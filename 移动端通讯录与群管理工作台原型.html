@@ -1138,9 +1138,9 @@ function showNewFriends() {
   closeAddMenu();
   document.getElementById('subNavTitle').textContent = '新的朋友';
   document.getElementById('subNavAction').innerHTML = '';
-  var html = '';
+  var html = '<div id="newFriendAnchor" style="position:relative">';
   if(FRIEND_REQUESTS.length === 0) {
-    html = '<div class="empty-state"><div class="empty-icon">📭</div><div class="empty-text">暂无新的朋友</div></div>';
+    html += '<div class="empty-state"><div class="empty-icon">📭</div><div class="empty-text">暂无新的朋友</div></div>';
   } else {
     FRIEND_REQUESTS.forEach(function(fr){
       var statusHtml = '';
@@ -1150,6 +1150,7 @@ function showNewFriends() {
       html += '<div class="friend-request-item" onclick="showAcceptFriend('+fr.id+')"><div class="friend-request-avatar" style="background:'+getAvatarColor(fr.name)+'">'+fr.name.charAt(0)+'</div><div class="friend-request-info"><div class="friend-request-name">'+fr.name+'</div><div class="friend-request-msg">'+fr.message+'</div></div>'+statusHtml+'</div>';
     });
   }
+  html += '</div>';
   document.getElementById('subPageContent').innerHTML = html;
   document.getElementById('subPage').classList.add('show');
 }
@@ -1389,6 +1390,7 @@ function showGroupDetail(groupId) {
   var currentIdentity = r.identity;
   var statusCls = g.status === '正常' ? 'status-normal' : g.status === '待同步' ? 'status-sync' : g.status === '停用' ? 'status-disabled' : 'status-error';
   var html = '';
+  html += '<div id="groupDetailAnchor" style="position:relative">';
   html += '<div class="gd-section">';
   html += '<div class="gd-row"><span class="gd-label">群名称</span><span class="gd-value">'+g.name+'</span></div>';
   html += '<div class="gd-row"><span class="gd-label">群类型</span><span class="gd-value">'+g.type+'</span></div>';
@@ -1465,6 +1467,7 @@ function showGroupDetail(groupId) {
   } else if(g.status === '停用') {
     html += '<div class="gd-enter-chat"><button class="btn btn-block" style="background:#F0F0F0;color:var(--text-tertiary);cursor:not-allowed" disabled>群已停用</button></div>';
   }
+  html += '</div>';
   document.getElementById('subPageContent').innerHTML = html;
   document.getElementById('subPage').classList.add('show');
 }
@@ -1660,7 +1663,7 @@ var ANNOTATIONS = [
   {
     id: 3,
     title: '群详情页',
-    target: '#subPage',
+    target: '#groupDetailAnchor',
     page: 'sub',
     subFilter: function() { var t = document.getElementById('subNavTitle'); return t && (t.textContent === '群详情'); },
     content: '### 8.1 页面目标\n\n展示某个门店群的群基础信息、群主、群管和白名单客户成员。\n\n### 8.2 页面结构\n\n群基础信息 → 群成员概览 → 群主信息 → 群管列表 → 客户列表 → 异常提示 → 进入群聊按钮\n\n### 8.3 群基础信息\n\n| 字段 | 说明 |\n|------|------|\n| 群名称 | 门店群聊名称 |\n| 群类型 | 门店群 |\n| 来源门店 | 当前群所属门店 |\n| 当前身份 | 当前用户查看身份 |\n| 所属租户 | 当前身份所属租户 |\n| 创建方式 | 系统自动创建 |\n| 创建时间 | 群生成时间 |\n| 群状态 | 正常/异常 |\n\n### 8.4 群成员概览\n\n| 指标 | 说明 |\n|------|------|\n| 群主 | 代理/店长 |\n| 群管人数 | 店长、店员人数 |\n| 客户人数 | 白名单客户数量 |\n| 黑名单客户 | 不进入群，不在成员列表展示 |\n| 异常成员 | 离职、停用、失效成员 |\n\n### 8.5 群主展示\n\n姓名/昵称、身份（代理/店长）、所属门店、状态\n\n### 8.6 群管展示\n\n姓名/昵称、身份（店长/店员）、所属门店、状态\n\n### 8.7 客户列表\n\n只展示白名单客户。客户手机号默认脱敏：138****5678\n\n### 8.8 异常提示\n\n| 异常 | 说明 |\n|------|------|\n| 群主停用 | 群主账号不可用 |\n| 群管离职 | 店长/店员离职 |\n| 客户状态异常 | 客户被拉黑或停用 |\n| 群成员待同步 | 后台数据与群成员不一致 |\n| 跨租户数据异常 | 群成员不属于当前租户 |\n\n### 8.9 进入群聊按钮\n\n| 场景 | 处理 |\n|------|------|\n| 已有群聊能力 | 展示「进入群聊」按钮 |\n| 暂无群聊能力 | 不展示按钮，只展示通讯录关系 |\n| 用户无群聊权限 | 按钮置灰或隐藏 |'
@@ -1668,7 +1671,7 @@ var ANNOTATIONS = [
   {
     id: 4,
     title: '新的朋友（设计稿扩展）',
-    target: '#subPage',
+    target: '#newFriendAnchor',
     page: 'sub',
     subFilter: function() { var t = document.getElementById('subNavTitle'); return t && t.textContent === '新的朋友'; },
     content: '### 新的朋友页面\n\n> ⚠️ 注意：此功能来自设计稿扩展，不在PRD V1.0范围内。PRD本期不做完整IM聊天和好友系统。\n\n好友申请列表，每条包含：\n- 头像+姓名\n- 打招呼内容\n- 状态标签：待通过（绿色）/ 已添加（灰色）/ 已拒绝（红色）\n\n点击待通过项：进入通过/拒绝页面\n\n#### 通过好友申请\n显示用户信息+打招呼内容+「通过好友申请」绿色按钮+「拒绝好友申请」红色按钮\n\n#### 等待对方验证\n已发送申请后显示"等待对方验证"灰色文字\n\n#### 对方已拒绝\n显示"• 对方已拒绝"红色文字\n\n#### 空状态\n暂无新的朋友'
@@ -1683,7 +1686,7 @@ var ANNOTATIONS = [
   {
     id: 6,
     title: '白名单/黑名单规则',
-    target: '#subPage',
+    target: '#groupDetailAnchor',
     page: 'sub',
     subFilter: function() { var t = document.getElementById('subNavTitle'); return t && t.textContent === '群详情'; },
     content: '### 10.1 白名单客户规则\n\n只有白名单客户进入群成员展示。\n\n客户属于当前门店 且 客户状态=白名单 → 展示在群成员中\n\n### 10.2 黑名单客户规则\n\n黑名单客户不进入群，不展示在群成员列表。\n\n客户状态=黑名单 → 不展示\n\n如客户从白名单变为黑名单，系统应在后台同步后从群成员中移除或隐藏。\n\n### 10.3 客户状态规则\n\n| 客户状态 | 是否展示在群内 |\n|----------|----------------|\n| 白名单 | 是 |\n| 黑名单 | 否 |\n| 停用 | 否 |\n| 删除 | 否 |\n| 未确认 | 否，除非后台规则允许 |'
@@ -1698,7 +1701,7 @@ var ANNOTATIONS = [
   {
     id: 8,
     title: '状态规则',
-    target: '#subPage',
+    target: '#groupDetailAnchor',
     page: 'sub',
     subFilter: function() { var t = document.getElementById('subNavTitle'); return t && t.textContent === '群详情'; },
     content: '### 12.1 群状态\n\n| 状态 | 说明 |\n|------|------|\n| 正常 | 群可正常查看 |\n| 异常 | 群主、群管、成员数据异常 |\n| 停用 | 群不可用 |\n| 待同步 | 后台成员数据发生变化，待同步 |\n| 已删除 | 不展示 |\n\n### 12.2 成员状态\n\n| 状态 | 是否展示 | 说明 |\n|------|----------|------|\n| 正常 | 是 | 正常群成员 |\n| 离职 | 可显示为异常或隐藏 | 店员/店长离职 |\n| 停用 | 否或异常提示 | 账号停用 |\n| 黑名单 | 否 | 黑名单客户不展示 |\n| 已删除 | 否 | 删除成员不展示 |'
@@ -1706,7 +1709,7 @@ var ANNOTATIONS = [
   {
     id: 9,
     title: '异常场景',
-    target: '#subPage',
+    target: '#groupDetailAnchor',
     page: 'sub',
     subFilter: function() { var t = document.getElementById('subNavTitle'); return t && t.textContent === '群详情'; },
     content: '### 16.1 当前身份不存在\n\n用户登录后未选择身份，或当前身份失效。\n\n提示：当前身份不可用，请前往个人中心切换身份\n\n### 16.2 当前身份无群\n\n店员/店长身份下，当前门店尚未创建群。\n\n提示：当前门店暂无群聊，请联系管理员确认\n\n### 16.3 代理无门店\n\n代理身份下无绑定门店。\n\n提示：暂无可管理的门店群，当前代理身份下尚未绑定门店\n\n### 16.4 跨租户数据异常\n\n接口返回非当前租户数据。前端不展示，后端记录异常日志。\n\n提示：数据异常，请稍后重试\n\n### 16.5 客户数据为空\n\n群内无白名单客户。\n\n提示：当前群暂无白名单客户'
@@ -1840,6 +1843,7 @@ function isBadgeVisible(ann) {
 }
 
 function positionBadges() {
+  var _posMap = {};
   ANNOTATIONS.forEach(function(ann) {
     var badge = _annBadges[ann.id];
     if (!badge) return;
@@ -1850,10 +1854,14 @@ function positionBadges() {
     var rect = target.getBoundingClientRect();
     var badgeRect = badge.getBoundingClientRect();
     var bw = badgeRect.width || 20;
-    var top = rect.top - 8;
+    var bh = badgeRect.height || 14;
+    var posKey = ann.target + '|' + ann.page;
+    var offsetIdx = _posMap[posKey] || 0;
+    _posMap[posKey] = offsetIdx + 1;
+    var top = rect.top - 8 - offsetIdx * (bh + 4);
     var left = rect.right - bw - 4;
-    if (top < 0) top = rect.top + 4;
-    if (left < 0) left = rect.left + 4;
+    if (top < 4) top = rect.top + 4 + offsetIdx * (bh + 4);
+    if (left < 4) left = rect.left + 4;
     if (left + bw > window.innerWidth) left = window.innerWidth - bw - 4;
     badge.style.top = top + 'px';
     badge.style.left = left + 'px';
