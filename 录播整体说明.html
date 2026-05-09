@@ -1,0 +1,518 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <title>录播整体说明</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <link href="resources/css/axure_rp_page.css" type="text/css" rel="stylesheet"/>
+    <link href="data/styles.css" type="text/css" rel="stylesheet"/>
+    <link href="files/录播整体说明/styles.css" type="text/css" rel="stylesheet"/>
+    <script src="resources/scripts/jquery-3.2.1.min.js"></script>
+    <script src="resources/scripts/axure/axQuery.js"></script>
+    <script src="resources/scripts/axure/globals.js"></script>
+    <script src="resources/scripts/axutils.js"></script>
+    <script src="resources/scripts/axure/annotation.js"></script>
+    <script src="resources/scripts/axure/axQuery.std.js"></script>
+    <script src="resources/scripts/axure/doc.js"></script>
+    <script src="resources/scripts/messagecenter.js"></script>
+    <script src="resources/scripts/axure/events.js"></script>
+    <script src="resources/scripts/axure/recording.js"></script>
+    <script src="resources/scripts/axure/action.js"></script>
+    <script src="resources/scripts/axure/expr.js"></script>
+    <script src="resources/scripts/axure/geometry.js"></script>
+    <script src="resources/scripts/axure/flyout.js"></script>
+    <script src="resources/scripts/axure/model.js"></script>
+    <script src="resources/scripts/axure/repeater.js"></script>
+    <script src="resources/scripts/axure/sto.js"></script>
+    <script src="resources/scripts/axure/utils.temp.js"></script>
+    <script src="resources/scripts/axure/variables.js"></script>
+    <script src="resources/scripts/axure/drag.js"></script>
+    <script src="resources/scripts/axure/move.js"></script>
+    <script src="resources/scripts/axure/visibility.js"></script>
+    <script src="resources/scripts/axure/style.js"></script>
+    <script src="resources/scripts/axure/adaptive.js"></script>
+    <script src="resources/scripts/axure/tree.js"></script>
+    <script src="resources/scripts/axure/init.temp.js"></script>
+    <script src="resources/scripts/axure/legacy.js"></script>
+    <script src="resources/scripts/axure/viewer.js"></script>
+    <script src="resources/scripts/axure/math.js"></script>
+    <script src="resources/scripts/axure/jquery.nicescroll.min.js"></script>
+    <script src="data/document.js"></script>
+    <script src="files/录播整体说明/data.js"></script>
+    <script type="text/javascript">
+      $axure.utils.getTransparentGifPath = function() { return 'resources/images/transparent.gif'; };
+      $axure.utils.getOtherPath = function() { return 'resources/Other.html'; };
+      $axure.utils.getReloadPath = function() { return 'resources/reload.html'; };
+    </script>
+  </head>
+  <body>
+    <div id="base" class="">
+
+      <!-- Unnamed (矩形) -->
+      <div id="u29450" class="ax_default sticky_1">
+        <div id="u29450_div" class=""></div>
+        <div id="u29450_text" class="text ">
+          <p><span>录播间，通过关联课程，针对课程关联商品脚本、和红包脚本，来实现相关的业务内容</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (图片 ) -->
+      <div id="u29451" class="ax_default image">
+        <img id="u29451_img" class="img " src="images/录播整体说明/u29451.png"/>
+        <div id="u29451_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u29452" class="ax_default sticky_1">
+        <div id="u29452_div" class=""></div>
+        <div id="u29452_text" class="text ">
+          <p><span>商品脚本，是直接控制录播间小黄车的商品列表，以及商品是否出现在该列表，以及商品的价格是否是???</span></p><p><span>1个录播课程 会关联N个商品脚本，一个脚本关联引用1个商品</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (图片 ) -->
+      <div id="u29453" class="ax_default image">
+        <img id="u29453_img" class="img " src="images/录播整体说明/u29453.png"/>
+        <div id="u29453_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u29454" class="ax_default sticky_1">
+        <div id="u29454_div" class=""></div>
+        <div id="u29454_text" class="text ">
+          <p><span>红包脚本，是给课程关联现金红包的脚本，一个课程可以有多个脚本，1个脚本关联一个现金红包</span></p><p><span>脚本控制是否显示ICON，控制是否领完，这个领完并非是实际领完，是为了促进互动效果</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (图片 ) -->
+      <div id="u29455" class="ax_default image">
+        <img id="u29455_img" class="img " src="images/录播整体说明/u29455.png"/>
+        <div id="u29455_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u29456" class="ax_default sticky_1">
+        <div id="u29456_div" class=""></div>
+        <div id="u29456_text" class="text ">
+          <p><span>前置条件：录播期间课程视频完播后，如果课程关联了答题卡，需要显示该答题卡否则不显示</span></p><p><span>后置条件：需要记录当前用户在哪个录播间，那个课程，做了答题，答题是否正确</span></p><p><span>答题记录：用户编号、录播间编号、课程编号、题编号、题目类型（单选、多选、答案选项、答题时间，是否正确</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (图片 ) -->
+      <div id="u29457" class="ax_default image">
+        <img id="u29457_img" class="img " src="images/录播整体说明/u29457.png"/>
+        <div id="u29457_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u29458" class="ax_default sticky_1">
+        <div id="u29458_div" class=""></div>
+        <div id="u29458_text" class="text ">
+          <p><span style="font-family:'PingFangSC-Regular', 'PingFang SC', sans-serif;font-weight:400;">录播间的状态，决定前端展示形式</span></p><p><span style="font-family:'NunitoSans-Regular', 'Nunito Sans', sans-serif;font-weight:400;font-style:normal;">1</span><span style="font-family:'PingFangSC-Regular', 'PingFang SC', sans-serif;font-weight:400;">：如果配置了开始结束时间，那么依据当前时间开始之前==未开始，之间==进行中，==结束时间，已结束</span></p><p><span style="font-family:'PingFangSC-Regular', 'PingFang SC', sans-serif;font-weight:400;">2：如果手动结束，需要更新结束时间 == 已结束</span></p><p><span style="font-family:'PingFangSC-Regular', 'PingFang SC', sans-serif;font-weight:400;">3：即刻开始，需要更新开始时间 == 进行中</span></p><p><span style="font-family:'PingFangSC-Regular', 'PingFang SC', sans-serif;font-weight:400;">4：重新开始，那么开始时间会存在，结束时间不存在 == 进行中</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (图片 ) -->
+      <div id="u29459" class="ax_default image">
+        <img id="u29459_img" class="img " src="images/录播整体说明/u29459.png"/>
+        <div id="u29459_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (图片 ) -->
+      <div id="u29460" class="ax_default image">
+        <img id="u29460_img" class="img " src="images/录播整体说明/u29460.png"/>
+        <div id="u29460_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (角色) -->
+      <div id="u29461" class="ax_default flow_shape">
+        <img id="u29461_img" class="img " src="images/v1_0_0__整体业务流程/u92.svg"/>
+        <div id="u29461_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u29462" class="ax_default flow_shape">
+        <div id="u29462_div" class=""></div>
+        <div id="u29462_text" class="text ">
+          <p><span>创建录播</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (连接) -->
+      <div id="u29463" class="ax_default connector">
+        <img id="u29463_seg0" class="img " src="images/录播整体说明/u29463_seg0.svg" alt="u29463_seg0"/>
+        <img id="u29463_seg1" class="img " src="images/录播整体说明/u29463_seg1.svg" alt="u29463_seg1"/>
+        <div id="u29463_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u29464" class="ax_default flow_shape">
+        <div id="u29464_div" class=""></div>
+        <div id="u29464_text" class="text ">
+          <p><span>设置开始时间</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u29465" class="ax_default flow_shape">
+        <div id="u29465_div" class=""></div>
+        <div id="u29465_text" class="text ">
+          <p><span>设置结束时间</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (连接) -->
+      <div id="u29466" class="ax_default connector">
+        <img id="u29466_seg0" class="img " src="images/录播整体说明/u29466_seg0.svg" alt="u29466_seg0"/>
+        <img id="u29466_seg1" class="img " src="images/录播整体说明/u29466_seg1.svg" alt="u29466_seg1"/>
+        <div id="u29466_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (连接) -->
+      <div id="u29467" class="ax_default connector">
+        <img id="u29467_seg0" class="img " src="images/录播整体说明/u29467_seg0.svg" alt="u29467_seg0"/>
+        <img id="u29467_seg1" class="img " src="images/录播整体说明/u29467_seg1.svg" alt="u29467_seg1"/>
+        <div id="u29467_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u29468" class="ax_default flow_shape">
+        <div id="u29468_div" class=""></div>
+        <div id="u29468_text" class="text ">
+          <p><span>保存录播</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (连接) -->
+      <div id="u29469" class="ax_default connector">
+        <img id="u29469_seg0" class="img " src="images/录播整体说明/u29469_seg0.svg" alt="u29469_seg0"/>
+        <img id="u29469_seg1" class="img " src="images/录播整体说明/u29469_seg1.svg" alt="u29469_seg1"/>
+        <div id="u29469_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (菱形) -->
+      <div id="u29470" class="ax_default flow_shape">
+        <img id="u29470_img" class="img " src="images/v1_0_0__整体业务流程/u119.svg"/>
+        <div id="u29470_text" class="text ">
+          <p><span style="font-family:'PingFangSC-Regular', 'PingFang SC', sans-serif;">当前时间</span><span style="font-family:'ArialMT', 'Arial', sans-serif;"> </span><span style="font-family:'PingFangSC-Regular', 'PingFang SC', sans-serif;">小于</span><span style="font-family:'ArialMT', 'Arial', sans-serif;"> </span><span style="font-family:'PingFangSC-Regular', 'PingFang SC', sans-serif;">开始时间</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (连接) -->
+      <div id="u29471" class="ax_default connector">
+        <img id="u29471_seg0" class="img " src="images/录播整体说明/u29471_seg0.svg" alt="u29471_seg0"/>
+        <img id="u29471_seg1" class="img " src="images/录播整体说明/u29471_seg1.svg" alt="u29471_seg1"/>
+        <img id="u29471_seg2" class="img " src="images/录播整体说明/u29471_seg2.svg" alt="u29471_seg2"/>
+        <img id="u29471_seg3" class="img " src="images/录播整体说明/u29471_seg3.svg" alt="u29471_seg3"/>
+        <div id="u29471_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (斜角矩形) -->
+      <div id="u29472" class="ax_default flow_shape">
+        <img id="u29472_img" class="img " src="images/场次管理/u24579.svg"/>
+        <div id="u29472_text" class="text ">
+          <p><span>状态1：未开始</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (连接) -->
+      <div id="u29473" class="ax_default connector">
+        <img id="u29473_seg0" class="img " src="images/录播整体说明/u29473_seg0.svg" alt="u29473_seg0"/>
+        <img id="u29473_seg1" class="img " src="images/录播整体说明/u29473_seg1.svg" alt="u29473_seg1"/>
+        <div id="u29473_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (斜角矩形) -->
+      <div id="u29474" class="ax_default flow_shape">
+        <img id="u29474_img" class="img " src="images/场次管理/u24579.svg"/>
+        <div id="u29474_text" class="text ">
+          <p><span>状态2：进行中</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (连接) -->
+      <div id="u29475" class="ax_default connector">
+        <img id="u29475_seg0" class="img " src="images/录播整体说明/u29475_seg0.svg" alt="u29475_seg0"/>
+        <img id="u29475_seg1" class="img " src="images/录播整体说明/u29475_seg1.svg" alt="u29475_seg1"/>
+        <div id="u29475_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (菱形) -->
+      <div id="u29476" class="ax_default flow_shape">
+        <img id="u29476_img" class="img " src="images/v1_0_0__整体业务流程/u119.svg"/>
+        <div id="u29476_text" class="text ">
+          <p><span style="font-family:'PingFangSC-Regular', 'PingFang SC', sans-serif;">当前时间</span><span style="font-family:'ArialMT', 'Arial', sans-serif;">==</span><span style="font-family:'PingFangSC-Regular', 'PingFang SC', sans-serif;">结束时间</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (连接) -->
+      <div id="u29477" class="ax_default connector">
+        <img id="u29477_seg0" class="img " src="images/录播整体说明/u29477_seg0.svg" alt="u29477_seg0"/>
+        <img id="u29477_seg1" class="img " src="images/录播整体说明/u29477_seg1.svg" alt="u29477_seg1"/>
+        <div id="u29477_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (斜角矩形) -->
+      <div id="u29478" class="ax_default flow_shape">
+        <img id="u29478_img" class="img " src="images/场次管理/u24579.svg"/>
+        <div id="u29478_text" class="text ">
+          <p><span>状态3：已结束</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (连接) -->
+      <div id="u29479" class="ax_default connector">
+        <img id="u29479_seg0" class="img " src="images/录播整体说明/u29479_seg0.svg" alt="u29479_seg0"/>
+        <img id="u29479_seg1" class="img " src="images/录播整体说明/u29479_seg1.svg" alt="u29479_seg1"/>
+        <div id="u29479_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (连接) -->
+      <div id="u29480" class="ax_default connector">
+        <img id="u29480_seg0" class="img " src="images/录播整体说明/u29480_seg0.svg" alt="u29480_seg0"/>
+        <img id="u29480_seg1" class="img " src="images/录播整体说明/u29480_seg1.svg" alt="u29480_seg1"/>
+        <img id="u29480_seg2" class="img " src="images/录播整体说明/u29480_seg2.svg" alt="u29480_seg2"/>
+        <img id="u29480_seg3" class="img " src="images/录播整体说明/u29480_seg3.svg" alt="u29480_seg3"/>
+        <div id="u29480_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u29481" class="ax_default flow_shape">
+        <div id="u29481_div" class=""></div>
+        <div id="u29481_text" class="text ">
+          <p><span>结束</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (连接) -->
+      <div id="u29482" class="ax_default connector">
+        <img id="u29482_seg0" class="img " src="images/录播整体说明/u29482_seg0.svg" alt="u29482_seg0"/>
+        <img id="u29482_seg1" class="img " src="images/录播整体说明/u29482_seg1.svg" alt="u29482_seg1"/>
+        <img id="u29482_seg2" class="img " src="images/录播整体说明/u29482_seg2.svg" alt="u29482_seg2"/>
+        <div id="u29482_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u29483" class="ax_default flow_shape">
+        <div id="u29483_div" class=""></div>
+        <div id="u29483_text" class="text ">
+          <p><span>即刻开始</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (连接) -->
+      <div id="u29484" class="ax_default connector">
+        <img id="u29484_seg0" class="img " src="images/录播整体说明/u29484_seg0.svg" alt="u29484_seg0"/>
+        <img id="u29484_seg1" class="img " src="images/录播整体说明/u29484_seg1.svg" alt="u29484_seg1"/>
+        <div id="u29484_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (连接) -->
+      <div id="u29485" class="ax_default connector">
+        <img id="u29485_seg0" class="img " src="images/录播整体说明/u29485_seg0.svg" alt="u29485_seg0"/>
+        <img id="u29485_seg1" class="img " src="images/录播整体说明/u29485_seg1.svg" alt="u29485_seg1"/>
+        <div id="u29485_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u29486" class="ax_default flow_shape">
+        <div id="u29486_div" class=""></div>
+        <div id="u29486_text" class="text ">
+          <p><span>设置开始时间，置空结束时间</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (连接) -->
+      <div id="u29487" class="ax_default connector">
+        <img id="u29487_seg0" class="img " src="images/录播整体说明/u29487_seg0.svg" alt="u29487_seg0"/>
+        <img id="u29487_seg1" class="img " src="images/录播整体说明/u29487_seg1.svg" alt="u29487_seg1"/>
+        <img id="u29487_seg2" class="img " src="images/录播整体说明/u29487_seg2.svg" alt="u29487_seg2"/>
+        <div id="u29487_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u29488" class="ax_default flow_shape">
+        <div id="u29488_div" class=""></div>
+        <div id="u29488_text" class="text ">
+          <p><span>设置结束时间</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (连接) -->
+      <div id="u29489" class="ax_default connector">
+        <img id="u29489_seg0" class="img " src="images/录播整体说明/u29489_seg0.svg" alt="u29489_seg0"/>
+        <img id="u29489_seg1" class="img " src="images/录播整体说明/u29489_seg1.svg" alt="u29489_seg1"/>
+        <div id="u29489_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (连接) -->
+      <div id="u29490" class="ax_default connector">
+        <img id="u29490_seg0" class="img " src="images/录播整体说明/u29490_seg0.svg" alt="u29490_seg0"/>
+        <img id="u29490_seg1" class="img " src="images/录播整体说明/u29490_seg1.svg" alt="u29490_seg1"/>
+        <div id="u29490_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u29491" class="ax_default flow_shape">
+        <div id="u29491_div" class=""></div>
+        <div id="u29491_text" class="text ">
+          <p><span>重新开始：重置开始时间为当前时间，结束时间为空</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (连接) -->
+      <div id="u29492" class="ax_default connector">
+        <img id="u29492_seg0" class="img " src="images/录播整体说明/u29492_seg0.svg" alt="u29492_seg0"/>
+        <img id="u29492_seg1" class="img " src="images/录播整体说明/u29492_seg1.svg" alt="u29492_seg1"/>
+        <div id="u29492_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (斜角矩形) -->
+      <div id="u29493" class="ax_default flow_shape">
+        <img id="u29493_img" class="img " src="images/场次管理/u24579.svg"/>
+        <div id="u29493_text" class="text ">
+          <p><span>状态2：进行中</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (连接) -->
+      <div id="u29494" class="ax_default connector">
+        <img id="u29494_seg0" class="img " src="images/录播整体说明/u29494_seg0.svg" alt="u29494_seg0"/>
+        <img id="u29494_seg1" class="img " src="images/录播整体说明/u29494_seg1.svg" alt="u29494_seg1"/>
+        <div id="u29494_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (菱形) -->
+      <div id="u29495" class="ax_default flow_shape">
+        <img id="u29495_img" class="img " src="images/v1_0_0__整体业务流程/u119.svg"/>
+        <div id="u29495_text" class="text ">
+          <p><span>结束时间 == 空？</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (连接) -->
+      <div id="u29496" class="ax_default connector">
+        <img id="u29496_seg0" class="img " src="images/录播整体说明/u29496_seg0.svg" alt="u29496_seg0"/>
+        <img id="u29496_seg1" class="img " src="images/录播整体说明/u29496_seg1.svg" alt="u29496_seg1"/>
+        <div id="u29496_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (菱形) -->
+      <div id="u29497" class="ax_default flow_shape">
+        <img id="u29497_img" class="img " src="images/v1_0_0__整体业务流程/u119.svg"/>
+        <div id="u29497_text" class="text ">
+          <p><span>当前时间 == 结束时间？</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (连接) -->
+      <div id="u29498" class="ax_default connector">
+        <img id="u29498_seg0" class="img " src="images/录播整体说明/u29498_seg0.svg" alt="u29498_seg0"/>
+        <img id="u29498_seg1" class="img " src="images/录播整体说明/u29498_seg1.svg" alt="u29498_seg1"/>
+        <div id="u29498_text" class="text ">
+          <p><span>[N]</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (连接) -->
+      <div id="u29499" class="ax_default connector">
+        <img id="u29499_seg0" class="img " src="images/录播整体说明/u29499_seg0.svg" alt="u29499_seg0"/>
+        <img id="u29499_seg1" class="img " src="images/录播整体说明/u29499_seg1.svg" alt="u29499_seg1"/>
+        <img id="u29499_seg2" class="img " src="images/录播整体说明/u29499_seg2.svg" alt="u29499_seg2"/>
+        <div id="u29499_text" class="text ">
+          <p><span>【Y】</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u29500" class="ax_default flow_shape">
+        <div id="u29500_div" class=""></div>
+        <div id="u29500_text" class="text ">
+          <p><span>提示：还未结束是否需要结束？</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (连接) -->
+      <div id="u29501" class="ax_default connector">
+        <img id="u29501_seg0" class="img " src="images/录播整体说明/u29501_seg0.svg" alt="u29501_seg0"/>
+        <img id="u29501_seg1" class="img " src="images/录播整体说明/u29501_seg1.svg" alt="u29501_seg1"/>
+        <div id="u29501_text" class="text ">
+          <p><span>【N】</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (连接) -->
+      <div id="u29502" class="ax_default connector">
+        <img id="u29502_seg0" class="img " src="images/录播整体说明/u29502_seg0.svg" alt="u29502_seg0"/>
+        <img id="u29502_seg1" class="img " src="images/录播整体说明/u29502_seg1.svg" alt="u29502_seg1"/>
+        <img id="u29502_seg2" class="img " src="images/录播整体说明/u29502_seg2.svg" alt="u29502_seg2"/>
+        <div id="u29502_text" class="text ">
+          <p><span>【Y】</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (连接) -->
+      <div id="u29503" class="ax_default connector">
+        <img id="u29503_seg0" class="img " src="images/录播整体说明/u29503_seg0.svg" alt="u29503_seg0"/>
+        <img id="u29503_seg1" class="img " src="images/录播整体说明/u29503_seg1.svg" alt="u29503_seg1"/>
+        <img id="u29503_seg2" class="img " src="images/录播整体说明/u29503_seg2.svg" alt="u29503_seg2"/>
+        <div id="u29503_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+    </div>
+    <script src="resources/scripts/axure/ios.js"></script>
+  </body>
+</html>

@@ -1,0 +1,394 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <title>销售订单明细报表</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <link href="resources/css/axure_rp_page.css" type="text/css" rel="stylesheet"/>
+    <link href="data/styles.css" type="text/css" rel="stylesheet"/>
+    <link href="files/销售订单明细报表/styles.css" type="text/css" rel="stylesheet"/>
+    <script src="resources/scripts/jquery-3.2.1.min.js"></script>
+    <script src="resources/scripts/axure/axQuery.js"></script>
+    <script src="resources/scripts/axure/globals.js"></script>
+    <script src="resources/scripts/axutils.js"></script>
+    <script src="resources/scripts/axure/annotation.js"></script>
+    <script src="resources/scripts/axure/axQuery.std.js"></script>
+    <script src="resources/scripts/axure/doc.js"></script>
+    <script src="resources/scripts/messagecenter.js"></script>
+    <script src="resources/scripts/axure/events.js"></script>
+    <script src="resources/scripts/axure/recording.js"></script>
+    <script src="resources/scripts/axure/action.js"></script>
+    <script src="resources/scripts/axure/expr.js"></script>
+    <script src="resources/scripts/axure/geometry.js"></script>
+    <script src="resources/scripts/axure/flyout.js"></script>
+    <script src="resources/scripts/axure/model.js"></script>
+    <script src="resources/scripts/axure/repeater.js"></script>
+    <script src="resources/scripts/axure/sto.js"></script>
+    <script src="resources/scripts/axure/utils.temp.js"></script>
+    <script src="resources/scripts/axure/variables.js"></script>
+    <script src="resources/scripts/axure/drag.js"></script>
+    <script src="resources/scripts/axure/move.js"></script>
+    <script src="resources/scripts/axure/visibility.js"></script>
+    <script src="resources/scripts/axure/style.js"></script>
+    <script src="resources/scripts/axure/adaptive.js"></script>
+    <script src="resources/scripts/axure/tree.js"></script>
+    <script src="resources/scripts/axure/init.temp.js"></script>
+    <script src="resources/scripts/axure/legacy.js"></script>
+    <script src="resources/scripts/axure/viewer.js"></script>
+    <script src="resources/scripts/axure/math.js"></script>
+    <script src="resources/scripts/axure/jquery.nicescroll.min.js"></script>
+    <script src="data/document.js"></script>
+    <script src="files/销售订单明细报表/data.js"></script>
+    <script type="text/javascript">
+      $axure.utils.getTransparentGifPath = function() { return 'resources/images/transparent.gif'; };
+      $axure.utils.getOtherPath = function() { return 'resources/Other.html'; };
+      $axure.utils.getReloadPath = function() { return 'resources/reload.html'; };
+    </script>
+  </head>
+  <body>
+    <div id="base" class="">
+
+      <!-- Unnamed (矩形) -->
+      <div id="u40973" class="ax_default shape">
+        <div id="u40973_div" class=""></div>
+        <div id="u40973_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u40974" class="ax_default heading_3">
+        <div id="u40974_div" class=""></div>
+        <div id="u40974_text" class="text ">
+          <p style="font-size:14px;"><span style="color:rgba(0, 0, 0, 0.647058823529412);">经营报表&nbsp; </span><span style="font-size:12px;">销售订单明细报表</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u40975" class="ax_default box_1">
+        <div id="u40975_div" class=""></div>
+        <div id="u40975_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u40976" class="ax_default label">
+        <div id="u40976_div" class=""></div>
+        <div id="u40976_text" class="text ">
+          <p><span>时间范围：</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (统计时间) -->
+
+      <!-- Unnamed (下拉列表) -->
+      <div id="u40978" class="ax_default droplist">
+        <div id="u40978_div" class=""></div>
+        <select id="u40978_input" class="u40978_input">
+          <option class="u40978_input_option" value="自然日">自然日</option>
+          <option class="u40978_input_option" value="自然周">自然周</option>
+          <option class="u40978_input_option" value="自然月">自然月</option>
+          <option class="u40978_input_option" value="近7天">近7天</option>
+          <option class="u40978_input_option" value="近30天">近30天</option>
+          <option class="u40978_input_option" value="自定义">自定义</option>
+        </select>
+      </div>
+
+      <!-- Unnamed (动态面板) -->
+      <div id="u40979" class="ax_default">
+        <div id="u40979_state0" class="panel_state" data-label="自然日" style="">
+          <div id="u40979_state0_content" class="panel_state_content">
+
+            <!-- Unnamed (文本框) -->
+            <div id="u40980" class="ax_default text_field">
+              <div id="u40980_div" class=""></div>
+              <input id="u40980_input" type="date" value="" class="u40980_input"/>
+            </div>
+          </div>
+        </div>
+        <div id="u40979_state1" class="panel_state" data-label="近7天" style="visibility: hidden;">
+          <div id="u40979_state1_content" class="panel_state_content">
+
+            <!-- Unnamed (文本框) -->
+            <div id="u40981" class="ax_default text_field disabled">
+              <div id="u40981_div" class="disabled"></div>
+              <input id="u40981_input" type="date" value="2026-04-06" class="u40981_input" disabled/>
+            </div>
+
+            <!-- Unnamed (文本框) -->
+            <div id="u40982" class="ax_default text_field disabled">
+              <div id="u40982_div" class="disabled"></div>
+              <input id="u40982_input" type="date" value="2026-04-13" class="u40982_input" disabled/>
+            </div>
+          </div>
+        </div>
+        <div id="u40979_state2" class="panel_state" data-label="近30天" style="visibility: hidden;">
+          <div id="u40979_state2_content" class="panel_state_content">
+
+            <!-- Unnamed (文本框) -->
+            <div id="u40983" class="ax_default text_field disabled">
+              <div id="u40983_div" class="disabled"></div>
+              <input id="u40983_input" type="date" value="2026-03-14" class="u40983_input" disabled/>
+            </div>
+
+            <!-- Unnamed (文本框) -->
+            <div id="u40984" class="ax_default text_field disabled">
+              <div id="u40984_div" class="disabled"></div>
+              <input id="u40984_input" type="date" value="2026-04-13" class="u40984_input" disabled/>
+            </div>
+          </div>
+        </div>
+        <div id="u40979_state3" class="panel_state" data-label="自然周" style="visibility: hidden;">
+          <div id="u40979_state3_content" class="panel_state_content">
+
+            <!-- 自然周 (文本框) -->
+            <div id="u40985" class="ax_default text_field" data-label="自然周">
+              <div id="u40985_div" class=""></div>
+              <input id="u40985_input" type="date" value="" class="u40985_input"/>
+            </div>
+
+            <!-- Unnamed (文本框) -->
+            <div id="u40986" class="ax_default text_field">
+              <div id="u40986_div" class=""></div>
+              <input id="u40986_input" type="date" value="" class="u40986_input"/>
+            </div>
+          </div>
+        </div>
+        <div id="u40979_state4" class="panel_state" data-label="自然月" style="visibility: hidden;">
+          <div id="u40979_state4_content" class="panel_state_content">
+
+            <!-- 自然月 (下拉列表) -->
+            <div id="u40987" class="ax_default droplist" data-label="自然月">
+              <div id="u40987_div" class=""></div>
+              <select id="u40987_input" class="u40987_input">
+                <option class="u40987_input_option" value="2026-01">2026-01</option>
+                <option class="u40987_input_option" value="2026-02">2026-02</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div id="u40979_state5" class="panel_state" data-label="自定义" style="visibility: hidden;">
+          <div id="u40979_state5_content" class="panel_state_content">
+
+            <!-- Unnamed (文本框) -->
+            <div id="u40988" class="ax_default text_field">
+              <div id="u40988_div" class=""></div>
+              <input id="u40988_input" type="date" value="" class="u40988_input"/>
+            </div>
+
+            <!-- Unnamed (文本框) -->
+            <div id="u40989" class="ax_default text_field">
+              <div id="u40989_div" class=""></div>
+              <input id="u40989_input" type="date" value="" class="u40989_input"/>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="u40977" style="display:none; visibility:hidden;"></div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u40990" class="ax_default box_1">
+        <div id="u40990_div" class=""></div>
+        <div id="u40990_text" class="text ">
+          <p><span>筛选</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u40991" class="ax_default box_1">
+        <div id="u40991_div" class=""></div>
+        <div id="u40991_text" class="text ">
+          <p><span>导出</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u40992" class="ax_default box_2">
+        <div id="u40992_div" class=""></div>
+        <div id="u40992_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u40993" class="ax_default label">
+        <div id="u40993_div" class=""></div>
+        <div id="u40993_text" class="text ">
+          <p><span>订单编号 | 退换货单号</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u40994" class="ax_default label">
+        <div id="u40994_div" class=""></div>
+        <div id="u40994_text" class="text ">
+          <p><span>发生时间</span></p>
+        </div>
+      </div>
+
+      <!-- 成交数量 (矩形) -->
+      <div id="u40995" class="ax_default label" data-label="成交数量">
+        <div id="u40995_div" class=""></div>
+        <div id="u40995_text" class="text ">
+          <p><span>成交数量</span></p>
+        </div>
+      </div>
+
+      <!-- 成交金额(元) (矩形) -->
+      <div id="u40996" class="ax_default label" data-label="成交金额(元)">
+        <div id="u40996_div" class=""></div>
+        <div id="u40996_text" class="text ">
+          <p><span>成交金额(元)</span></p>
+        </div>
+      </div>
+
+      <!-- 售价金额(元) (矩形) -->
+      <div id="u40997" class="ax_default label" data-label="售价金额(元)">
+        <div id="u40997_div" class=""></div>
+        <div id="u40997_text" class="text ">
+          <p><span>售价金额(元)</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u40998" class="ax_default label">
+        <div id="u40998_div" class=""></div>
+        <div id="u40998_text" class="text ">
+          <p><span>优惠金额(元)</span></p>
+        </div>
+      </div>
+
+      <!-- 收款明细(元) (矩形) -->
+      <div id="u40999" class="ax_default label" data-label="收款明细(元)">
+        <div id="u40999_div" class=""></div>
+        <div id="u40999_text" class="text ">
+          <p><span>收款明细(元)</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41000" class="ax_default label">
+        <div id="u41000_div" class=""></div>
+        <div id="u41000_text" class="text ">
+          <p><span>优惠明细(元)</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41001" class="ax_default label">
+        <div id="u41001_div" class=""></div>
+        <div id="u41001_text" class="text ">
+          <p><span>销售渠道</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41002" class="ax_default label">
+        <div id="u41002_div" class=""></div>
+        <div id="u41002_text" class="text ">
+          <p><span>销售单元</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41003" class="ax_default label">
+        <div id="u41003_div" class=""></div>
+        <div id="u41003_text" class="text ">
+          <p><span>店员</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41004" class="ax_default label">
+        <div id="u41004_div" class=""></div>
+        <div id="u41004_text" class="text ">
+          <p><span>成交数量：0 成交金额：0.00 元售价金额：0.00 元优惠金额：0.00 元</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41005" class="ax_default label">
+        <div id="u41005_div" class=""></div>
+        <div id="u41005_text" class="text ">
+          <p><span>交易类型</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41006" class="ax_default label">
+        <div id="u41006_div" class=""></div>
+        <div id="u41006_text" class="text ">
+          <p><span>交易类型</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (下拉列表) -->
+      <div id="u41007" class="ax_default droplist">
+        <div id="u41007_div" class=""></div>
+        <select id="u41007_input" class="u41007_input">
+          <option class="u41007_input_option" value="全部">全部</option>
+          <option class="u41007_input_option" value="商品下单">商品下单</option>
+          <option class="u41007_input_option" value="商品退款">商品退款</option>
+          <option class="u41007_input_option" value="商品自提">商品自提</option>
+          <option class="u41007_input_option" value="商品退货">商品退货</option>
+          <option class="u41007_input_option" value="购买权益卡">购买权益卡</option>
+          <option class="u41007_input_option" value="购买优惠券">购买优惠券</option>
+        </select>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41008" class="ax_default label">
+        <div id="u41008_div" class=""></div>
+        <div id="u41008_text" class="text ">
+          <p><span>外部订单编号</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41009" class="ax_default label">
+        <div id="u41009_div" class=""></div>
+        <div id="u41009_text" class="text ">
+          <p><span>销售渠道</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (下拉列表) -->
+      <div id="u41010" class="ax_default droplist">
+        <div id="u41010_div" class=""></div>
+        <select id="u41010_input" class="u41010_input">
+          <option class="u41010_input_option" value="全部">全部</option>
+          <option class="u41010_input_option" value="门店">门店</option>
+          <option class="u41010_input_option" value="直播">直播</option>
+          <option class="u41010_input_option" value="录播">录播</option>
+        </select>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41011" class="ax_default label">
+        <div id="u41011_div" class=""></div>
+        <div id="u41011_text" class="text ">
+          <p><span>销售单元</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (下拉列表) -->
+      <div id="u41012" class="ax_default droplist">
+        <div id="u41012_div" class=""></div>
+        <select id="u41012_input" class="u41012_input">
+          <option class="u41012_input_option" value="全部">全部</option>
+          <option class="u41012_input_option" value="门店A">门店A</option>
+          <option class="u41012_input_option" value="门店B">门店B</option>
+          <option class="u41012_input_option" value="门店C">门店C</option>
+          <option class="u41012_input_option" value="门店D">门店D</option>
+          <option class="u41012_input_option" value="直播间A">直播间A</option>
+          <option class="u41012_input_option" value="直播间B">直播间B</option>
+          <option class="u41012_input_option" value="直播间C">直播间C</option>
+          <option class="u41012_input_option" value="录播A">录播A</option>
+          <option class="u41012_input_option" value="录播B">录播B</option>
+        </select>
+      </div>
+    </div>
+    <script src="resources/scripts/axure/ios.js"></script>
+  </body>
+</html>

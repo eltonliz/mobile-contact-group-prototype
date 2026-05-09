@@ -1,0 +1,638 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <title>交易同比环比报表</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <link href="resources/css/axure_rp_page.css" type="text/css" rel="stylesheet"/>
+    <link href="data/styles.css" type="text/css" rel="stylesheet"/>
+    <link href="files/交易同比环比报表/styles.css" type="text/css" rel="stylesheet"/>
+    <script src="resources/scripts/jquery-3.2.1.min.js"></script>
+    <script src="resources/scripts/axure/axQuery.js"></script>
+    <script src="resources/scripts/axure/globals.js"></script>
+    <script src="resources/scripts/axutils.js"></script>
+    <script src="resources/scripts/axure/annotation.js"></script>
+    <script src="resources/scripts/axure/axQuery.std.js"></script>
+    <script src="resources/scripts/axure/doc.js"></script>
+    <script src="resources/scripts/messagecenter.js"></script>
+    <script src="resources/scripts/axure/events.js"></script>
+    <script src="resources/scripts/axure/recording.js"></script>
+    <script src="resources/scripts/axure/action.js"></script>
+    <script src="resources/scripts/axure/expr.js"></script>
+    <script src="resources/scripts/axure/geometry.js"></script>
+    <script src="resources/scripts/axure/flyout.js"></script>
+    <script src="resources/scripts/axure/model.js"></script>
+    <script src="resources/scripts/axure/repeater.js"></script>
+    <script src="resources/scripts/axure/sto.js"></script>
+    <script src="resources/scripts/axure/utils.temp.js"></script>
+    <script src="resources/scripts/axure/variables.js"></script>
+    <script src="resources/scripts/axure/drag.js"></script>
+    <script src="resources/scripts/axure/move.js"></script>
+    <script src="resources/scripts/axure/visibility.js"></script>
+    <script src="resources/scripts/axure/style.js"></script>
+    <script src="resources/scripts/axure/adaptive.js"></script>
+    <script src="resources/scripts/axure/tree.js"></script>
+    <script src="resources/scripts/axure/init.temp.js"></script>
+    <script src="resources/scripts/axure/legacy.js"></script>
+    <script src="resources/scripts/axure/viewer.js"></script>
+    <script src="resources/scripts/axure/math.js"></script>
+    <script src="resources/scripts/axure/jquery.nicescroll.min.js"></script>
+    <script src="data/document.js"></script>
+    <script src="files/交易同比环比报表/data.js"></script>
+    <script type="text/javascript">
+      $axure.utils.getTransparentGifPath = function() { return 'resources/images/transparent.gif'; };
+      $axure.utils.getOtherPath = function() { return 'resources/Other.html'; };
+      $axure.utils.getReloadPath = function() { return 'resources/reload.html'; };
+    </script>
+  </head>
+  <body>
+    <div id="base" class="">
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41094" class="ax_default shape">
+        <div id="u41094_div" class=""></div>
+        <div id="u41094_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41095" class="ax_default heading_3">
+        <div id="u41095_div" class=""></div>
+        <div id="u41095_text" class="text ">
+          <p style="font-size:14px;"><span style="color:rgba(0, 0, 0, 0.647058823529412);">经营报表&nbsp; </span><span style="font-size:12px;">销售订单明细报表</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41096" class="ax_default box_1">
+        <div id="u41096_div" class=""></div>
+        <div id="u41096_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41097" class="ax_default label">
+        <div id="u41097_div" class=""></div>
+        <div id="u41097_text" class="text ">
+          <p><span>时间范围：</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (统计时间) -->
+
+      <!-- Unnamed (下拉列表) -->
+      <div id="u41099" class="ax_default droplist">
+        <div id="u41099_div" class=""></div>
+        <select id="u41099_input" class="u41099_input">
+          <option class="u41099_input_option" value="自然日">自然日</option>
+          <option class="u41099_input_option" value="自然周">自然周</option>
+          <option class="u41099_input_option" value="自然月">自然月</option>
+          <option class="u41099_input_option" value="近7天">近7天</option>
+          <option class="u41099_input_option" value="近30天">近30天</option>
+          <option class="u41099_input_option" value="自定义">自定义</option>
+        </select>
+      </div>
+
+      <!-- Unnamed (动态面板) -->
+      <div id="u41100" class="ax_default">
+        <div id="u41100_state0" class="panel_state" data-label="自然日" style="">
+          <div id="u41100_state0_content" class="panel_state_content">
+
+            <!-- Unnamed (文本框) -->
+            <div id="u41101" class="ax_default text_field">
+              <div id="u41101_div" class=""></div>
+              <input id="u41101_input" type="date" value="" class="u41101_input"/>
+            </div>
+          </div>
+        </div>
+        <div id="u41100_state1" class="panel_state" data-label="近7天" style="visibility: hidden;">
+          <div id="u41100_state1_content" class="panel_state_content">
+
+            <!-- Unnamed (文本框) -->
+            <div id="u41102" class="ax_default text_field disabled">
+              <div id="u41102_div" class="disabled"></div>
+              <input id="u41102_input" type="date" value="2026-04-06" class="u41102_input" disabled/>
+            </div>
+
+            <!-- Unnamed (文本框) -->
+            <div id="u41103" class="ax_default text_field disabled">
+              <div id="u41103_div" class="disabled"></div>
+              <input id="u41103_input" type="date" value="2026-04-13" class="u41103_input" disabled/>
+            </div>
+          </div>
+        </div>
+        <div id="u41100_state2" class="panel_state" data-label="近30天" style="visibility: hidden;">
+          <div id="u41100_state2_content" class="panel_state_content">
+
+            <!-- Unnamed (文本框) -->
+            <div id="u41104" class="ax_default text_field disabled">
+              <div id="u41104_div" class="disabled"></div>
+              <input id="u41104_input" type="date" value="2026-03-14" class="u41104_input" disabled/>
+            </div>
+
+            <!-- Unnamed (文本框) -->
+            <div id="u41105" class="ax_default text_field disabled">
+              <div id="u41105_div" class="disabled"></div>
+              <input id="u41105_input" type="date" value="2026-04-13" class="u41105_input" disabled/>
+            </div>
+          </div>
+        </div>
+        <div id="u41100_state3" class="panel_state" data-label="自然周" style="visibility: hidden;">
+          <div id="u41100_state3_content" class="panel_state_content">
+
+            <!-- 自然周 (文本框) -->
+            <div id="u41106" class="ax_default text_field" data-label="自然周">
+              <div id="u41106_div" class=""></div>
+              <input id="u41106_input" type="date" value="" class="u41106_input"/>
+            </div>
+
+            <!-- Unnamed (文本框) -->
+            <div id="u41107" class="ax_default text_field">
+              <div id="u41107_div" class=""></div>
+              <input id="u41107_input" type="date" value="" class="u41107_input"/>
+            </div>
+          </div>
+        </div>
+        <div id="u41100_state4" class="panel_state" data-label="自然月" style="visibility: hidden;">
+          <div id="u41100_state4_content" class="panel_state_content">
+
+            <!-- 自然月 (下拉列表) -->
+            <div id="u41108" class="ax_default droplist" data-label="自然月">
+              <div id="u41108_div" class=""></div>
+              <select id="u41108_input" class="u41108_input">
+                <option class="u41108_input_option" value="2026-01">2026-01</option>
+                <option class="u41108_input_option" value="2026-02">2026-02</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div id="u41100_state5" class="panel_state" data-label="自定义" style="visibility: hidden;">
+          <div id="u41100_state5_content" class="panel_state_content">
+
+            <!-- Unnamed (文本框) -->
+            <div id="u41109" class="ax_default text_field">
+              <div id="u41109_div" class=""></div>
+              <input id="u41109_input" type="date" value="" class="u41109_input"/>
+            </div>
+
+            <!-- Unnamed (文本框) -->
+            <div id="u41110" class="ax_default text_field">
+              <div id="u41110_div" class=""></div>
+              <input id="u41110_input" type="date" value="" class="u41110_input"/>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="u41098" style="display:none; visibility:hidden;"></div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41111" class="ax_default box_1">
+        <div id="u41111_div" class=""></div>
+        <div id="u41111_text" class="text ">
+          <p><span>筛选</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41112" class="ax_default box_1">
+        <div id="u41112_div" class=""></div>
+        <div id="u41112_text" class="text ">
+          <p><span>导出</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41113" class="ax_default box_2">
+        <div id="u41113_div" class=""></div>
+        <div id="u41113_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41114" class="ax_default label">
+        <div id="u41114_div" class=""></div>
+        <div id="u41114_text" class="text ">
+          <p><span>销售单元</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41115" class="ax_default label">
+        <div id="u41115_div" class=""></div>
+        <div id="u41115_text" class="text ">
+          <p><span>时间</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41116" class="ax_default label">
+        <div id="u41116_div" class=""></div>
+        <div id="u41116_text" class="text ">
+          <p><span>销售金额（元）</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41117" class="ax_default label">
+        <div id="u41117_div" class=""></div>
+        <div id="u41117_text" class="text ">
+          <p><span>销售总金额（元）</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41118" class="ax_default label">
+        <div id="u41118_div" class=""></div>
+        <div id="u41118_text" class="text ">
+          <p><span>销售金额</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41119" class="ax_default label">
+        <div id="u41119_div" class=""></div>
+        <div id="u41119_text" class="text ">
+          <p><span>占比</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41120" class="ax_default label">
+        <div id="u41120_div" class=""></div>
+        <div id="u41120_text" class="text ">
+          <p><span>环比</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41121" class="ax_default label">
+        <div id="u41121_div" class=""></div>
+        <div id="u41121_text" class="text ">
+          <p><span>环比率</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41122" class="ax_default label">
+        <div id="u41122_div" class=""></div>
+        <div id="u41122_text" class="text ">
+          <p><span>环比差额</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41123" class="ax_default label">
+        <div id="u41123_div" class=""></div>
+        <div id="u41123_text" class="text ">
+          <p><span>同比</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41124" class="ax_default label">
+        <div id="u41124_div" class=""></div>
+        <div id="u41124_text" class="text ">
+          <p><span>同比率</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41125" class="ax_default label">
+        <div id="u41125_div" class=""></div>
+        <div id="u41125_text" class="text ">
+          <p><span>同比差额</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41126" class="ax_default label">
+        <div id="u41126_div" class=""></div>
+        <div id="u41126_text" class="text ">
+          <p><span>营收金额（元）</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (垂直线) -->
+      <div id="u41127" class="ax_default line">
+        <img id="u41127_img" class="img " src="images/商品同比环比报表/u41063.svg"/>
+        <div id="u41127_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (垂直线) -->
+      <div id="u41128" class="ax_default line">
+        <img id="u41128_img" class="img " src="images/商品同比环比报表/u41063.svg"/>
+        <div id="u41128_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41129" class="ax_default label">
+        <div id="u41129_div" class=""></div>
+        <div id="u41129_text" class="text ">
+          <p><span>营收金额</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41130" class="ax_default label">
+        <div id="u41130_div" class=""></div>
+        <div id="u41130_text" class="text ">
+          <p><span>环比</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41131" class="ax_default label">
+        <div id="u41131_div" class=""></div>
+        <div id="u41131_text" class="text ">
+          <p><span>环比率</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41132" class="ax_default label">
+        <div id="u41132_div" class=""></div>
+        <div id="u41132_text" class="text ">
+          <p><span>环比差额</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41133" class="ax_default label">
+        <div id="u41133_div" class=""></div>
+        <div id="u41133_text" class="text ">
+          <p><span>同比</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41134" class="ax_default label">
+        <div id="u41134_div" class=""></div>
+        <div id="u41134_text" class="text ">
+          <p><span>同比率</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41135" class="ax_default label">
+        <div id="u41135_div" class=""></div>
+        <div id="u41135_text" class="text ">
+          <p><span>同比差额</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (垂直线) -->
+      <div id="u41136" class="ax_default line">
+        <img id="u41136_img" class="img " src="images/商品同比环比报表/u41074.svg"/>
+        <div id="u41136_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41137" class="ax_default label">
+        <div id="u41137_div" class=""></div>
+        <div id="u41137_text" class="text ">
+          <p><span>退款金额（元）</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41138" class="ax_default label">
+        <div id="u41138_div" class=""></div>
+        <div id="u41138_text" class="text ">
+          <p><span>退款金额</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41139" class="ax_default label">
+        <div id="u41139_div" class=""></div>
+        <div id="u41139_text" class="text ">
+          <p><span>环比</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41140" class="ax_default label">
+        <div id="u41140_div" class=""></div>
+        <div id="u41140_text" class="text ">
+          <p><span>环比率</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41141" class="ax_default label">
+        <div id="u41141_div" class=""></div>
+        <div id="u41141_text" class="text ">
+          <p><span>环比差额</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41142" class="ax_default label">
+        <div id="u41142_div" class=""></div>
+        <div id="u41142_text" class="text ">
+          <p><span>同比</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41143" class="ax_default label">
+        <div id="u41143_div" class=""></div>
+        <div id="u41143_text" class="text ">
+          <p><span>同比率</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41144" class="ax_default label">
+        <div id="u41144_div" class=""></div>
+        <div id="u41144_text" class="text ">
+          <p><span>同比差额</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (垂直线) -->
+      <div id="u41145" class="ax_default line">
+        <img id="u41145_img" class="img " src="images/商品同比环比报表/u41083.svg"/>
+        <div id="u41145_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41146" class="ax_default label">
+        <div id="u41146_div" class=""></div>
+        <div id="u41146_text" class="text ">
+          <p><span>笔单价</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41147" class="ax_default label">
+        <div id="u41147_div" class=""></div>
+        <div id="u41147_text" class="text ">
+          <p><span>笔单价</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41148" class="ax_default label">
+        <div id="u41148_div" class=""></div>
+        <div id="u41148_text" class="text ">
+          <p><span>环比</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41149" class="ax_default label">
+        <div id="u41149_div" class=""></div>
+        <div id="u41149_text" class="text ">
+          <p><span>环比率</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41150" class="ax_default label">
+        <div id="u41150_div" class=""></div>
+        <div id="u41150_text" class="text ">
+          <p><span>环比差额</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41151" class="ax_default label">
+        <div id="u41151_div" class=""></div>
+        <div id="u41151_text" class="text ">
+          <p><span>同比</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41152" class="ax_default label">
+        <div id="u41152_div" class=""></div>
+        <div id="u41152_text" class="text ">
+          <p><span>同比率</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41153" class="ax_default label">
+        <div id="u41153_div" class=""></div>
+        <div id="u41153_text" class="text ">
+          <p><span>同比差额</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41154" class="ax_default label">
+        <div id="u41154_div" class=""></div>
+        <div id="u41154_text" class="text ">
+          <p><span>平均</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (垂直线) -->
+      <div id="u41155" class="ax_default line">
+        <img id="u41155_img" class="img " src="images/商品同比环比报表/u41083.svg"/>
+        <div id="u41155_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41156" class="ax_default label">
+        <div id="u41156_div" class=""></div>
+        <div id="u41156_text" class="text ">
+          <p><span>销售订单数</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41157" class="ax_default label">
+        <div id="u41157_div" class=""></div>
+        <div id="u41157_text" class="text ">
+          <p><span>销售订单数</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41158" class="ax_default label">
+        <div id="u41158_div" class=""></div>
+        <div id="u41158_text" class="text ">
+          <p><span>环比</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41159" class="ax_default label">
+        <div id="u41159_div" class=""></div>
+        <div id="u41159_text" class="text ">
+          <p><span>环比率</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41160" class="ax_default label">
+        <div id="u41160_div" class=""></div>
+        <div id="u41160_text" class="text ">
+          <p><span>环比差额</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41161" class="ax_default label">
+        <div id="u41161_div" class=""></div>
+        <div id="u41161_text" class="text ">
+          <p><span>同比</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41162" class="ax_default label">
+        <div id="u41162_div" class=""></div>
+        <div id="u41162_text" class="text ">
+          <p><span>同比率</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41163" class="ax_default label">
+        <div id="u41163_div" class=""></div>
+        <div id="u41163_text" class="text ">
+          <p><span>同比差额</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41164" class="ax_default label">
+        <div id="u41164_div" class=""></div>
+        <div id="u41164_text" class="text ">
+          <p><span>交易类型</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (下拉列表) -->
+      <div id="u41165" class="ax_default droplist">
+        <div id="u41165_div" class=""></div>
+        <select id="u41165_input" class="u41165_input">
+          <option class="u41165_input_option" value="全部">全部</option>
+          <option class="u41165_input_option" value="商品下单">商品下单</option>
+          <option class="u41165_input_option" value="商品退款">商品退款</option>
+          <option class="u41165_input_option" value="商品自提">商品自提</option>
+          <option class="u41165_input_option" value="商品退货">商品退货</option>
+          <option class="u41165_input_option" value="购买权益卡">购买权益卡</option>
+          <option class="u41165_input_option" value="购买优惠券">购买优惠券</option>
+        </select>
+      </div>
+    </div>
+    <script src="resources/scripts/axure/ios.js"></script>
+  </body>
+</html>

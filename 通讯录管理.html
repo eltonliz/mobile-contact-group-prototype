@@ -1,0 +1,2372 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>通讯录管理 - 租赁后台运营系统</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary: #4F6EF7;
+  --primary-light: #E8EDFE;
+  --primary-dark: #3A56D4;
+  --danger: #FF6B6B;
+  --danger-light: #FFE8E8;
+  --success: #52C41A;
+  --success-light: #E8F8E0;
+  --warning: #FAAD14;
+  --warning-light: #FFF7E6;
+  --bg: #F5F7FA;
+  --card: #FFFFFF;
+  --text: #1F2937;
+  --text-secondary: #6B7280;
+  --text-muted: #9CA3AF;
+  --border: #E5E7EB;
+  --border-light: #F3F4F6;
+  --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.04);
+  --shadow-lg: 0 10px 25px rgba(0,0,0,0.1), 0 6px 10px rgba(0,0,0,0.05);
+  --radius: 8px;
+  --radius-lg: 12px;
+  --sidebar-width: 220px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.5;
+  overflow: hidden;
+  height: 100vh;
+}
+
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #D1D5DB; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #9CA3AF; }
+
+.layout { display: flex; height: 100vh; }
+
+.sidebar {
+  width: var(--sidebar-width);
+  background: linear-gradient(180deg, #1E293B 0%, #0F172A 100%);
+  color: #CBD5E1;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 100;
+}
+
+.sidebar-logo {
+  padding: 24px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sidebar-logo .logo-icon {
+  width: 36px;
+  height: 36px;
+  background: var(--primary);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: white;
+  font-weight: 700;
+}
+
+.sidebar-logo .logo-text {
+  font-size: 15px;
+  font-weight: 600;
+  color: #F1F5F9;
+  letter-spacing: 0.5px;
+}
+
+.sidebar-logo .logo-sub {
+  font-size: 11px;
+  color: #64748B;
+  margin-top: 2px;
+}
+
+.sidebar-nav { flex: 1; padding: 12px 0; overflow-y: auto; }
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  font-size: 14px;
+  color: #94A3B8;
+}
+
+.nav-item:hover { background: rgba(255,255,255,0.05); color: #E2E8F0; }
+
+.nav-item.active {
+  background: rgba(79,110,247,0.15);
+  color: #FFFFFF;
+}
+
+.nav-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 24px;
+  background: var(--primary);
+  border-radius: 0 3px 3px 0;
+}
+
+.nav-item .nav-icon {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px 28px;
+  background: var(--bg);
+}
+
+.page { display: none; }
+.page.active { display: block; }
+
+.page-header {
+  margin-bottom: 24px;
+}
+
+.page-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.3px;
+}
+
+.page-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+.stat-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  background: var(--card);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: 1px solid var(--border-light);
+}
+
+.stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+
+.stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.stat-icon.blue { background: var(--primary-light); color: var(--primary); }
+.stat-icon.green { background: var(--success-light); color: var(--success); }
+.stat-icon.orange { background: var(--warning-light); color: var(--warning); }
+.stat-icon.red { background: var(--danger-light); color: var(--danger); }
+
+.stat-info .stat-label { font-size: 13px; color: var(--text-secondary); margin-bottom: 4px; }
+.stat-info .stat-value { font-size: 26px; font-weight: 700; color: var(--text); letter-spacing: -0.5px; }
+
+.card {
+  background: var(--card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border-light);
+}
+
+.card-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-title { font-size: 15px; font-weight: 600; color: var(--text); }
+.card-body { padding: 20px; }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+.btn-primary { background: var(--primary); color: white; }
+.btn-primary:hover { background: var(--primary-dark); }
+.btn-success { background: var(--success); color: white; }
+.btn-success:hover { background: #3DA614; }
+.btn-danger { background: var(--danger); color: white; }
+.btn-danger:hover { background: #E85555; }
+.btn-warning { background: var(--warning); color: white; }
+.btn-ghost { background: transparent; color: var(--text-secondary); border: 1px solid var(--border); }
+.btn-ghost:hover { border-color: var(--primary); color: var(--primary); }
+.btn-sm { padding: 5px 12px; font-size: 12px; }
+.btn-link { background: none; border: none; color: var(--primary); padding: 4px 8px; font-size: 13px; cursor: pointer; }
+.btn-link:hover { text-decoration: underline; }
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.tag-blue { background: var(--primary-light); color: var(--primary); }
+.tag-green { background: var(--success-light); color: var(--success); }
+.tag-orange { background: var(--warning-light); color: #D48806; }
+.tag-red { background: var(--danger-light); color: var(--danger); }
+.tag-gray { background: #F3F4F6; color: #6B7280; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table th {
+  text-align: left;
+  padding: 12px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: #F9FAFB;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-light);
+  font-size: 13px;
+  color: var(--text);
+}
+
+table tr:hover td { background: #FAFBFC; }
+
+table tr:last-child td { border-bottom: none; }
+
+.input {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s;
+  color: var(--text);
+}
+
+.input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79,110,247,0.1); }
+
+.select {
+  padding: 8px 32px 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: inherit;
+  outline: none;
+  appearance: none;
+  background: white url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239CA3AF' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 10px center;
+  cursor: pointer;
+  transition: border-color 0.2s;
+  color: var(--text);
+}
+
+.select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79,110,247,0.1); }
+
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.tree-container { padding: 12px 0; }
+
+.tree-node {
+  user-select: none;
+}
+
+.tree-node-content {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background 0.15s;
+  font-size: 13px;
+}
+
+.tree-node-content:hover { background: var(--primary-light); }
+
+.tree-node-content.selected { background: var(--primary-light); color: var(--primary); font-weight: 500; }
+
+.tree-toggle {
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: var(--text-muted);
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+
+.tree-toggle.expanded { transform: rotate(90deg); }
+
+.tree-children {
+  padding-left: 20px;
+  display: none;
+}
+
+.tree-children.show { display: block; }
+
+.tree-icon { font-size: 14px; flex-shrink: 0; }
+
+.drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.3);
+  z-index: 500;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s;
+}
+
+.drawer-overlay.show { opacity: 1; visibility: visible; }
+
+.drawer {
+  position: fixed;
+  top: 0;
+  right: -480px;
+  width: 480px;
+  height: 100vh;
+  background: var(--card);
+  z-index: 501;
+  transition: right 0.3s cubic-bezier(0.4,0,0.2,1);
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+}
+
+.drawer.show { right: 0; }
+
+.drawer-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.drawer-header h3 { font-size: 16px; font-weight: 600; }
+
+.drawer-close {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 6px;
+  font-size: 18px;
+  color: var(--text-secondary);
+  transition: background 0.2s;
+  border: none;
+  background: none;
+}
+
+.drawer-close:hover { background: #F3F4F6; }
+
+.drawer-body { flex: 1; overflow-y: auto; padding: 24px; }
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.25s;
+}
+
+.modal-overlay.show { opacity: 1; visibility: visible; }
+
+.modal {
+  background: var(--card);
+  border-radius: var(--radius-lg);
+  width: 90%;
+  max-width: 640px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-lg);
+  transform: scale(0.95);
+  transition: transform 0.25s;
+}
+
+.modal-overlay.show .modal { transform: scale(1); }
+
+.modal-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-header h3 { font-size: 16px; font-weight: 600; }
+
+.modal-body { flex: 1; overflow-y: auto; padding: 24px; }
+
+.modal-footer {
+  padding: 16px 24px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.toast-container {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.toast {
+  background: var(--card);
+  border-radius: 8px;
+  padding: 14px 20px;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  animation: toastIn 0.3s ease;
+  border-left: 4px solid var(--success);
+  min-width: 280px;
+}
+
+.toast.error { border-left-color: var(--danger); }
+.toast.warning { border-left-color: var(--warning); }
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateX(40px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes toastOut {
+  from { opacity: 1; transform: translateX(0); }
+  to { opacity: 0; transform: translateX(40px); }
+}
+
+.contact-layout {
+  display: flex;
+  gap: 20px;
+}
+
+.contact-left {
+  width: 280px;
+  flex-shrink: 0;
+}
+
+.contact-right { flex: 1; min-width: 0; }
+
+.detail-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--primary-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--primary);
+  margin: 0 auto 12px;
+}
+
+.detail-name { text-align: center; font-size: 18px; font-weight: 600; margin-bottom: 4px; }
+.detail-role { text-align: center; margin-bottom: 20px; }
+
+.detail-section { margin-bottom: 20px; }
+.detail-section-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  font-size: 13px;
+}
+
+.detail-row .label { color: var(--text-muted); }
+.detail-row .value { color: var(--text); font-weight: 500; }
+
+.detail-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.detail-stat-item {
+  text-align: center;
+  padding: 12px;
+  background: #F9FAFB;
+  border-radius: 8px;
+}
+
+.detail-stat-item .num { font-size: 20px; font-weight: 700; color: var(--primary); }
+.detail-stat-item .lbl { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+.rule-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 16px;
+  transition: border-color 0.2s;
+}
+
+.rule-card:hover { border-color: var(--primary); }
+
+.rule-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.rule-card-title { font-size: 15px; font-weight: 600; }
+
+.switch {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  cursor: pointer;
+}
+
+.switch input { display: none; }
+
+.switch-slider {
+  position: absolute;
+  inset: 0;
+  background: #D1D5DB;
+  border-radius: 12px;
+  transition: background 0.2s;
+}
+
+.switch-slider::before {
+  content: '';
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  background: white;
+  border-radius: 50%;
+  top: 3px;
+  left: 3px;
+  transition: transform 0.2s;
+}
+
+.switch input:checked + .switch-slider { background: var(--primary); }
+.switch input:checked + .switch-slider::before { transform: translateX(20px); }
+
+.rule-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+
+.rule-row .rule-label {
+  color: var(--text-muted);
+  min-width: 80px;
+  flex-shrink: 0;
+}
+
+.rule-row .rule-value { color: var(--text); }
+
+.group-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+.group-card {
+  background: var(--card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  transition: all 0.2s;
+  cursor: default;
+}
+
+.group-card:hover { box-shadow: var(--shadow-md); border-color: var(--primary); }
+
+.group-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.group-card-name { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+
+.group-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+.group-avatars {
+  display: flex;
+  margin-bottom: 16px;
+}
+
+.group-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: white;
+  margin-left: -8px;
+}
+
+.group-avatar:first-child { margin-left: 0; }
+
+.group-avatar.more {
+  background: #E5E7EB;
+  color: var(--text-secondary);
+}
+
+.group-card-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.push-layout {
+  display: flex;
+  gap: 20px;
+}
+
+.push-left {
+  width: 300px;
+  flex-shrink: 0;
+}
+
+.push-right { flex: 1; min-width: 0; }
+
+.push-group-item {
+  padding: 12px 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.push-group-item:hover { border-color: var(--primary); }
+.push-group-item.selected { border-color: var(--primary); background: var(--primary-light); }
+
+.push-group-name { font-size: 14px; font-weight: 500; }
+.push-group-count { font-size: 12px; color: var(--text-muted); }
+
+.tabs {
+  display: flex;
+  border-bottom: 2px solid var(--border-light);
+  margin-bottom: 20px;
+}
+
+.tab {
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: all 0.2s;
+  background: none;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  font-family: inherit;
+}
+
+.tab:hover { color: var(--primary); }
+
+.tab.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+.form-group { margin-bottom: 18px; }
+
+.form-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.form-label .required { color: var(--danger); margin-left: 2px; }
+
+.textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: inherit;
+  outline: none;
+  resize: vertical;
+  min-height: 80px;
+  transition: border-color 0.2s;
+  color: var(--text);
+}
+
+.textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79,110,247,0.1); }
+
+.radio-group { display: flex; gap: 20px; }
+
+.radio-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.radio-item input[type="radio"] { accent-color: var(--primary); }
+
+.permission-card {
+  background: #FFFBEB;
+  border: 1px solid #FDE68A;
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin-bottom: 20px;
+}
+
+.permission-card .perm-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #92400E;
+  margin-bottom: 8px;
+}
+
+.permission-card .perm-row {
+  font-size: 12px;
+  color: #A16207;
+  margin-bottom: 4px;
+}
+
+.chart-bar-container { margin-bottom: 24px; }
+
+.chart-bar-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.chart-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.chart-bar-label {
+  width: 80px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.chart-bar-track {
+  flex: 1;
+  height: 24px;
+  background: #F3F4F6;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.chart-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.6s ease;
+  display: flex;
+  align-items: center;
+  padding-left: 8px;
+  font-size: 11px;
+  color: white;
+  font-weight: 600;
+  min-width: 30px;
+}
+
+.pie-chart-css {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  position: relative;
+  margin: 0 auto;
+}
+
+.pie-legend {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-top: 16px;
+}
+
+.pie-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.pie-legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.rank-list { list-style: none; }
+
+.rank-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.rank-item:last-child { border-bottom: none; }
+
+.rank-num {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.rank-num.top1 { background: #FEF3C7; color: #D97706; }
+.rank-num.top2 { background: #E5E7EB; color: #6B7280; }
+.rank-num.top3 { background: #FED7AA; color: #C2410C; }
+.rank-num.normal { background: #F3F4F6; color: #9CA3AF; }
+
+.rank-name { flex: 1; font-size: 13px; font-weight: 500; }
+.rank-value { font-size: 14px; font-weight: 700; color: var(--primary); }
+
+.time-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.time-tab {
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: white;
+  color: var(--text-secondary);
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.time-tab:hover { border-color: var(--primary); color: var(--primary); }
+.time-tab.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+.collapse-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.collapse-header:hover { background: #F9FAFB; }
+
+.collapse-arrow {
+  transition: transform 0.2s;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.collapse-arrow.open { transform: rotate(90deg); }
+
+.collapse-body { display: none; }
+.collapse-body.show { display: block; }
+
+.confirm-dialog .modal { max-width: 420px; }
+
+.confirm-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--primary-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  margin: 0 auto 16px;
+}
+
+.confirm-title { text-align: center; font-size: 16px; font-weight: 600; margin-bottom: 8px; }
+.confirm-desc { text-align: center; font-size: 13px; color: var(--text-secondary); }
+
+.msg-item {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.msg-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: white;
+  flex-shrink: 0;
+}
+
+.msg-content {
+  background: #F3F4F6;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 13px;
+  max-width: 80%;
+}
+
+.msg-name { font-size: 11px; color: var(--text-muted); margin-bottom: 2px; }
+
+.member-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.member-item:last-child { border-bottom: none; }
+
+.member-info { display: flex; align-items: center; gap: 10px; }
+
+.member-avatar-sm {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: white;
+}
+
+.product-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.product-item:hover { border-color: var(--primary); }
+.product-item.selected { border-color: var(--primary); background: var(--primary-light); }
+
+.product-img {
+  width: 48px;
+  height: 48px;
+  border-radius: 6px;
+  background: #F3F4F6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+
+.product-name { font-size: 13px; font-weight: 500; }
+.product-price { font-size: 13px; color: var(--danger); font-weight: 600; }
+
+.stat-grid-2x4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.stat-mini {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 16px;
+  text-align: center;
+  border: 1px solid var(--border-light);
+}
+
+.stat-mini .stat-mini-val { font-size: 22px; font-weight: 700; color: var(--primary); }
+.stat-mini .stat-mini-label { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+.charts-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.push-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.push-stat-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 16px;
+  border: 1px solid var(--border-light);
+}
+
+.push-stat-card .ps-title {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.push-stat-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  font-size: 12px;
+}
+
+.push-stat-row .ps-label { color: var(--text-muted); }
+.push-stat-row .ps-val { font-weight: 600; }
+
+.conv-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.conv-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 20px;
+  text-align: center;
+  border: 1px solid var(--border-light);
+}
+
+.conv-val { font-size: 28px; font-weight: 700; }
+.conv-label { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+.rank-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.ai-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #667EEA, #764BA2);
+  color: white;
+  font-size: 12px;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity 0.2s;
+}
+
+.ai-btn:hover { opacity: 0.85; }
+
+.empty-state {
+  text-align: center;
+  padding: 40px;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+</style>
+</head>
+<body>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">租</div>
+      <div>
+        <div class="logo-text">租赁运营</div>
+        <div class="logo-sub">后台管理系统</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-item active" data-page="contacts" onclick="switchPage('contacts', this)">
+        <span class="nav-icon">📋</span> 通讯录
+      </div>
+      <div class="nav-item" data-page="autogroup" onclick="switchPage('autogroup', this)">
+        <span class="nav-icon">⚡</span> 自动建群
+      </div>
+      <div class="nav-item" data-page="groupmanage" onclick="switchPage('groupmanage', this)">
+        <span class="nav-icon">👥</span> 群聊管理
+      </div>
+      <div class="nav-item" data-page="grouppush" onclick="switchPage('grouppush', this)">
+        <span class="nav-icon">📢</span> 群内推送
+      </div>
+      <div class="nav-item" data-page="statistics" onclick="switchPage('statistics', this)">
+        <span class="nav-icon">📊</span> 数据统计
+      </div>
+      <div class="nav-item" onclick="showToast('已返回主页', 'warning')">
+        <span class="nav-icon">🏠</span> 返回主页
+      </div>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+
+    <!-- 页面1：通讯录 -->
+    <div class="page active" id="page-contacts">
+      <div class="page-header">
+        <h1 class="page-title">通讯录管理</h1>
+        <p class="page-desc">管理代理、门店、店员及客户的组织关系与通讯信息</p>
+      </div>
+
+      <div class="stat-cards">
+        <div class="stat-card">
+          <div class="stat-icon blue">👤</div>
+          <div class="stat-info">
+            <div class="stat-label">代理数量</div>
+            <div class="stat-value">12</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon green">🏪</div>
+          <div class="stat-info">
+            <div class="stat-label">门店数量</div>
+            <div class="stat-value">86</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon orange">👔</div>
+          <div class="stat-info">
+            <div class="stat-label">店员数量</div>
+            <div class="stat-value">324</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon red">🤝</div>
+          <div class="stat-info">
+            <div class="stat-label">客户数量</div>
+            <div class="stat-value">5,680</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="contact-layout">
+        <div class="contact-left">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">组织关系</span>
+            </div>
+            <div class="card-body" style="padding: 8px 12px;">
+              <div class="tree-container" id="orgTree"></div>
+            </div>
+          </div>
+        </div>
+        <div class="contact-right">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">联系人列表</span>
+              <span style="font-size:12px;color:var(--text-muted)" id="contactCount">共 8 人</span>
+            </div>
+            <div class="card-body">
+              <div class="filter-bar">
+                <input class="input" placeholder="搜索姓名" id="searchName" oninput="filterContacts()" style="width:160px">
+                <select class="select" id="filterRole" onchange="filterContacts()">
+                  <option value="">全部角色</option>
+                  <option value="代理">代理</option>
+                  <option value="门店">门店</option>
+                  <option value="店员">店员</option>
+                  <option value="客户">客户</option>
+                </select>
+                <input class="input" placeholder="搜索手机号" id="searchPhone" oninput="filterContacts()" style="width:160px">
+              </div>
+              <div style="overflow-x:auto;">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>姓名</th>
+                      <th>角色</th>
+                      <th>手机号</th>
+                      <th>所属门店</th>
+                      <th>上级关系</th>
+                      <th>建群状态</th>
+                      <th>操作</th>
+                    </tr>
+                  </thead>
+                  <tbody id="contactTableBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 页面2：自动建群 -->
+    <div class="page" id="page-autogroup">
+      <div class="page-header">
+        <h1 class="page-title">自动建群管理</h1>
+        <p class="page-desc">配置自动建群规则，确认系统生成的建群建议</p>
+      </div>
+
+      <div class="card" style="margin-bottom:20px;border-left:4px solid var(--primary);">
+        <div class="card-body" style="padding:16px 20px;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span style="font-size:20px;">💡</span>
+            <div>
+              <div style="font-size:14px;font-weight:600;margin-bottom:2px;">自动建群说明</div>
+              <div style="font-size:13px;color:var(--text-secondary);">系统根据组织关系自动生成建群建议，运营确认后创建群聊。开启规则后，当触发条件满足时将自动生成待确认任务。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:20px;">
+        <div class="card-header">
+          <span class="card-title">建群规则配置</span>
+        </div>
+        <div class="card-body">
+          <div class="rule-card">
+            <div class="rule-card-header">
+              <span class="rule-card-title">🏪 门店服务群规则</span>
+              <label class="switch">
+                <input type="checkbox" checked id="ruleStore">
+                <span class="switch-slider"></span>
+              </label>
+            </div>
+            <div class="rule-row">
+              <span class="rule-label">触发条件：</span>
+              <span class="rule-value">门店成员 ≥ 1人时生成建群建议</span>
+            </div>
+            <div class="rule-row">
+              <span class="rule-label">群成员：</span>
+              <span class="rule-value">代理 + 门店负责人 + 门店成员</span>
+            </div>
+            <div class="rule-row">
+              <span class="rule-label">群名称：</span>
+              <span class="rule-value">[门店名称]-服务群</span>
+            </div>
+          </div>
+          <div class="rule-card">
+            <div class="rule-card-header">
+              <span class="rule-card-title">🎯 客户运营群规则</span>
+              <label class="switch">
+                <input type="checkbox" checked id="ruleCustomer">
+                <span class="switch-slider"></span>
+              </label>
+            </div>
+            <div class="rule-row">
+              <span class="rule-label">触发条件：</span>
+              <span class="rule-value">店员绑定客户 ≥ 5人时生成建群建议</span>
+            </div>
+            <div class="rule-row">
+              <span class="rule-label">群成员：</span>
+              <span class="rule-value">店员 + 该店员名下客户</span>
+            </div>
+            <div class="rule-row">
+              <span class="rule-label">群名称：</span>
+              <span class="rule-value">[店员姓名]-客户运营群</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:20px;">
+        <div class="card-header">
+          <span class="card-title">待确认建群任务</span>
+          <span class="tag tag-orange" id="pendingCount">3 条待确认</span>
+        </div>
+        <div class="card-body" style="padding:0;">
+          <table>
+            <thead>
+              <tr>
+                <th>任务编号</th>
+                <th>建群类型</th>
+                <th>群名称</th>
+                <th>预计成员数</th>
+                <th>触发原因</th>
+                <th>创建时间</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="pendingTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="collapse-header" onclick="toggleCollapse(this)">
+          <span class="card-title">已建群记录</span>
+          <span class="collapse-arrow">▶</span>
+        </div>
+        <div class="collapse-body" id="createdRecords">
+          <div style="padding:0 20px 20px;">
+            <table>
+              <thead>
+                <tr>
+                  <th>任务编号</th>
+                  <th>建群类型</th>
+                  <th>群名称</th>
+                  <th>成员数</th>
+                  <th>创建时间</th>
+                  <th>状态</th>
+                </tr>
+              </thead>
+              <tbody id="createdTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 页面3：群聊管理 -->
+    <div class="page" id="page-groupmanage">
+      <div class="page-header">
+        <h1 class="page-title">群聊管理</h1>
+        <p class="page-desc">查看和管理所有群聊信息</p>
+      </div>
+
+      <div class="card" style="margin-bottom:20px;">
+        <div class="card-body" style="padding:16px 20px;">
+          <div class="filter-bar" style="margin-bottom:0;">
+            <input class="input" placeholder="搜索群名称" id="searchGroup" oninput="filterGroups()" style="width:200px">
+            <select class="select" id="filterGroupType" onchange="filterGroups()">
+              <option value="">全部类型</option>
+              <option value="门店服务群">门店服务群</option>
+              <option value="客户运营群">客户运营群</option>
+              <option value="活动群">活动群</option>
+            </select>
+            <select class="select" id="filterGroupStatus" onchange="filterGroups()">
+              <option value="">全部状态</option>
+              <option value="活跃">活跃</option>
+              <option value="沉默">沉默</option>
+              <option value="已解散">已解散</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="group-cards" id="groupCardsContainer"></div>
+    </div>
+
+    <!-- 页面4：群内推送 -->
+    <div class="page" id="page-grouppush">
+      <div class="page-header">
+        <h1 class="page-title">群内推送</h1>
+        <p class="page-desc">向群聊推送优惠券、商品或活动信息</p>
+      </div>
+
+      <div class="permission-card">
+        <div class="perm-title">🔑 推送权限提示</div>
+        <div class="perm-row">当前角色：代理</div>
+        <div class="perm-row">可推送范围：名下所有门店群和客户群</div>
+        <div class="perm-row">推送频次限制：每群每天最多 3 条</div>
+      </div>
+
+      <div class="push-layout">
+        <div class="push-left">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">选择群聊</span>
+            </div>
+            <div class="card-body" style="padding:12px;" id="pushGroupList"></div>
+          </div>
+        </div>
+        <div class="push-right">
+          <div class="card" style="margin-bottom:20px;">
+            <div class="card-header">
+              <span class="card-title">推送内容配置</span>
+            </div>
+            <div class="card-body">
+              <div class="tabs">
+                <button class="tab active" onclick="switchPushTab('coupon', this)">优惠券</button>
+                <button class="tab" onclick="switchPushTab('product', this)">商品</button>
+                <button class="tab" onclick="switchPushTab('activity', this)">活动</button>
+              </div>
+
+              <div class="tab-content active" id="pushTab-coupon">
+                <div class="form-group">
+                  <label class="form-label">选择优惠券<span class="required">*</span></label>
+                  <select class="select" style="width:100%;">
+                    <option value="">请选择优惠券</option>
+                    <option>新客专享券 - 满500减100（剩余328张）</option>
+                    <option>老客回馈券 - 满300减50（剩余156张）</option>
+                    <option>限时折扣券 - 满1000减200（剩余89张）</option>
+                    <option>免押金券 - 全额免押（剩余42张）</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">推送文案</label>
+                  <textarea class="textarea" id="couponText" placeholder="请输入推送文案..."></textarea>
+                  <div style="margin-top:6px;">
+                    <button class="ai-btn" onclick="generateAI('couponText', '优惠券')">✨ AI生成文案</button>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">推送时间</label>
+                  <div class="radio-group">
+                    <label class="radio-item"><input type="radio" name="couponTime" checked> 立即推送</label>
+                    <label class="radio-item"><input type="radio" name="couponTime"> 定时推送</label>
+                  </div>
+                </div>
+                <button class="btn btn-primary" onclick="confirmPush('优惠券')">确认推送</button>
+              </div>
+
+              <div class="tab-content" id="pushTab-product">
+                <div class="form-group">
+                  <label class="form-label">选择商品<span class="required">*</span></label>
+                  <input class="input" placeholder="搜索商品名称" style="width:100%;margin-bottom:8px;">
+                  <div id="productList">
+                    <div class="product-item" onclick="selectProduct(this)">
+                      <div class="product-img">🛋️</div>
+                      <div>
+                        <div class="product-name">北欧风布艺沙发</div>
+                        <div class="product-price">¥2,399/月</div>
+                      </div>
+                    </div>
+                    <div class="product-item" onclick="selectProduct(this)">
+                      <div class="product-img">🛏️</div>
+                      <div>
+                        <div class="product-name">智能电动床</div>
+                        <div class="product-price">¥1,899/月</div>
+                      </div>
+                    </div>
+                    <div class="product-item" onclick="selectProduct(this)">
+                      <div class="product-img">冰箱</div>
+                      <div>
+                        <div class="product-name">双门智能冰箱</div>
+                        <div class="product-price">¥599/月</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">推送文案</label>
+                  <textarea class="textarea" id="productText" placeholder="请输入推送文案..."></textarea>
+                  <div style="margin-top:6px;">
+                    <button class="ai-btn" onclick="generateAI('productText', '商品')">✨ AI生成文案</button>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">推送时间</label>
+                  <div class="radio-group">
+                    <label class="radio-item"><input type="radio" name="productTime" checked> 立即推送</label>
+                    <label class="radio-item"><input type="radio" name="productTime"> 定时推送</label>
+                  </div>
+                </div>
+                <button class="btn btn-primary" onclick="confirmPush('商品')">确认推送</button>
+              </div>
+
+              <div class="tab-content" id="pushTab-activity">
+                <div class="form-group">
+                  <label class="form-label">选择活动<span class="required">*</span></label>
+                  <select class="select" style="width:100%;">
+                    <option value="">请选择活动</option>
+                    <option>五一租房节 - 全场8折起</option>
+                    <option>新居入伙季 - 免押金活动</option>
+                    <option>老带新奖励计划</option>
+                    <option>周末限时秒杀</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">推送文案</label>
+                  <textarea class="textarea" id="activityText" placeholder="请输入推送文案..."></textarea>
+                  <div style="margin-top:6px;">
+                    <button class="ai-btn" onclick="generateAI('activityText', '活动')">✨ AI生成文案</button>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">推送时间</label>
+                  <div class="radio-group">
+                    <label class="radio-item"><input type="radio" name="activityTime" checked> 立即推送</label>
+                    <label class="radio-item"><input type="radio" name="activityTime"> 定时推送</label>
+                  </div>
+                </div>
+                <button class="btn btn-primary" onclick="confirmPush('活动')">确认推送</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:20px;">
+        <div class="card-header">
+          <span class="card-title">推送记录</span>
+        </div>
+        <div class="card-body" style="padding:0;">
+          <table>
+            <thead>
+              <tr>
+                <th>推送时间</th>
+                <th>目标群</th>
+                <th>推送类型</th>
+                <th>推送内容摘要</th>
+                <th>状态</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="pushRecordBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 页面5：数据统计 -->
+    <div class="page" id="page-statistics">
+      <div class="page-header">
+        <h1 class="page-title">通讯录数据统计</h1>
+        <p class="page-desc">查看通讯录、建群、推送及转化数据</p>
+      </div>
+
+      <div class="time-tabs">
+        <button class="time-tab" onclick="switchTime(this)">今日</button>
+        <button class="time-tab active" onclick="switchTime(this)">本周</button>
+        <button class="time-tab" onclick="switchTime(this)">本月</button>
+        <button class="time-tab" onclick="switchTime(this)">自定义</button>
+      </div>
+
+      <div class="stat-grid-2x4">
+        <div class="stat-mini"><div class="stat-mini-val">12</div><div class="stat-mini-label">代理数量</div></div>
+        <div class="stat-mini"><div class="stat-mini-val">86</div><div class="stat-mini-label">门店数量</div></div>
+        <div class="stat-mini"><div class="stat-mini-val">324</div><div class="stat-mini-label">店员数量</div></div>
+        <div class="stat-mini"><div class="stat-mini-val">5,680</div><div class="stat-mini-label">客户数量</div></div>
+        <div class="stat-mini"><div class="stat-mini-val">45</div><div class="stat-mini-label">已建群数量</div></div>
+        <div class="stat-mini"><div class="stat-mini-val">32</div><div class="stat-mini-label">自动建群数量</div></div>
+        <div class="stat-mini"><div class="stat-mini-val">230</div><div class="stat-mini-label">本月新增客户</div></div>
+        <div class="stat-mini"><div class="stat-mini-val">78%</div><div class="stat-mini-label">群活跃度</div></div>
+      </div>
+
+      <div class="charts-row">
+        <div class="card">
+          <div class="card-header"><span class="card-title">各代理下门店数量</span></div>
+          <div class="card-body">
+            <div class="chart-bar-container">
+              <div class="chart-bar-row"><span class="chart-bar-label">代理A</span><div class="chart-bar-track"><div class="chart-bar-fill" style="width:85%;background:var(--primary);">18</div></div></div>
+              <div class="chart-bar-row"><span class="chart-bar-label">代理B</span><div class="chart-bar-track"><div class="chart-bar-fill" style="width:65%;background:var(--primary);">14</div></div></div>
+              <div class="chart-bar-row"><span class="chart-bar-label">代理C</span><div class="chart-bar-track"><div class="chart-bar-fill" style="width:50%;background:var(--primary);">11</div></div></div>
+              <div class="chart-bar-row"><span class="chart-bar-label">代理D</span><div class="chart-bar-track"><div class="chart-bar-fill" style="width:40%;background:var(--primary);">9</div></div></div>
+              <div class="chart-bar-row"><span class="chart-bar-label">代理E</span><div class="chart-bar-track"><div class="chart-bar-fill" style="width:30%;background:var(--primary);">7</div></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">各门店下店员数量</span></div>
+          <div class="card-body">
+            <div class="chart-bar-container">
+              <div class="chart-bar-row"><span class="chart-bar-label">门店A-1</span><div class="chart-bar-track"><div class="chart-bar-fill" style="width:90%;background:var(--success);">12</div></div></div>
+              <div class="chart-bar-row"><span class="chart-bar-label">门店B-1</span><div class="chart-bar-track"><div class="chart-bar-fill" style="width:75%;background:var(--success);">10</div></div></div>
+              <div class="chart-bar-row"><span class="chart-bar-label">门店A-2</span><div class="chart-bar-track"><div class="chart-bar-fill" style="width:60%;background:var(--success);">8</div></div></div>
+              <div class="chart-bar-row"><span class="chart-bar-label">门店C-1</span><div class="chart-bar-track"><div class="chart-bar-fill" style="width:50%;background:var(--success);">7</div></div></div>
+              <div class="chart-bar-row"><span class="chart-bar-label">门店B-2</span><div class="chart-bar-track"><div class="chart-bar-fill" style="width:38%;background:var(--success);">5</div></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">各店员下客户数量</span></div>
+          <div class="card-body">
+            <div class="chart-bar-container">
+              <div class="chart-bar-row"><span class="chart-bar-label">店员A-1-1</span><div class="chart-bar-track"><div class="chart-bar-fill" style="width:95%;background:var(--warning);">38</div></div></div>
+              <div class="chart-bar-row"><span class="chart-bar-label">店员B-1-1</span><div class="chart-bar-track"><div class="chart-bar-fill" style="width:70%;background:var(--warning);">28</div></div></div>
+              <div class="chart-bar-row"><span class="chart-bar-label">店员A-1-2</span><div class="chart-bar-track"><div class="chart-bar-fill" style="width:55%;background:var(--warning);">22</div></div></div>
+              <div class="chart-bar-row"><span class="chart-bar-label">店员C-1-1</span><div class="chart-bar-track"><div class="chart-bar-fill" style="width:40%;background:var(--warning);">16</div></div></div>
+              <div class="chart-bar-row"><span class="chart-bar-label">店员A-2-1</span><div class="chart-bar-track"><div class="chart-bar-fill" style="width:30%;background:var(--warning);">12</div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:24px;">
+        <div class="card-header"><span class="card-title">建群统计</span></div>
+        <div class="card-body">
+          <div style="display:flex;gap:40px;align-items:center;">
+            <div style="text-align:center;">
+              <div style="font-size:36px;font-weight:700;color:var(--primary);">85%</div>
+              <div style="font-size:13px;color:var(--text-muted);margin-top:4px;">建群成功率</div>
+            </div>
+            <div style="flex:1;">
+              <div style="display:flex;align-items:center;gap:20px;">
+                <div class="pie-chart-css" style="background: conic-gradient(var(--primary) 0% 71%, var(--success) 71% 100%);"></div>
+                <div>
+                  <div style="font-size:14px;font-weight:600;margin-bottom:12px;">自动/手动建群比例</div>
+                  <div class="pie-legend">
+                    <div class="pie-legend-item"><div class="pie-legend-dot" style="background:var(--primary);"></div>自动建群 71%（32个）</div>
+                  </div>
+                  <div class="pie-legend" style="margin-top:8px;">
+                    <div class="pie-legend-item"><div class="pie-legend-dot" style="background:var(--success);"></div>手动建群 29%（13个）</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div style="flex:1;">
+              <div style="font-size:14px;font-weight:600;margin-bottom:12px;">各类型群数量分布</div>
+              <div class="chart-bar-row"><span class="chart-bar-label" style="width:70px;">门店服务</span><div class="chart-bar-track"><div class="chart-bar-fill" style="width:60%;background:var(--primary);">27</div></div></div>
+              <div class="chart-bar-row"><span class="chart-bar-label" style="width:70px;">客户运营</span><div class="chart-bar-track"><div class="chart-bar-fill" style="width:35%;background:var(--success);">15</div></div></div>
+              <div class="chart-bar-row"><span class="chart-bar-label" style="width:70px;">活动群</span><div class="chart-bar-track"><div class="chart-bar-fill" style="width:7%;background:var(--warning);">3</div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="push-stat-grid">
+        <div class="push-stat-card">
+          <div class="ps-title">🎫 优惠券推送</div>
+          <div class="push-stat-row"><span class="ps-label">推送次数</span><span class="ps-val">128</span></div>
+          <div class="push-stat-row"><span class="ps-label">领取人数</span><span class="ps-val">86</span></div>
+          <div class="push-stat-row"><span class="ps-label">核销人数</span><span class="ps-val">42</span></div>
+        </div>
+        <div class="push-stat-card">
+          <div class="ps-title">🛍️ 商品推送</div>
+          <div class="push-stat-row"><span class="ps-label">推送次数</span><span class="ps-val">96</span></div>
+          <div class="push-stat-row"><span class="ps-label">点击人数</span><span class="ps-val">54</span></div>
+          <div class="push-stat-row"><span class="ps-label">转化人数</span><span class="ps-val">18</span></div>
+        </div>
+        <div class="push-stat-card">
+          <div class="ps-title">🎉 活动推送</div>
+          <div class="push-stat-row"><span class="ps-label">推送次数</span><span class="ps-val">64</span></div>
+          <div class="push-stat-row"><span class="ps-label">参与人数</span><span class="ps-val">37</span></div>
+          <div class="push-stat-row"><span class="ps-label">—</span><span class="ps-val">—</span></div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:24px;">
+        <div class="card-header"><span class="card-title">转化统计</span></div>
+        <div class="card-body">
+          <div class="conv-grid" style="margin-bottom:24px;">
+            <div class="conv-card">
+              <div class="conv-val" style="color:var(--primary);">23.5%</div>
+              <div class="conv-label">群内客户转化率</div>
+            </div>
+            <div class="conv-card">
+              <div class="conv-val" style="color:var(--success);">15.8%</div>
+              <div class="conv-label">券转化率</div>
+            </div>
+            <div class="conv-card">
+              <div class="conv-val" style="color:var(--warning);">8.2%</div>
+              <div class="conv-label">商品点击转化率</div>
+            </div>
+            <div class="conv-card">
+              <div class="conv-val" style="color:var(--danger);">57.8%</div>
+              <div class="conv-label">活动参与转化率</div>
+            </div>
+          </div>
+          <div class="rank-grid">
+            <div>
+              <div style="font-size:14px;font-weight:600;margin-bottom:12px;">🏪 门店转化贡献排行</div>
+              <ul class="rank-list">
+                <li class="rank-item"><span class="rank-num top1">1</span><span class="rank-name">门店A-1</span><span class="rank-value">¥128,500</span></li>
+                <li class="rank-item"><span class="rank-num top2">2</span><span class="rank-name">门店B-1</span><span class="rank-value">¥96,300</span></li>
+                <li class="rank-item"><span class="rank-num top3">3</span><span class="rank-name">门店A-2</span><span class="rank-value">¥82,100</span></li>
+                <li class="rank-item"><span class="rank-num normal">4</span><span class="rank-name">门店C-1</span><span class="rank-value">¥67,800</span></li>
+                <li class="rank-item"><span class="rank-num normal">5</span><span class="rank-name">门店B-2</span><span class="rank-value">¥54,200</span></li>
+              </ul>
+            </div>
+            <div>
+              <div style="font-size:14px;font-weight:600;margin-bottom:12px;">👔 店员转化贡献排行</div>
+              <ul class="rank-list">
+                <li class="rank-item"><span class="rank-num top1">1</span><span class="rank-name">店员A-1-1（张伟）</span><span class="rank-value">¥45,600</span></li>
+                <li class="rank-item"><span class="rank-num top2">2</span><span class="rank-name">店员B-1-1（李娜）</span><span class="rank-value">¥38,200</span></li>
+                <li class="rank-item"><span class="rank-num top3">3</span><span class="rank-name">店员A-1-2（王磊）</span><span class="rank-value">¥32,800</span></li>
+                <li class="rank-item"><span class="rank-num normal">4</span><span class="rank-name">店员C-1-1（赵敏）</span><span class="rank-value">¥28,500</span></li>
+                <li class="rank-item"><span class="rank-num normal">5</span><span class="rank-name">店员A-2-1（陈浩）</span><span class="rank-value">¥22,100</span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- 联系人详情抽屉 -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+<div class="drawer" id="contactDrawer">
+  <div class="drawer-header">
+    <h3>联系人详情</h3>
+    <button class="drawer-close" onclick="closeDrawer()">✕</button>
+  </div>
+  <div class="drawer-body" id="drawerBody"></div>
+</div>
+
+<!-- 群详情弹窗 -->
+<div class="modal-overlay" id="groupModalOverlay" onclick="closeGroupModal()">
+  <div class="modal" onclick="event.stopPropagation()" style="max-width:720px;">
+    <div class="modal-header">
+      <h3>群聊详情</h3>
+      <button class="drawer-close" onclick="closeGroupModal()">✕</button>
+    </div>
+    <div class="modal-body" id="groupModalBody"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeGroupModal()">关闭</button>
+      <button class="btn btn-danger" onclick="dissolveGroup()">解散群</button>
+    </div>
+  </div>
+</div>
+
+<!-- 确认弹窗 -->
+<div class="modal-overlay confirm-dialog" id="confirmOverlay" onclick="closeConfirm()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-body" style="padding:32px 24px;">
+      <div class="confirm-icon">⚡</div>
+      <div class="confirm-title" id="confirmTitle">确认建群？</div>
+      <div class="confirm-desc" id="confirmDesc">确认后将创建群聊并通知相关成员</div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeConfirm()">取消</button>
+      <button class="btn btn-primary" id="confirmBtn" onclick="doConfirm()">确认</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+var contacts = [
+  { id:1, name:'张伟', role:'店员', phone:'138****1234', store:'门店A-1', parent:'代理A', groupStatus:'已建群', customers:38, amount:'¥45,600', activity:'92%', groups:['门店A-1服务群','张伟客户运营群'] },
+  { id:2, name:'李娜', role:'店员', phone:'139****5678', store:'门店B-1', parent:'代理B', groupStatus:'已建群', customers:28, amount:'¥38,200', activity:'88%', groups:['门店B-1服务群','李娜客户运营群'] },
+  { id:3, name:'王磊', role:'店员', phone:'137****9012', store:'门店A-1', parent:'代理A', groupStatus:'待建群', customers:22, amount:'¥32,800', activity:'75%', groups:['门店A-1服务群'] },
+  { id:4, name:'赵敏', role:'店员', phone:'136****3456', store:'门店C-1', parent:'代理C', groupStatus:'未建群', customers:16, amount:'¥28,500', activity:'68%', groups:[] },
+  { id:5, name:'陈浩', role:'店员', phone:'135****7890', store:'门店A-2', parent:'代理A', groupStatus:'已建群', customers:12, amount:'¥22,100', activity:'82%', groups:['门店A-2服务群'] },
+  { id:6, name:'刘洋', role:'代理', phone:'133****2345', store:'—', parent:'—', groupStatus:'—', customers:86, amount:'¥256,800', activity:'95%', groups:[] },
+  { id:7, name:'周芳', role:'门店', phone:'132****6789', store:'门店A-1', parent:'代理A', groupStatus:'已建群', customers:42, amount:'¥128,500', activity:'90%', groups:['门店A-1服务群'] },
+  { id:8, name:'吴强', role:'客户', phone:'131****0123', store:'—', parent:'店员张伟', groupStatus:'—', customers:0, amount:'¥8,500', activity:'45%', groups:['张伟客户运营群'] }
+];
+
+var orgTree = {
+  name: '全部', icon: '🏢', children: [
+    { name: '代理A', icon: '👤', expanded: true, children: [
+      { name: '门店A-1', icon: '🏪', children: [
+        { name: '店员A-1-1', icon: '👔', filterName: '张伟' },
+        { name: '店员A-1-2', icon: '👔', filterName: '王磊' }
+      ]},
+      { name: '门店A-2', icon: '🏪', children: [
+        { name: '店员A-2-1', icon: '👔', filterName: '陈浩' }
+      ]}
+    ]},
+    { name: '代理B', icon: '👤', expanded: false, children: [
+      { name: '门店B-1', icon: '🏪', children: [
+        { name: '店员B-1-1', icon: '👔', filterName: '李娜' }
+      ]},
+      { name: '门店B-2', icon: '🏪', children: [] }
+    ]},
+    { name: '代理C', icon: '👤', expanded: false, children: [
+      { name: '门店C-1', icon: '🏪', children: [
+        { name: '店员C-1-1', icon: '👔', filterName: '赵敏' }
+      ]}
+    ]}
+  ]
+};
+
+var pendingTasks = [
+  { id:'T20250501', type:'门店服务群', name:'门店B-2-服务群', members:5, reason:'门店B-2新增成员2人', time:'2025-05-06 14:30', status:'pending' },
+  { id:'T20250502', type:'客户运营群', name:'赵敏-客户运营群', members:8, reason:'店员赵敏绑定客户达5人', time:'2025-05-06 15:20', status:'pending' },
+  { id:'T20250503', type:'门店服务群', name:'门店C-2-服务群', members:4, reason:'门店C-2新增成员1人', time:'2025-05-07 09:10', status:'pending' }
+];
+
+var createdTasks = [
+  { id:'T20250428', type:'门店服务群', name:'门店A-1-服务群', members:12, time:'2025-04-28 10:00', status:'已创建' },
+  { id:'T20250429', type:'客户运营群', name:'张伟-客户运营群', members:15, time:'2025-04-29 11:30', status:'已创建' },
+  { id:'T20250430', type:'门店服务群', name:'门店B-1-服务群', members:10, time:'2025-04-30 09:45', status:'已创建' }
+];
+
+var groups = [
+  { id:1, name:'门店A-1-服务群', type:'门店服务群', members:12, lastActive:'10分钟前', status:'活跃', colors:['#4F6EF7','#52C41A','#FAAD14','#FF6B6B','#8B5CF6'] },
+  { id:2, name:'张伟-客户运营群', type:'客户运营群', members:15, lastActive:'30分钟前', status:'活跃', colors:['#FF6B6B','#4F6EF7','#52C41A','#FAAD14','#EC4899'] },
+  { id:3, name:'门店B-1-服务群', type:'门店服务群', members:10, lastActive:'2小时前', status:'活跃', colors:['#52C41A','#4F6EF7','#FAAD14','#FF6B6B'] },
+  { id:4, name:'李娜-客户运营群', type:'客户运营群', members:8, lastActive:'1天前', status:'沉默', colors:['#FAAD14','#4F6EF7','#52C41A'] },
+  { id:5, name:'五一租房节活动群', type:'活动群', members:25, lastActive:'5分钟前', status:'活跃', colors:['#FF6B6B','#4F6EF7','#52C41A','#FAAD14','#8B5CF6'] },
+  { id:6, name:'门店A-2-服务群', type:'门店服务群', members:6, lastActive:'3天前', status:'沉默', colors:['#8B5CF6','#4F6EF7','#52C41A'] }
+];
+
+var pushRecords = [
+  { time:'2025-05-07 10:30', group:'门店A-1-服务群', type:'优惠券', content:'新客专享券！满500减100，限时领取', status:'已推送' },
+  { time:'2025-05-07 09:15', group:'张伟-客户运营群', type:'商品', content:'北欧风布艺沙发，月租仅2399元', status:'已推送' },
+  { time:'2025-05-06 16:00', group:'五一租房节活动群', type:'活动', content:'五一租房节，全场8折起！', status:'已推送' },
+  { time:'2025-05-06 14:20', group:'门店B-1-服务群', type:'优惠券', content:'老客回馈券，满300减50', status:'已推送' },
+  { time:'2025-05-07 11:00', group:'李娜-客户运营群', type:'商品', content:'智能电动床，月租1899元起', status:'待推送' }
+];
+
+var selectedTreeNode = null;
+var currentConfirmAction = null;
+var selectedPushGroup = null;
+
+function switchPage(pageId, navEl) {
+  document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+  document.querySelectorAll('.nav-item').forEach(function(n) { n.classList.remove('active'); });
+  document.getElementById('page-' + pageId).classList.add('active');
+  if (navEl) navEl.classList.add('active');
+}
+
+function showToast(msg, type) {
+  type = type || 'success';
+  var container = document.getElementById('toastContainer');
+  var toast = document.createElement('div');
+  toast.className = 'toast' + (type === 'error' ? ' error' : type === 'warning' ? ' warning' : '');
+  toast.innerHTML = (type === 'success' ? '✅' : type === 'error' ? '❌' : '⚠️') + ' ' + msg;
+  container.appendChild(toast);
+  setTimeout(function() {
+    toast.style.animation = 'toastOut 0.3s ease forwards';
+    setTimeout(function() { toast.remove(); }, 300);
+  }, 2500);
+}
+
+function renderOrgTree() {
+  var container = document.getElementById('orgTree');
+  container.innerHTML = renderTreeNode(orgTree, 0);
+}
+
+function renderTreeNode(node, depth) {
+  var hasChildren = node.children && node.children.length > 0;
+  var isExpanded = node.expanded !== false;
+  var html = '<div class="tree-node">';
+  html += '<div class="tree-node-content' + (selectedTreeNode === node.name ? ' selected' : '') + '" onclick="selectTreeNode(this, \'' + node.name.replace(/'/g, "\\'") + '\')" style="padding-left:' + (depth * 16 + 8) + 'px">';
+  if (hasChildren) {
+    html += '<span class="tree-toggle' + (isExpanded ? ' expanded' : '') + '" onclick="event.stopPropagation();toggleTree(this)">▶</span>';
+  } else {
+    html += '<span style="width:18px;display:inline-block;"></span>';
+  }
+  html += '<span class="tree-icon">' + node.icon + '</span>';
+  html += '<span>' + node.name + '</span>';
+  html += '</div>';
+  if (hasChildren) {
+    html += '<div class="tree-children' + (isExpanded ? ' show' : '') + '">';
+    node.children.forEach(function(child) {
+      html += renderTreeNode(child, depth + 1);
+    });
+    html += '</div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function toggleTree(el) {
+  el.classList.toggle('expanded');
+  var children = el.closest('.tree-node').querySelector('.tree-children');
+  if (children) children.classList.toggle('show');
+}
+
+function selectTreeNode(el, name) {
+  document.querySelectorAll('.tree-node-content').forEach(function(n) { n.classList.remove('selected'); });
+  el.classList.add('selected');
+  selectedTreeNode = name;
+  filterContacts();
+}
+
+function filterContacts() {
+  var nameSearch = document.getElementById('searchName').value.toLowerCase();
+  var roleFilter = document.getElementById('filterRole').value;
+  var phoneSearch = document.getElementById('searchPhone').value;
+  var filtered = contacts.filter(function(c) {
+    var nameMatch = !nameSearch || c.name.toLowerCase().includes(nameSearch);
+    var roleMatch = !roleFilter || c.role === roleFilter;
+    var phoneMatch = !phoneSearch || c.phone.includes(phoneSearch);
+    var treeMatch = true;
+    if (selectedTreeNode && selectedTreeNode !== '全部') {
+      if (selectedTreeNode.startsWith('店员')) {
+        treeMatch = c.name === getFilterName(selectedTreeNode);
+      } else if (selectedTreeNode.startsWith('门店')) {
+        treeMatch = c.store === selectedTreeNode || c.parent === selectedTreeNode.replace('门店', '代理');
+      } else if (selectedTreeNode.startsWith('代理')) {
+        treeMatch = c.parent === selectedTreeNode || c.store.startsWith(selectedTreeNode.replace('代理', '门店'));
+      }
+    }
+    return nameMatch && roleMatch && phoneMatch && treeMatch;
+  });
+  renderContactTable(filtered);
+  document.getElementById('contactCount').textContent = '共 ' + filtered.length + ' 人';
+}
+
+function getFilterName(treeName) {
+  var map = { '店员A-1-1': '张伟', '店员A-1-2': '王磊', '店员A-2-1': '陈浩', '店员B-1-1': '李娜', '店员C-1-1': '赵敏' };
+  return map[treeName] || '';
+}
+
+function renderContactTable(list) {
+  var tbody = document.getElementById('contactTableBody');
+  if (list.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7" class="empty-state">暂无数据</td></tr>';
+    return;
+  }
+  var html = '';
+  list.forEach(function(c) {
+    var roleTag = c.role === '代理' ? 'tag-blue' : c.role === '门店' ? 'tag-green' : c.role === '店员' ? 'tag-orange' : 'tag-red';
+    var groupTag = c.groupStatus === '已建群' ? 'tag-green' : c.groupStatus === '待建群' ? 'tag-orange' : 'tag-gray';
+    html += '<tr>';
+    html += '<td style="font-weight:500;">' + c.name + '</td>';
+    html += '<td><span class="tag ' + roleTag + '">' + c.role + '</span></td>';
+    html += '<td>' + c.phone + '</td>';
+    html += '<td>' + c.store + '</td>';
+    html += '<td>' + c.parent + '</td>';
+    html += '<td><span class="tag ' + groupTag + '">' + c.groupStatus + '</span></td>';
+    html += '<td>';
+    html += '<button class="btn-link" onclick="showDetail(' + c.id + ')">查看详情</button>';
+    html += '<button class="btn-link" onclick="showToast(\'已发起与' + c.name + '的聊天\')">发起聊天</button>';
+    if (c.groupStatus === '待建群' || c.groupStatus === '未建群') {
+      html += '<button class="btn-link" style="color:var(--success);" onclick="showToast(\'已为' + c.name + '创建群聊\')">建群</button>';
+    }
+    html += '</td>';
+    html += '</tr>';
+  });
+  tbody.innerHTML = html;
+}
+
+function showDetail(id) {
+  var c = contacts.find(function(x) { return x.id === id; });
+  if (!c) return;
+  var roleColor = c.role === '代理' ? 'var(--primary)' : c.role === '门店' ? 'var(--success)' : c.role === '店员' ? 'var(--warning)' : 'var(--danger)';
+  var html = '';
+  html += '<div class="detail-avatar" style="background:' + roleColor + '22;color:' + roleColor + ';">' + c.name[0] + '</div>';
+  html += '<div class="detail-name">' + c.name + '</div>';
+  html += '<div class="detail-role"><span class="tag" style="background:' + roleColor + '22;color:' + roleColor + ';">' + c.role + '</span></div>';
+
+  html += '<div class="detail-section">';
+  html += '<div class="detail-section-title">基本信息</div>';
+  html += '<div class="detail-row"><span class="label">手机号</span><span class="value">' + c.phone + '</span></div>';
+  html += '<div class="detail-row"><span class="label">所属组织</span><span class="value">' + (c.store === '—' ? '—' : c.store) + '</span></div>';
+  html += '<div class="detail-row"><span class="label">上级</span><span class="value">' + c.parent + '</span></div>';
+  html += '</div>';
+
+  html += '<div class="detail-section">';
+  html += '<div class="detail-section-title">关联群聊</div>';
+  if (c.groups.length > 0) {
+    c.groups.forEach(function(g) {
+      html += '<div style="padding:6px 0;font-size:13px;display:flex;align-items:center;gap:6px;"><span style="color:var(--primary);">👥</span> ' + g + '</div>';
+    });
+  } else {
+    html += '<div style="font-size:13px;color:var(--text-muted);">暂无关联群聊</div>';
+  }
+  html += '</div>';
+
+  html += '<div class="detail-section">';
+  html += '<div class="detail-section-title">业务数据</div>';
+  html += '<div class="detail-stat-grid">';
+  html += '<div class="detail-stat-item"><div class="num">' + c.customers + '</div><div class="lbl">客户数</div></div>';
+  html += '<div class="detail-stat-item"><div class="num">' + c.amount + '</div><div class="lbl">成交金额</div></div>';
+  html += '<div class="detail-stat-item"><div class="num">' + c.activity + '</div><div class="lbl">活跃度</div></div>';
+  html += '</div>';
+  html += '</div>';
+
+  document.getElementById('drawerBody').innerHTML = html;
+  document.getElementById('drawerOverlay').classList.add('show');
+  document.getElementById('contactDrawer').classList.add('show');
+}
+
+function closeDrawer() {
+  document.getElementById('drawerOverlay').classList.remove('show');
+  document.getElementById('contactDrawer').classList.remove('show');
+}
+
+function renderPendingTasks() {
+  var tbody = document.getElementById('pendingTableBody');
+  var pending = pendingTasks.filter(function(t) { return t.status === 'pending'; });
+  document.getElementById('pendingCount').textContent = pending.length + ' 条待确认';
+  if (pending.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7" class="empty-state">暂无待确认任务</td></tr>';
+    return;
+  }
+  var html = '';
+  pending.forEach(function(t) {
+    var typeTag = t.type === '门店服务群' ? 'tag-blue' : 'tag-green';
+    html += '<tr>';
+    html += '<td style="font-family:monospace;font-size:12px;">' + t.id + '</td>';
+    html += '<td><span class="tag ' + typeTag + '">' + t.type + '</span></td>';
+    html += '<td style="font-weight:500;">' + t.name + '</td>';
+    html += '<td>' + t.members + '人</td>';
+    html += '<td style="font-size:12px;color:var(--text-secondary);">' + t.reason + '</td>';
+    html += '<td style="font-size:12px;">' + t.time + '</td>';
+    html += '<td>';
+    html += '<button class="btn btn-success btn-sm" onclick="confirmCreateGroup(\'' + t.id + '\')">确认建群</button> ';
+    html += '<button class="btn btn-ghost btn-sm" onclick="ignoreTask(\'' + t.id + '\')">忽略</button>';
+    html += '</td>';
+    html += '</tr>';
+  });
+  tbody.innerHTML = html;
+}
+
+function renderCreatedTasks() {
+  var tbody = document.getElementById('createdTableBody');
+  var html = '';
+  createdTasks.forEach(function(t) {
+    var typeTag = t.type === '门店服务群' ? 'tag-blue' : 'tag-green';
+    html += '<tr>';
+    html += '<td style="font-family:monospace;font-size:12px;">' + t.id + '</td>';
+    html += '<td><span class="tag ' + typeTag + '">' + t.type + '</span></td>';
+    html += '<td style="font-weight:500;">' + t.name + '</td>';
+    html += '<td>' + t.members + '人</td>';
+    html += '<td style="font-size:12px;">' + t.time + '</td>';
+    html += '<td><span class="tag tag-green">' + t.status + '</span></td>';
+    html += '</tr>';
+  });
+  tbody.innerHTML = html;
+}
+
+function confirmCreateGroup(taskId) {
+  currentConfirmAction = { type: 'createGroup', taskId: taskId };
+  var task = pendingTasks.find(function(t) { return t.id === taskId; });
+  document.getElementById('confirmTitle').textContent = '确认建群？';
+  document.getElementById('confirmDesc').textContent = '即将创建「' + task.name + '」，预计 ' + task.members + ' 名成员';
+  document.getElementById('confirmOverlay').classList.add('show');
+}
+
+function ignoreTask(taskId) {
+  currentConfirmAction = { type: 'ignore', taskId: taskId };
+  document.getElementById('confirmTitle').textContent = '确认忽略？';
+  document.getElementById('confirmDesc').textContent = '忽略后将不再提醒此建群任务';
+  document.getElementById('confirmOverlay').classList.add('show');
+}
+
+function doConfirm() {
+  if (!currentConfirmAction) return;
+  if (currentConfirmAction.type === 'createGroup') {
+    var task = pendingTasks.find(function(t) { return t.id === currentConfirmAction.taskId; });
+    if (task) {
+      task.status = 'created';
+      createdTasks.push({ id: task.id, type: task.type, name: task.name, members: task.members, time: new Date().toLocaleString('zh-CN'), status: '已创建' });
+      renderPendingTasks();
+      renderCreatedTasks();
+      showToast('群聊「' + task.name + '」创建成功！');
+    }
+  } else if (currentConfirmAction.type === 'ignore') {
+    var task2 = pendingTasks.find(function(t) { return t.id === currentConfirmAction.taskId; });
+    if (task2) {
+      task2.status = 'ignored';
+      renderPendingTasks();
+      showToast('已忽略该建群任务', 'warning');
+    }
+  }
+  closeConfirm();
+}
+
+function closeConfirm() {
+  document.getElementById('confirmOverlay').classList.remove('show');
+  currentConfirmAction = null;
+}
+
+function toggleCollapse(el) {
+  var arrow = el.querySelector('.collapse-arrow');
+  var body = el.nextElementSibling;
+  arrow.classList.toggle('open');
+  body.classList.toggle('show');
+}
+
+function renderGroupCards() {
+  var container = document.getElementById('groupCardsContainer');
+  var nameSearch = document.getElementById('searchGroup').value.toLowerCase();
+  var typeFilter = document.getElementById('filterGroupType').value;
+  var statusFilter = document.getElementById('filterGroupStatus').value;
+  var filtered = groups.filter(function(g) {
+    var nameMatch = !nameSearch || g.name.toLowerCase().includes(nameSearch);
+    var typeMatch = !typeFilter || g.type === typeFilter;
+    var statusMatch = !statusFilter || g.status === statusFilter;
+    return nameMatch && typeMatch && statusMatch;
+  });
+  if (filtered.length === 0) {
+    container.innerHTML = '<div class="empty-state" style="grid-column:1/-1;">暂无匹配的群聊</div>';
+    return;
+  }
+  var html = '';
+  filtered.forEach(function(g) {
+    var typeTag = g.type === '门店服务群' ? 'tag-blue' : g.type === '客户运营群' ? 'tag-green' : 'tag-orange';
+    var statusTag = g.status === '活跃' ? 'tag-green' : g.status === '沉默' ? 'tag-orange' : 'tag-gray';
+    html += '<div class="group-card">';
+    html += '<div class="group-card-header">';
+    html += '<div><div class="group-card-name">' + g.name + '</div></div>';
+    html += '<span class="tag ' + typeTag + '">' + g.type + '</span>';
+    html += '</div>';
+    html += '<div class="group-card-meta">';
+    html += '<span>👥 ' + g.members + '人</span>';
+    html += '<span>🕐 ' + g.lastActive + '</span>';
+    html += '<span class="tag ' + statusTag + '">' + g.status + '</span>';
+    html += '</div>';
+    html += '<div class="group-avatars">';
+    g.colors.forEach(function(c, i) {
+      if (i < 5) {
+        html += '<div class="group-avatar" style="background:' + c + ';">' + String.fromCharCode(65 + i) + '</div>';
+      }
+    });
+    if (g.members > 5) {
+      html += '<div class="group-avatar more">+' + (g.members - 5) + '</div>';
+    }
+    html += '</div>';
+    html += '<div class="group-card-actions">';
+    html += '<button class="btn btn-primary btn-sm" onclick="showGroupDetail(' + g.id + ')">群详情</button>';
+    html += '<button class="btn btn-ghost btn-sm" onclick="switchPage(\'grouppush\',document.querySelector(\'[data-page=grouppush]\'))">推送内容</button>';
+    html += '<button class="btn btn-ghost btn-sm" onclick="showToast(\'查看群数据\')">群数据</button>';
+    html += '</div>';
+    html += '</div>';
+  });
+  container.innerHTML = html;
+}
+
+function filterGroups() { renderGroupCards(); }
+
+function showGroupDetail(id) {
+  var g = groups.find(function(x) { return x.id === id; });
+  if (!g) return;
+  var html = '';
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">';
+  html += '<div class="detail-row"><span class="label">群名称</span><span class="value">' + g.name + '</span></div>';
+  html += '<div class="detail-row"><span class="label">群类型</span><span class="value">' + g.type + '</span></div>';
+  html += '<div class="detail-row"><span class="label">创建时间</span><span class="value">2025-04-28</span></div>';
+  html += '<div class="detail-row"><span class="label">成员数</span><span class="value">' + g.members + '人</span></div>';
+  html += '</div>';
+
+  html += '<div class="detail-section">';
+  html += '<div class="detail-section-title">群成员</div>';
+  var memberNames = ['张伟','李娜','王磊','赵敏','陈浩','刘洋','周芳','吴强'];
+  var memberRoles = ['店员','店员','店员','店员','店员','代理','门店','客户'];
+  for (var i = 0; i < Math.min(g.members, 8); i++) {
+    html += '<div class="member-item">';
+    html += '<div class="member-info">';
+    html += '<div class="member-avatar-sm" style="background:' + g.colors[i % g.colors.length] + ';">' + memberNames[i][0] + '</div>';
+    html += '<div><div style="font-size:13px;font-weight:500;">' + memberNames[i] + '</div><div style="font-size:11px;color:var(--text-muted);">' + memberRoles[i] + '</div></div>';
+    html += '</div>';
+    html += '<button class="btn btn-ghost btn-sm" onclick="showToast(\'已移除成员' + memberNames[i] + '\',\'warning\')">移除</button>';
+    html += '</div>';
+  }
+  if (g.members > 8) {
+    html += '<div style="text-align:center;padding:8px;font-size:12px;color:var(--text-muted);">还有 ' + (g.members - 8) + ' 位成员</div>';
+  }
+  html += '</div>';
+
+  html += '<div class="detail-section">';
+  html += '<div class="detail-section-title">群消息记录</div>';
+  var msgs = [
+    { name: '张伟', color: g.colors[0], text: '各位好，有新房源上架了' },
+    { name: '李娜', color: g.colors[1], text: '好的，我这边有客户感兴趣' },
+    { name: '系统', color: '#9CA3AF', text: '优惠券已推送到本群' }
+  ];
+  msgs.forEach(function(m) {
+    html += '<div class="msg-item">';
+    html += '<div class="msg-avatar" style="background:' + m.color + ';">' + m.name[0] + '</div>';
+    html += '<div><div class="msg-name">' + m.name + '</div><div class="msg-content">' + m.text + '</div></div>';
+    html += '</div>';
+  });
+  html += '</div>';
+
+  html += '<div style="margin-top:16px;">';
+  html += '<div class="form-group"><label class="form-label">修改群名</label><div style="display:flex;gap:8px;"><input class="input" value="' + g.name + '" style="flex:1;"><button class="btn btn-primary btn-sm" onclick="showToast(\'群名已修改\')">保存</button></div></div>';
+  html += '</div>';
+
+  document.getElementById('groupModalBody').innerHTML = html;
+  document.getElementById('groupModalOverlay').classList.add('show');
+}
+
+function closeGroupModal() {
+  document.getElementById('groupModalOverlay').classList.remove('show');
+}
+
+function dissolveGroup() {
+  closeGroupModal();
+  showToast('群聊已解散', 'warning');
+}
+
+function renderPushGroupList() {
+  var container = document.getElementById('pushGroupList');
+  var html = '';
+  groups.forEach(function(g) {
+    html += '<div class="push-group-item' + (selectedPushGroup === g.id ? ' selected' : '') + '" onclick="selectPushGroup(' + g.id + ')">';
+    html += '<div><div class="push-group-name">' + g.name + '</div><div class="push-group-count">' + g.type + '</div></div>';
+    html += '<span style="font-size:12px;color:var(--text-muted);">' + g.members + '人</span>';
+    html += '</div>';
+  });
+  container.innerHTML = html;
+}
+
+function selectPushGroup(id) {
+  selectedPushGroup = id;
+  renderPushGroupList();
+}
+
+function switchPushTab(tab, el) {
+  document.querySelectorAll('.tab-content').forEach(function(t) { t.classList.remove('active'); });
+  document.querySelectorAll('.tabs .tab').forEach(function(t) { t.classList.remove('active'); });
+  document.getElementById('pushTab-' + tab).classList.add('active');
+  el.classList.add('active');
+}
+
+function selectProduct(el) {
+  document.querySelectorAll('.product-item').forEach(function(p) { p.classList.remove('selected'); });
+  el.classList.add('selected');
+}
+
+function generateAI(textareaId, type) {
+  var textarea = document.getElementById(textareaId);
+  var texts = {
+    '优惠券': '🎉 限时福利来啦！精选好券免费领，满500立减100！手慢无，快来抢购吧～ 戳链接立即领取 👇',
+    '商品': '🔥 爆款推荐！品质生活从这开始，月租低至599元起，全新好物等你来选！点击查看详情 👇',
+    '活动': '🎊 超值活动火热进行中！多重好礼送不停，参与即有奖！名额有限，先到先得 👇'
+  };
+  textarea.value = texts[type] || '';
+  showToast('AI文案已生成');
+}
+
+function confirmPush(type) {
+  if (!selectedPushGroup) {
+    showToast('请先选择目标群聊', 'error');
+    return;
+  }
+  var g = groups.find(function(x) { return x.id === selectedPushGroup; });
+  showToast(type + '已推送到「' + g.name + '」');
+  pushRecords.unshift({
+    time: new Date().toLocaleString('zh-CN'),
+    group: g.name,
+    type: type,
+    content: type + '推送内容',
+    status: '已推送'
+  });
+  renderPushRecords();
+}
+
+function renderPushRecords() {
+  var tbody = document.getElementById('pushRecordBody');
+  var html = '';
+  pushRecords.forEach(function(r) {
+    var typeTag = r.type === '优惠券' ? 'tag-red' : r.type === '商品' ? 'tag-blue' : 'tag-orange';
+    var statusTag = r.status === '已推送' ? 'tag-green' : 'tag-orange';
+    html += '<tr>';
+    html += '<td style="font-size:12px;">' + r.time + '</td>';
+    html += '<td style="font-weight:500;">' + r.group + '</td>';
+    html += '<td><span class="tag ' + typeTag + '">' + r.type + '</span></td>';
+    html += '<td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + r.content + '</td>';
+    html += '<td><span class="tag ' + statusTag + '">' + r.status + '</span></td>';
+    html += '<td><button class="btn-link" onclick="showToast(\'查看推送详情\')">详情</button></td>';
+    html += '</tr>';
+  });
+  tbody.innerHTML = html;
+}
+
+function switchTime(el) {
+  document.querySelectorAll('.time-tab').forEach(function(t) { t.classList.remove('active'); });
+  el.classList.add('active');
+}
+
+function init() {
+  renderOrgTree();
+  renderContactTable(contacts);
+  renderPendingTasks();
+  renderCreatedTasks();
+  renderGroupCards();
+  renderPushGroupList();
+  renderPushRecords();
+}
+
+init();
+</script>
+</body>
+</html>

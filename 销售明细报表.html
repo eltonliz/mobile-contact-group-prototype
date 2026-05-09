@@ -1,0 +1,552 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <title>销售明细报表</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <link href="resources/css/axure_rp_page.css" type="text/css" rel="stylesheet"/>
+    <link href="data/styles.css" type="text/css" rel="stylesheet"/>
+    <link href="files/销售明细报表/styles.css" type="text/css" rel="stylesheet"/>
+    <script src="resources/scripts/jquery-3.2.1.min.js"></script>
+    <script src="resources/scripts/axure/axQuery.js"></script>
+    <script src="resources/scripts/axure/globals.js"></script>
+    <script src="resources/scripts/axutils.js"></script>
+    <script src="resources/scripts/axure/annotation.js"></script>
+    <script src="resources/scripts/axure/axQuery.std.js"></script>
+    <script src="resources/scripts/axure/doc.js"></script>
+    <script src="resources/scripts/messagecenter.js"></script>
+    <script src="resources/scripts/axure/events.js"></script>
+    <script src="resources/scripts/axure/recording.js"></script>
+    <script src="resources/scripts/axure/action.js"></script>
+    <script src="resources/scripts/axure/expr.js"></script>
+    <script src="resources/scripts/axure/geometry.js"></script>
+    <script src="resources/scripts/axure/flyout.js"></script>
+    <script src="resources/scripts/axure/model.js"></script>
+    <script src="resources/scripts/axure/repeater.js"></script>
+    <script src="resources/scripts/axure/sto.js"></script>
+    <script src="resources/scripts/axure/utils.temp.js"></script>
+    <script src="resources/scripts/axure/variables.js"></script>
+    <script src="resources/scripts/axure/drag.js"></script>
+    <script src="resources/scripts/axure/move.js"></script>
+    <script src="resources/scripts/axure/visibility.js"></script>
+    <script src="resources/scripts/axure/style.js"></script>
+    <script src="resources/scripts/axure/adaptive.js"></script>
+    <script src="resources/scripts/axure/tree.js"></script>
+    <script src="resources/scripts/axure/init.temp.js"></script>
+    <script src="resources/scripts/axure/legacy.js"></script>
+    <script src="resources/scripts/axure/viewer.js"></script>
+    <script src="resources/scripts/axure/math.js"></script>
+    <script src="resources/scripts/axure/jquery.nicescroll.min.js"></script>
+    <script src="data/document.js"></script>
+    <script src="files/销售明细报表/data.js"></script>
+    <script type="text/javascript">
+      $axure.utils.getTransparentGifPath = function() { return 'resources/images/transparent.gif'; };
+      $axure.utils.getOtherPath = function() { return 'resources/Other.html'; };
+      $axure.utils.getReloadPath = function() { return 'resources/reload.html'; };
+    </script>
+  </head>
+  <body>
+    <div id="base" class="">
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41566" class="ax_default shape">
+        <div id="u41566_div" class=""></div>
+        <div id="u41566_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41567" class="ax_default heading_3">
+        <div id="u41567_div" class=""></div>
+        <div id="u41567_text" class="text ">
+          <p style="font-size:14px;"><span style="color:rgba(0, 0, 0, 0.647058823529412);">经营报表&nbsp; </span><span style="font-size:12px;">销售汇总报表(商品库存值)</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41568" class="ax_default box_1">
+        <div id="u41568_div" class=""></div>
+        <div id="u41568_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41569" class="ax_default label">
+        <div id="u41569_div" class=""></div>
+        <div id="u41569_text" class="text ">
+          <p><span>时间范围：</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41570" class="ax_default label">
+        <div id="u41570_div" class=""></div>
+        <div id="u41570_text" class="text ">
+          <p><span>入账完成时间</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41571" class="ax_default box_1">
+        <div id="u41571_div" class=""></div>
+        <div id="u41571_text" class="text ">
+          <p><span>筛选</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41572" class="ax_default box_1">
+        <div id="u41572_div" class=""></div>
+        <div id="u41572_text" class="text ">
+          <p><span>导出</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41573" class="ax_default box_2">
+        <div id="u41573_div" class=""></div>
+        <div id="u41573_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41574" class="ax_default label">
+        <div id="u41574_div" class=""></div>
+        <div id="u41574_text" class="text ">
+          <p><span>商品名称</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41575" class="ax_default label">
+        <div id="u41575_div" class=""></div>
+        <div id="u41575_text" class="text ">
+          <p><span>单据号</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41576" class="ax_default label">
+        <div id="u41576_div" class=""></div>
+        <div id="u41576_text" class="text ">
+          <p><span>交易类型</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41577" class="ax_default label">
+        <div id="u41577_div" class=""></div>
+        <div id="u41577_text" class="text ">
+          <p><span>订单收款时间</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (文本框) -->
+      <div id="u41578" class="ax_default text_field">
+        <div id="u41578_div" class=""></div>
+        <input id="u41578_input" type="text" value="" class="u41578_input"/>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41579" class="ax_default label">
+        <div id="u41579_div" class=""></div>
+        <div id="u41579_text" class="text ">
+          <p><span>发生时间</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41580" class="ax_default label">
+        <div id="u41580_div" class=""></div>
+        <div id="u41580_text" class="text ">
+          <p><span>商品编码</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41581" class="ax_default label">
+        <div id="u41581_div" class=""></div>
+        <div id="u41581_text" class="text ">
+          <p><span>规格编码</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (下拉列表) -->
+      <div id="u41582" class="ax_default droplist">
+        <div id="u41582_div" class=""></div>
+        <select id="u41582_input" class="u41582_input">
+          <option class="u41582_input_option" value="交易发生时间">交易发生时间</option>
+          <option class="u41582_input_option" value="订单收款时间">订单收款时间</option>
+          <option class="u41582_input_option" value="订单发货时间">订单发货时间</option>
+        </select>
+      </div>
+
+      <!-- Unnamed (文本框) -->
+      <div id="u41583" class="ax_default text_field">
+        <div id="u41583_div" class=""></div>
+        <input id="u41583_input" type="text" value="" class="u41583_input"/>
+      </div>
+
+      <!-- Unnamed (文本框) -->
+      <div id="u41584" class="ax_default text_field">
+        <div id="u41584_div" class=""></div>
+        <input id="u41584_input" type="text" value="" class="u41584_input"/>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41585" class="ax_default label">
+        <div id="u41585_div" class=""></div>
+        <div id="u41585_text" class="text ">
+          <p><span>今日</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41586" class="ax_default label">
+        <div id="u41586_div" class=""></div>
+        <div id="u41586_text" class="text ">
+          <p><span>昨日</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41587" class="ax_default label">
+        <div id="u41587_div" class=""></div>
+        <div id="u41587_text" class="text ">
+          <p><span>近7日</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41588" class="ax_default label">
+        <div id="u41588_div" class=""></div>
+        <div id="u41588_text" class="text ">
+          <p><span>近30日</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (文本框) -->
+      <div id="u41589" class="ax_default text_field">
+        <div id="u41589_div" class=""></div>
+        <input id="u41589_input" type="text" value="" class="u41589_input"/>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41590" class="ax_default label">
+        <div id="u41590_div" class=""></div>
+        <div id="u41590_text" class="text ">
+          <p><span>单据号</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (文本框) -->
+      <div id="u41591" class="ax_default text_field">
+        <div id="u41591_div" class=""></div>
+        <input id="u41591_input" type="text" value="" class="u41591_input"/>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41592" class="ax_default label">
+        <div id="u41592_div" class=""></div>
+        <div id="u41592_text" class="text ">
+          <p><span>商品名称</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (文本框) -->
+      <div id="u41593" class="ax_default text_field">
+        <div id="u41593_div" class=""></div>
+        <input id="u41593_input" type="text" value="" class="u41593_input"/>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41594" class="ax_default label">
+        <div id="u41594_div" class=""></div>
+        <div id="u41594_text" class="text ">
+          <p><span>发货状态</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (下拉列表) -->
+      <div id="u41595" class="ax_default droplist">
+        <div id="u41595_div" class=""></div>
+        <select id="u41595_input" class="u41595_input">
+          <option class="u41595_input_option" value="全部">全部</option>
+          <option class="u41595_input_option" value="待发货">待发货</option>
+          <option class="u41595_input_option" value="部分发货">部分发货</option>
+          <option class="u41595_input_option" value="全部发货">全部发货</option>
+          <option class="u41595_input_option" value="无需发货">无需发货</option>
+        </select>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41596" class="ax_default label">
+        <div id="u41596_div" class=""></div>
+        <div id="u41596_text" class="text ">
+          <p><span>销售渠道</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (下拉列表) -->
+      <div id="u41597" class="ax_default droplist">
+        <div id="u41597_div" class=""></div>
+        <select id="u41597_input" class="u41597_input">
+          <option class="u41597_input_option" value="全部">全部</option>
+          <option class="u41597_input_option" value="门店">门店</option>
+          <option class="u41597_input_option" value="直播">直播</option>
+          <option class="u41597_input_option" value="录播">录播</option>
+        </select>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41598" class="ax_default label">
+        <div id="u41598_div" class=""></div>
+        <div id="u41598_text" class="text ">
+          <p><span>销售单元</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (下拉列表) -->
+      <div id="u41599" class="ax_default droplist">
+        <div id="u41599_div" class=""></div>
+        <select id="u41599_input" class="u41599_input">
+          <option class="u41599_input_option" value="全部">全部</option>
+          <option class="u41599_input_option" value="门店A">门店A</option>
+          <option class="u41599_input_option" value="门店B">门店B</option>
+          <option class="u41599_input_option" value="门店C">门店C</option>
+          <option class="u41599_input_option" value="门店D">门店D</option>
+          <option class="u41599_input_option" value="直播间A">直播间A</option>
+          <option class="u41599_input_option" value="直播间B">直播间B</option>
+          <option class="u41599_input_option" value="直播间C">直播间C</option>
+          <option class="u41599_input_option" value="录播A">录播A</option>
+          <option class="u41599_input_option" value="录播B">录播B</option>
+        </select>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41600" class="ax_default label">
+        <div id="u41600_div" class=""></div>
+        <div id="u41600_text" class="text ">
+          <p><span>商品/编码</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (文本框) -->
+      <div id="u41601" class="ax_default text_field">
+        <div id="u41601_div" class=""></div>
+        <input id="u41601_input" type="text" value="" class="u41601_input"/>
+      </div>
+
+      <!-- Unnamed (下拉列表) -->
+      <div id="u41602" class="ax_default droplist">
+        <div id="u41602_div" class=""></div>
+        <select id="u41602_input" class="u41602_input">
+          <option class="u41602_input_option" value="全部">全部</option>
+          <option class="u41602_input_option" value="规格编码">规格编码</option>
+          <option class="u41602_input_option" value="商品编码">商品编码</option>
+        </select>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41603" class="ax_default label">
+        <div id="u41603_div" class=""></div>
+        <div id="u41603_text" class="text ">
+          <p><span>销售数量合计：0 成交金额合计：0.00 元收款金额合计：0.00 元预收金额合计：0.00 元</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41604" class="ax_default label">
+        <div id="u41604_div" class=""></div>
+        <div id="u41604_text" class="text ">
+          <p><span>销售数量</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41605" class="ax_default label">
+        <div id="u41605_div" class=""></div>
+        <div id="u41605_text" class="text ">
+          <p><span>单位</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41606" class="ax_default label">
+        <div id="u41606_div" class=""></div>
+        <div id="u41606_text" class="text ">
+          <p><span>成交金额(元)</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41607" class="ax_default label">
+        <div id="u41607_div" class=""></div>
+        <div id="u41607_text" class="text ">
+          <p><span>优惠金额(元)</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41608" class="ax_default label">
+        <div id="u41608_div" class=""></div>
+        <div id="u41608_text" class="text ">
+          <p><span>售价金额(元)</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41609" class="ax_default label">
+        <div id="u41609_div" class=""></div>
+        <div id="u41609_text" class="text ">
+          <p><span>优惠明细(元)</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41610" class="ax_default label">
+        <div id="u41610_div" class=""></div>
+        <div id="u41610_text" class="text ">
+          <p><span>收款明细(元)</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41611" class="ax_default label">
+        <div id="u41611_div" class=""></div>
+        <div id="u41611_text" class="text ">
+          <p><span>商品类目</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41612" class="ax_default label">
+        <div id="u41612_div" class=""></div>
+        <div id="u41612_text" class="text ">
+          <p><span>销售渠道</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41613" class="ax_default label">
+        <div id="u41613_div" class=""></div>
+        <div id="u41613_text" class="text ">
+          <p><span>销售单元</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41614" class="ax_default label">
+        <div id="u41614_div" class=""></div>
+        <div id="u41614_text" class="text ">
+          <p><span>售价(元)</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41615" class="ax_default label">
+        <div id="u41615_div" class=""></div>
+        <div id="u41615_text" class="text ">
+          <p><span>供应价</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41616" class="ax_default label">
+        <div id="u41616_div" class=""></div>
+        <div id="u41616_text" class="text ">
+          <p><span>发货单元</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41617" class="ax_default label">
+        <div id="u41617_div" class=""></div>
+        <div id="u41617_text" class="text ">
+          <p><span>发货状态</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41618" class="ax_default label">
+        <div id="u41618_div" class=""></div>
+        <div id="u41618_text" class="text ">
+          <p><span>入账状态</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41619" class="ax_default label">
+        <div id="u41619_div" class=""></div>
+        <div id="u41619_text" class="text ">
+          <p><span>源单号</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41620" class="ax_default label">
+        <div id="u41620_div" class=""></div>
+        <div id="u41620_text" class="text ">
+          <p><span>备注</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41621" class="ax_default label">
+        <div id="u41621_div" class=""></div>
+        <div id="u41621_text" class="text ">
+          <p><span>今日</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41622" class="ax_default label">
+        <div id="u41622_div" class=""></div>
+        <div id="u41622_text" class="text ">
+          <p><span>昨日</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41623" class="ax_default label">
+        <div id="u41623_div" class=""></div>
+        <div id="u41623_text" class="text ">
+          <p><span>近7日</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41624" class="ax_default label">
+        <div id="u41624_div" class=""></div>
+        <div id="u41624_text" class="text ">
+          <p><span>近30日</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41625" class="ax_default label">
+        <div id="u41625_div" class=""></div>
+        <div id="u41625_text" class="text ">
+          <p><span>交易类型</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (下拉列表) -->
+      <div id="u41626" class="ax_default droplist">
+        <div id="u41626_div" class=""></div>
+        <select id="u41626_input" class="u41626_input">
+          <option class="u41626_input_option" value="全部">全部</option>
+          <option class="u41626_input_option" value="商品下单">商品下单</option>
+          <option class="u41626_input_option" value="商品退款">商品退款</option>
+          <option class="u41626_input_option" value="商品退货">商品退货</option>
+          <option class="u41626_input_option" value="购买优惠券">购买优惠券</option>
+          <option class="u41626_input_option" value="购买权益卡">购买权益卡</option>
+        </select>
+      </div>
+    </div>
+    <script src="resources/scripts/axure/ios.js"></script>
+  </body>
+</html>

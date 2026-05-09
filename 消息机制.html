@@ -1,0 +1,625 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <title>消息机制</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <link href="resources/css/axure_rp_page.css" type="text/css" rel="stylesheet"/>
+    <link href="data/styles.css" type="text/css" rel="stylesheet"/>
+    <link href="files/消息机制/styles.css" type="text/css" rel="stylesheet"/>
+    <script src="resources/scripts/jquery-3.2.1.min.js"></script>
+    <script src="resources/scripts/axure/axQuery.js"></script>
+    <script src="resources/scripts/axure/globals.js"></script>
+    <script src="resources/scripts/axutils.js"></script>
+    <script src="resources/scripts/axure/annotation.js"></script>
+    <script src="resources/scripts/axure/axQuery.std.js"></script>
+    <script src="resources/scripts/axure/doc.js"></script>
+    <script src="resources/scripts/messagecenter.js"></script>
+    <script src="resources/scripts/axure/events.js"></script>
+    <script src="resources/scripts/axure/recording.js"></script>
+    <script src="resources/scripts/axure/action.js"></script>
+    <script src="resources/scripts/axure/expr.js"></script>
+    <script src="resources/scripts/axure/geometry.js"></script>
+    <script src="resources/scripts/axure/flyout.js"></script>
+    <script src="resources/scripts/axure/model.js"></script>
+    <script src="resources/scripts/axure/repeater.js"></script>
+    <script src="resources/scripts/axure/sto.js"></script>
+    <script src="resources/scripts/axure/utils.temp.js"></script>
+    <script src="resources/scripts/axure/variables.js"></script>
+    <script src="resources/scripts/axure/drag.js"></script>
+    <script src="resources/scripts/axure/move.js"></script>
+    <script src="resources/scripts/axure/visibility.js"></script>
+    <script src="resources/scripts/axure/style.js"></script>
+    <script src="resources/scripts/axure/adaptive.js"></script>
+    <script src="resources/scripts/axure/tree.js"></script>
+    <script src="resources/scripts/axure/init.temp.js"></script>
+    <script src="resources/scripts/axure/legacy.js"></script>
+    <script src="resources/scripts/axure/viewer.js"></script>
+    <script src="resources/scripts/axure/math.js"></script>
+    <script src="resources/scripts/axure/jquery.nicescroll.min.js"></script>
+    <script src="data/document.js"></script>
+    <script src="files/消息机制/data.js"></script>
+    <script type="text/javascript">
+      $axure.utils.getTransparentGifPath = function() { return 'resources/images/transparent.gif'; };
+      $axure.utils.getOtherPath = function() { return 'resources/Other.html'; };
+      $axure.utils.getReloadPath = function() { return 'resources/reload.html'; };
+    </script>
+  </head>
+  <body>
+    <div id="base" class="">
+
+      <!-- Unnamed (矩形) -->
+      <div id="u29632" class="ax_default sticky_1">
+        <div id="u29632_div" class=""></div>
+        <div id="u29632_text" class="text ">
+          <p><span style="font-family:'ArialMT', 'Arial', sans-serif;">1</span><span style="font-family:'PingFangSC-Regular', 'PingFang SC', sans-serif;">：买家的消息</span></p><p><span style="font-family:'PingFangSC-Regular', 'PingFang SC', sans-serif;">订单：凡是商家操作的功能，需要发送站内消息</span></p><p><span style="font-family:'PingFangSC-Regular', 'PingFang SC', sans-serif;">物流：凡是商家操作的订单发货，售后单发货发送站内消息，这个可以跳转至相应的详情页面</span></p><p><span style="font-family:'PingFangSC-Regular', 'PingFang SC', sans-serif;">营销：凡是租户派送优惠券给到用户的优惠券，或优惠券距离有效期结束还有3天的都会发送至此，但是这个没有详情页面</span></p><p><span style="font-family:'PingFangSC-Regular', 'PingFang SC', sans-serif;">系统：凡是审核、直播预告距离开播前</span><span style="font-family:'ArialMT', 'Arial', sans-serif;">60</span><span style="font-family:'PingFangSC-Regular', 'PingFang SC', sans-serif;">分钟都会发送消息至此</span></p><p><span style="font-family:'ArialMT', 'Arial', sans-serif;"><br></span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (表格) -->
+      <div id="u29633" class="ax_default">
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29634" class="ax_default table_cell">
+          <img id="u29634_img" class="img " src="images/消息机制/u29634.png"/>
+          <div id="u29634_text" class="text ">
+            <p><span>类型</span></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29635" class="ax_default table_cell">
+          <img id="u29635_img" class="img " src="images/消息机制/u29635.png"/>
+          <div id="u29635_text" class="text ">
+            <p><span>消息体</span></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29636" class="ax_default table_cell">
+          <img id="u29636_img" class="img " src="images/消息机制/u29636.png"/>
+          <div id="u29636_text" class="text ">
+            <p><span>触发机制</span></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29637" class="ax_default table_cell">
+          <img id="u29637_img" class="img " src="images/消息机制/u29637.png"/>
+          <div id="u29637_text" class="text ">
+            <p><span>是否允许跳转</span></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29638" class="ax_default table_cell">
+          <img id="u29638_img" class="img " src="images/消息机制/u29638.png"/>
+          <div id="u29638_text" class="text ">
+            <p><span>页面</span></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29639" class="ax_default table_cell">
+          <img id="u29639_img" class="img " src="images/消息机制/u29634.png"/>
+          <div id="u29639_text" class="text ">
+            <p><span>订单</span></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29640" class="ax_default table_cell">
+          <img id="u29640_img" class="img " src="images/消息机制/u29635.png"/>
+          <div id="u29640_text" class="text ">
+            <p><span>您有一笔待付款订单，请尽快付款</span></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29641" class="ax_default table_cell">
+          <img id="u29641_img" class="img " src="images/消息机制/u29636.png"/>
+          <div id="u29641_text" class="text ">
+            <p><span>下单触发</span></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29642" class="ax_default table_cell">
+          <img id="u29642_img" class="img " src="images/消息机制/u29637.png"/>
+          <div id="u29642_text" class="text ">
+            <p><span>是</span></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29643" class="ax_default table_cell">
+          <img id="u29643_img" class="img " src="images/消息机制/u29638.png"/>
+          <div id="u29643_text" class="text ">
+            <p><span>消息体对应的订单详情页面</span></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29644" class="ax_default table_cell">
+          <img id="u29644_img" class="img " src="images/消息机制/u29634.png"/>
+          <div id="u29644_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29645" class="ax_default table_cell">
+          <img id="u29645_img" class="img " src="images/消息机制/u29635.png"/>
+          <div id="u29645_text" class="text ">
+            <p><span>商家已发货，请注意查收！</span></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29646" class="ax_default table_cell">
+          <img id="u29646_img" class="img " src="images/消息机制/u29636.png"/>
+          <div id="u29646_text" class="text ">
+            <p><span>订单商家全部发货触发</span></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29647" class="ax_default table_cell">
+          <img id="u29647_img" class="img " src="images/消息机制/u29637.png"/>
+          <div id="u29647_text" class="text ">
+            <p><span>是</span></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29648" class="ax_default table_cell">
+          <img id="u29648_img" class="img " src="images/消息机制/u29638.png"/>
+          <div id="u29648_text" class="text ">
+            <p><span>消息体对应的订单详情页面</span></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29649" class="ax_default table_cell">
+          <img id="u29649_img" class="img " src="images/消息机制/u29634.png"/>
+          <div id="u29649_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29650" class="ax_default table_cell">
+          <img id="u29650_img" class="img " src="images/消息机制/u29635.png"/>
+          <div id="u29650_text" class="text ">
+            <p><span>售后申请，商家已拒绝，请尽快处理！</span></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29651" class="ax_default table_cell">
+          <img id="u29651_img" class="img " src="images/消息机制/u29636.png"/>
+          <div id="u29651_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29652" class="ax_default table_cell">
+          <img id="u29652_img" class="img " src="images/消息机制/u29637.png"/>
+          <div id="u29652_text" class="text ">
+            <p><span>是</span></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29653" class="ax_default table_cell">
+          <img id="u29653_img" class="img " src="images/消息机制/u29638.png"/>
+          <div id="u29653_text" class="text ">
+            <p><span>消息体对应的售后关联的订单详情页面</span></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29654" class="ax_default table_cell">
+          <img id="u29654_img" class="img " src="images/消息机制/u29634.png"/>
+          <div id="u29654_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29655" class="ax_default table_cell">
+          <img id="u29655_img" class="img " src="images/消息机制/u29635.png"/>
+          <div id="u29655_text" class="text ">
+            <p><span>售后寄回，商家已拒绝签收，请尽快处理！</span></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29656" class="ax_default table_cell">
+          <img id="u29656_img" class="img " src="images/消息机制/u29636.png"/>
+          <div id="u29656_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29657" class="ax_default table_cell">
+          <img id="u29657_img" class="img " src="images/消息机制/u29637.png"/>
+          <div id="u29657_text" class="text ">
+            <p><span>是</span></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29658" class="ax_default table_cell">
+          <img id="u29658_img" class="img " src="images/消息机制/u29638.png"/>
+          <div id="u29658_text" class="text ">
+            <p><span>消息体对应的售后关联的订单详情页面</span></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29659" class="ax_default table_cell">
+          <img id="u29659_img" class="img " src="images/消息机制/u29659.png"/>
+          <div id="u29659_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29660" class="ax_default table_cell">
+          <img id="u29660_img" class="img " src="images/消息机制/u29660.png"/>
+          <div id="u29660_text" class="text ">
+            <p><span>售后寄回即将超时，请尽快寄回！</span></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29661" class="ax_default table_cell">
+          <img id="u29661_img" class="img " src="images/消息机制/u29661.png"/>
+          <div id="u29661_text" class="text ">
+            <p><span>读取租户设置中售后配置，操作时间+配置时间-当前时间==30分钟触发</span></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29662" class="ax_default table_cell">
+          <img id="u29662_img" class="img " src="images/消息机制/u29662.png"/>
+          <div id="u29662_text" class="text ">
+            <p><span>是</span></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29663" class="ax_default table_cell">
+          <img id="u29663_img" class="img " src="images/消息机制/u29663.png"/>
+          <div id="u29663_text" class="text ">
+            <p><span>消息体对应的售后关联的订单详情页面</span></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29664" class="ax_default table_cell">
+          <img id="u29664_img" class="img " src="images/消息机制/u29634.png"/>
+          <div id="u29664_text" class="text ">
+            <p><span>物流</span></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29665" class="ax_default table_cell">
+          <img id="u29665_img" class="img " src="images/消息机制/u29635.png"/>
+          <div id="u29665_text" class="text ">
+            <p><span>商家已退回退货，请尽快处理！</span></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29666" class="ax_default table_cell">
+          <img id="u29666_img" class="img " src="images/消息机制/u29636.png"/>
+          <div id="u29666_text" class="text ">
+            <p><span>售后单商家退回发货触发</span></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29667" class="ax_default table_cell">
+          <img id="u29667_img" class="img " src="images/消息机制/u29637.png"/>
+          <div id="u29667_text" class="text ">
+            <p><span>是</span></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29668" class="ax_default table_cell">
+          <img id="u29668_img" class="img " src="images/消息机制/u29638.png"/>
+          <div id="u29668_text" class="text ">
+            <p><span>消息体对应的售后关联的订单详情页面</span></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29669" class="ax_default table_cell">
+          <img id="u29669_img" class="img " src="images/消息机制/u29634.png"/>
+          <div id="u29669_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29670" class="ax_default table_cell">
+          <img id="u29670_img" class="img " src="images/消息机制/u29635.png"/>
+          <div id="u29670_text" class="text ">
+            <p><span>商家已签收退货，请耐心等待商家退款！</span></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29671" class="ax_default table_cell">
+          <img id="u29671_img" class="img " src="images/消息机制/u29636.png"/>
+          <div id="u29671_text" class="text ">
+            <p><span>售后单商家签收触发</span></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29672" class="ax_default table_cell">
+          <img id="u29672_img" class="img " src="images/消息机制/u29637.png"/>
+          <div id="u29672_text" class="text ">
+            <p><span>是</span></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29673" class="ax_default table_cell">
+          <img id="u29673_img" class="img " src="images/消息机制/u29638.png"/>
+          <div id="u29673_text" class="text ">
+            <p><span>消息体对应的售后关联的订单详情页面</span></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29674" class="ax_default table_cell">
+          <img id="u29674_img" class="img " src="images/消息机制/u29634.png"/>
+          <div id="u29674_text" class="text ">
+            <p><span>营销</span></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29675" class="ax_default table_cell">
+          <img id="u29675_img" class="img " src="images/消息机制/u29635.png"/>
+          <div id="u29675_text" class="text ">
+            <p><span>你有一张满减券即将到期，请尽快使用！</span></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29676" class="ax_default table_cell">
+          <img id="u29676_img" class="img " src="images/消息机制/u29636.png"/>
+          <div id="u29676_text" class="text ">
+            <p><span>有效截止日期 - 当前时间 == 30分钟触发</span></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29677" class="ax_default table_cell">
+          <img id="u29677_img" class="img " src="images/消息机制/u29637.png"/>
+          <div id="u29677_text" class="text ">
+            <p><span>是</span></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29678" class="ax_default table_cell">
+          <img id="u29678_img" class="img " src="images/消息机制/u29638.png"/>
+          <div id="u29678_text" class="text ">
+            <p><span>个人优惠券列表</span></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29679" class="ax_default table_cell">
+          <img id="u29679_img" class="img " src="images/消息机制/u29634.png"/>
+          <div id="u29679_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29680" class="ax_default table_cell">
+          <img id="u29680_img" class="img " src="images/消息机制/u29635.png"/>
+          <div id="u29680_text" class="text ">
+            <p><span>你有一张兑换券即将到期，请尽快使用！</span></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29681" class="ax_default table_cell">
+          <img id="u29681_img" class="img " src="images/消息机制/u29636.png"/>
+          <div id="u29681_text" class="text ">
+            <p><span>有效截止日期 - 当前时间 == 30分钟触发</span></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29682" class="ax_default table_cell">
+          <img id="u29682_img" class="img " src="images/消息机制/u29637.png"/>
+          <div id="u29682_text" class="text ">
+            <p><span>是</span></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29683" class="ax_default table_cell">
+          <img id="u29683_img" class="img " src="images/消息机制/u29638.png"/>
+          <div id="u29683_text" class="text ">
+            <p><span>个人优惠券列表</span></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29684" class="ax_default table_cell">
+          <img id="u29684_img" class="img " src="images/消息机制/u29634.png"/>
+          <div id="u29684_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29685" class="ax_default table_cell">
+          <img id="u29685_img" class="img " src="images/消息机制/u29635.png"/>
+          <div id="u29685_text" class="text ">
+            <p><span>你有一张折扣券即将到期，请尽快使用！</span></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29686" class="ax_default table_cell">
+          <img id="u29686_img" class="img " src="images/消息机制/u29636.png"/>
+          <div id="u29686_text" class="text ">
+            <p><span>有效截止日期 - 当前时间 == 30分钟触发</span></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29687" class="ax_default table_cell">
+          <img id="u29687_img" class="img " src="images/消息机制/u29637.png"/>
+          <div id="u29687_text" class="text ">
+            <p><span>是</span></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29688" class="ax_default table_cell">
+          <img id="u29688_img" class="img " src="images/消息机制/u29638.png"/>
+          <div id="u29688_text" class="text ">
+            <p><span>个人优惠券列表</span></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29689" class="ax_default table_cell">
+          <img id="u29689_img" class="img " src="images/消息机制/u29634.png"/>
+          <div id="u29689_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29690" class="ax_default table_cell">
+          <img id="u29690_img" class="img " src="images/消息机制/u29635.png"/>
+          <div id="u29690_text" class="text ">
+            <p><span>你有一张商品现金券券即将到期，请尽快使用！</span></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29691" class="ax_default table_cell">
+          <img id="u29691_img" class="img " src="images/消息机制/u29636.png"/>
+          <div id="u29691_text" class="text ">
+            <p><span>有效截止日期 - 当前时间 == 30分钟触发</span></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29692" class="ax_default table_cell">
+          <img id="u29692_img" class="img " src="images/消息机制/u29637.png"/>
+          <div id="u29692_text" class="text ">
+            <p><span>是</span></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29693" class="ax_default table_cell">
+          <img id="u29693_img" class="img " src="images/消息机制/u29638.png"/>
+          <div id="u29693_text" class="text ">
+            <p><span>个人优惠券列表</span></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29694" class="ax_default table_cell">
+          <img id="u29694_img" class="img " src="images/消息机制/u29634.png"/>
+          <div id="u29694_text" class="text ">
+            <p><span>系统</span></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29695" class="ax_default table_cell">
+          <img id="u29695_img" class="img " src="images/消息机制/u29635.png"/>
+          <div id="u29695_text" class="text ">
+            <p><span>直播预约即将开播，请留意！</span></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29696" class="ax_default table_cell">
+          <img id="u29696_img" class="img " src="images/消息机制/u29636.png"/>
+          <div id="u29696_text" class="text ">
+            <p><span>开播时间-当前时间==5分钟触发</span></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29697" class="ax_default table_cell">
+          <img id="u29697_img" class="img " src="images/消息机制/u29637.png"/>
+          <div id="u29697_text" class="text ">
+            <p><span>是</span></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29698" class="ax_default table_cell">
+          <img id="u29698_img" class="img " src="images/消息机制/u29638.png"/>
+          <div id="u29698_text" class="text ">
+            <p><span>直播间</span></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29699" class="ax_default table_cell">
+          <img id="u29699_img" class="img " src="images/消息机制/u29699.png"/>
+          <div id="u29699_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29700" class="ax_default table_cell">
+          <img id="u29700_img" class="img " src="images/消息机制/u29700.png"/>
+          <div id="u29700_text" class="text ">
+            <p><span>您的申请审核不通过，请尽快处理！</span></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29701" class="ax_default table_cell">
+          <img id="u29701_img" class="img " src="images/消息机制/u29701.png"/>
+          <div id="u29701_text" class="text ">
+            <p><span>审核不通过触发</span></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29702" class="ax_default table_cell">
+          <img id="u29702_img" class="img " src="images/消息机制/u29702.png"/>
+          <div id="u29702_text" class="text ">
+            <p><span>是</span></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (单元格) -->
+        <div id="u29703" class="ax_default table_cell">
+          <img id="u29703_img" class="img " src="images/消息机制/u29703.png"/>
+          <div id="u29703_text" class="text ">
+            <p><span>店长、店员、门店直属上级组织成员身份，申请页面</span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="resources/scripts/axure/ios.js"></script>
+  </body>
+</html>

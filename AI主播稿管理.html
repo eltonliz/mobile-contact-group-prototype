@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI主播稿管理</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background: #F5F7FA; color: #333; display: flex; height: 100vh; overflow: hidden; }
+
+.sidebar { width: 220px; background: #fff; border-right: 1px solid #E8ECF0; display: flex; flex-direction: column; flex-shrink: 0; }
+.sidebar-logo { padding: 20px; border-bottom: 1px solid #E8ECF0; font-size: 16px; font-weight: 700; color: #4F6EF7; display: flex; align-items: center; gap: 8px; }
+.sidebar-logo .logo-icon { width: 32px; height: 32px; background: #4F6EF7; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 14px; font-weight: 700; }
+.sidebar-menu { flex: 1; overflow-y: auto; padding: 8px 0; }
+.sidebar-menu-item { display: flex; align-items: center; padding: 12px 20px; cursor: pointer; color: #666; font-size: 14px; transition: all .2s; gap: 10px; border-left: 3px solid transparent; }
+.sidebar-menu-item:hover { background: #F0F3FF; color: #4F6EF7; }
+.sidebar-menu-item.active { background: #F0F3FF; color: #4F6EF7; font-weight: 600; border-left-color: #4F6EF7; }
+.sidebar-menu-item .menu-icon { width: 20px; text-align: center; font-size: 16px; }
+
+.main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+.topbar { height: 56px; background: #fff; border-bottom: 1px solid #E8ECF0; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; flex-shrink: 0; }
+.topbar-breadcrumb { font-size: 14px; color: #999; }
+.topbar-breadcrumb span { color: #333; font-weight: 500; }
+.topbar-right { display: flex; align-items: center; gap: 16px; font-size: 14px; color: #666; }
+.topbar-avatar { width: 32px; height: 32px; border-radius: 50%; background: #4F6EF7; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 13px; }
+
+.content { flex: 1; overflow-y: auto; padding: 20px 24px; }
+
+.page { display: none; }
+.page.active { display: block; }
+
+.card { background: #fff; border-radius: 8px; padding: 20px; margin-bottom: 16px; box-shadow: 0 1px 4px rgba(0,0,0,.06); }
+.card-title { font-size: 15px; font-weight: 600; color: #333; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #F0F0F0; }
+
+.filter-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; margin-bottom: 16px; }
+.filter-group { display: flex; flex-direction: column; gap: 4px; }
+.filter-group label { font-size: 12px; color: #999; }
+.filter-group select, .filter-group input { height: 34px; border: 1px solid #DCDFE6; border-radius: 6px; padding: 0 10px; font-size: 13px; outline: none; background: #fff; min-width: 140px; }
+.filter-group select:focus, .filter-group input:focus { border-color: #4F6EF7; }
+.filter-group input[type="date"] { min-width: 130px; }
+
+.btn { display: inline-flex; align-items: center; justify-content: center; height: 34px; padding: 0 16px; border-radius: 6px; font-size: 13px; cursor: pointer; border: none; transition: all .2s; gap: 4px; white-space: nowrap; }
+.btn-primary { background: #4F6EF7; color: #fff; }
+.btn-primary:hover { background: #3D5BD6; }
+.btn-danger { background: #FF6B6B; color: #fff; }
+.btn-danger:hover { background: #E55555; }
+.btn-success { background: #52C41A; color: #fff; }
+.btn-success:hover { background: #45A816; }
+.btn-default { background: #fff; color: #666; border: 1px solid #DCDFE6; }
+.btn-default:hover { border-color: #4F6EF7; color: #4F6EF7; }
+.btn-text { background: none; border: none; color: #4F6EF7; padding: 0 6px; height: auto; font-size: 13px; }
+.btn-text:hover { color: #3D5BD6; text-decoration: underline; }
+.btn-text.danger { color: #FF6B6B; }
+.btn-text.danger:hover { color: #E55555; }
+.btn-lg { height: 42px; padding: 0 28px; font-size: 15px; font-weight: 600; }
+
+table { width: 100%; border-collapse: collapse; }
+thead th { background: #FAFBFC; padding: 10px 12px; text-align: left; font-size: 13px; color: #999; font-weight: 500; border-bottom: 1px solid #F0F0F0; }
+tbody td { padding: 12px; font-size: 13px; border-bottom: 1px solid #F5F5F5; color: #333; }
+tbody tr:hover { background: #FAFBFC; }
+
+.status-tag { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 12px; }
+.status-draft { background: #FFF7E6; color: #FA8C16; }
+.status-confirmed { background: #F0FFF4; color: #52C41A; }
+.status-expired { background: #F5F5F5; color: #999; }
+
+.pagination { display: flex; align-items: center; justify-content: flex-end; gap: 4px; margin-top: 16px; }
+.pagination button { width: 32px; height: 32px; border: 1px solid #DCDFE6; background: #fff; border-radius: 4px; cursor: pointer; font-size: 13px; color: #666; display: flex; align-items: center; justify-content: center; }
+.pagination button.active { background: #4F6EF7; color: #fff; border-color: #4F6EF7; }
+.pagination button:hover:not(.active) { border-color: #4F6EF7; color: #4F6EF7; }
+.pagination-info { font-size: 13px; color: #999; margin-right: 12px; }
+
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group.full { grid-column: 1 / -1; }
+.form-group label { font-size: 13px; color: #666; font-weight: 500; }
+.form-group label .required { color: #FF6B6B; margin-left: 2px; }
+.form-group select, .form-group input, .form-group textarea { height: 36px; border: 1px solid #DCDFE6; border-radius: 6px; padding: 0 12px; font-size: 13px; outline: none; background: #fff; }
+.form-group textarea { height: 80px; padding: 8px 12px; resize: vertical; }
+.form-group select:focus, .form-group input:focus, .form-group textarea:focus { border-color: #4F6EF7; box-shadow: 0 0 0 2px rgba(79,110,247,.1); }
+.form-group .readonly { background: #F5F7FA; color: #999; }
+
+.tag-list { display: flex; flex-wrap: wrap; gap: 6px; }
+.tag { display: inline-block; padding: 3px 10px; border-radius: 4px; font-size: 12px; background: #F0F3FF; color: #4F6EF7; }
+.tag.orange { background: #FFF7E6; color: #FA8C16; }
+.tag.green { background: #F0FFF4; color: #52C41A; }
+
+.product-list { display: flex; flex-direction: column; gap: 8px; }
+.product-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid #F0F0F0; border-radius: 8px; cursor: pointer; transition: all .2s; }
+.product-item:hover { border-color: #4F6EF7; background: #FAFBFF; }
+.product-item.selected { border-color: #4F6EF7; background: #F0F3FF; }
+.product-item input[type="checkbox"] { width: 16px; height: 16px; accent-color: #4F6EF7; }
+.product-img { width: 48px; height: 48px; border-radius: 6px; background: #F5F7FA; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+.product-info { flex: 1; }
+.product-name { font-size: 13px; color: #333; font-weight: 500; }
+.product-price { font-size: 13px; color: #FF6B6B; font-weight: 600; margin-top: 2px; }
+
+.generate-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 20px; padding-top: 16px; border-top: 1px solid #F0F0F0; }
+.remain-count { font-size: 13px; color: #999; }
+.remain-count strong { color: #4F6EF7; }
+
+.preview-layout { display: flex; gap: 20px; }
+.preview-content { flex: 1; }
+.preview-panel { width: 280px; flex-shrink: 0; }
+
+.script-section { margin-bottom: 20px; }
+.script-section-title { font-size: 14px; font-weight: 600; color: #4F6EF7; margin-bottom: 8px; padding: 6px 0; border-bottom: 2px solid #4F6EF7; display: inline-block; }
+.script-section p { font-size: 14px; line-height: 1.8; color: #555; text-indent: 2em; }
+.product-block { background: #FAFBFF; border-left: 3px solid #4F6EF7; padding: 12px 16px; margin: 10px 0; border-radius: 0 6px 6px 0; }
+.product-block .product-label { font-size: 13px; font-weight: 600; color: #4F6EF7; margin-bottom: 6px; }
+
+.panel-card { background: #fff; border-radius: 8px; padding: 16px; box-shadow: 0 1px 4px rgba(0,0,0,.06); margin-bottom: 12px; }
+.panel-label { font-size: 12px; color: #999; margin-bottom: 4px; }
+.panel-value { font-size: 14px; font-weight: 600; color: #333; }
+.panel-actions { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+.panel-actions .btn { width: 100%; }
+
+.optimize-area { margin-top: 16px; border-top: 1px solid #F0F0F0; padding-top: 16px; display: none; }
+.optimize-area.show { display: block; }
+.chat-box { max-height: 240px; overflow-y: auto; margin-bottom: 12px; }
+.chat-msg { margin-bottom: 10px; }
+.chat-msg.ai { display: flex; gap: 8px; }
+.chat-msg.user { display: flex; gap: 8px; flex-direction: row-reverse; }
+.chat-avatar { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; }
+.chat-msg.ai .chat-avatar { background: #4F6EF7; color: #fff; }
+.chat-msg.user .chat-avatar { background: #52C41A; color: #fff; }
+.chat-bubble { max-width: 80%; padding: 8px 12px; border-radius: 8px; font-size: 13px; line-height: 1.6; }
+.chat-msg.ai .chat-bubble { background: #F0F3FF; color: #333; }
+.chat-msg.user .chat-bubble { background: #4F6EF7; color: #fff; }
+.chat-input-row { display: flex; gap: 8px; }
+.chat-input-row input { flex: 1; height: 36px; border: 1px solid #DCDFE6; border-radius: 6px; padding: 0 12px; font-size: 13px; outline: none; }
+.chat-input-row input:focus { border-color: #4F6EF7; }
+.quick-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.quick-tag { padding: 4px 10px; border: 1px solid #DCDFE6; border-radius: 14px; font-size: 12px; color: #666; cursor: pointer; transition: all .2s; background: #fff; }
+.quick-tag:hover { border-color: #4F6EF7; color: #4F6EF7; background: #F0F3FF; }
+
+.teleprompter { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000; background: #1A1A2E; color: #fff; display: none; flex-direction: column; }
+.teleprompter.active { display: flex; }
+.teleprompter-toolbar { height: 50px; background: rgba(0,0,0,.4); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; flex-shrink: 0; }
+.teleprompter-toolbar .tool-group { display: flex; align-items: center; gap: 8px; }
+.teleprompter-toolbar .tool-btn { padding: 6px 14px; border: 1px solid rgba(255,255,255,.3); border-radius: 4px; background: transparent; color: #fff; font-size: 13px; cursor: pointer; transition: all .2s; }
+.teleprompter-toolbar .tool-btn:hover, .teleprompter-toolbar .tool-btn.active { background: rgba(255,255,255,.15); border-color: rgba(255,255,255,.6); }
+.teleprompter-toolbar .tool-btn.back-btn { background: #4F6EF7; border-color: #4F6EF7; }
+.teleprompter-body { flex: 1; overflow-y: auto; padding: 40px 15%; }
+.teleprompter-body.font-small { font-size: 18px; }
+.teleprompter-body.font-medium { font-size: 24px; }
+.teleprompter-body.font-large { font-size: 32px; }
+.teleprompter-body.light-mode { background: #fff; color: #333; }
+.teleprompter-section { margin-bottom: 32px; }
+.teleprompter-section-title { font-weight: 700; margin-bottom: 12px; opacity: .7; border-bottom: 1px solid rgba(255,255,255,.2); padding-bottom: 8px; }
+.teleprompter-body.light-mode .teleprompter-section-title { border-bottom-color: rgba(0,0,0,.15); }
+.teleprompter-section p { line-height: 1.9; margin-bottom: 8px; }
+.teleprompter-product { background: rgba(79,110,247,.2); border-left: 4px solid #4F6EF7; padding: 12px 16px; margin: 16px 0; border-radius: 0 8px 8px 0; }
+.teleprompter-body.light-mode .teleprompter-product { background: rgba(79,110,247,.08); }
+.teleprompter-product-label { font-weight: 700; color: #7B93FF; margin-bottom: 6px; }
+.teleprompter-footer { height: 44px; background: rgba(0,0,0,.4); display: flex; align-items: center; justify-content: center; gap: 20px; font-size: 13px; color: rgba(255,255,255,.6); flex-shrink: 0; }
+
+.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,.45); z-index: 900; display: none; align-items: center; justify-content: center; }
+.modal-overlay.show { display: flex; }
+.modal { background: #fff; border-radius: 12px; padding: 28px; width: 420px; max-width: 90vw; box-shadow: 0 8px 30px rgba(0,0,0,.15); }
+.modal-title { font-size: 16px; font-weight: 600; margin-bottom: 12px; }
+.modal-body { font-size: 14px; color: #666; line-height: 1.6; margin-bottom: 20px; }
+.modal-actions { display: flex; justify-content: flex-end; gap: 10px; }
+
+.loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,.85); z-index: 950; display: none; align-items: center; justify-content: center; flex-direction: column; gap: 16px; }
+.loading-overlay.show { display: flex; }
+.spinner { width: 48px; height: 48px; border: 4px solid #E8ECF0; border-top-color: #4F6EF7; border-radius: 50%; animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text { font-size: 15px; color: #4F6EF7; font-weight: 500; }
+
+.link-copied-toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #52C41A; color: #fff; padding: 10px 24px; border-radius: 6px; font-size: 14px; z-index: 999; display: none; box-shadow: 0 4px 12px rgba(82,196,26,.3); }
+.link-copied-toast.show { display: block; animation: fadeInOut 2s ease; }
+@keyframes fadeInOut { 0% { opacity: 0; transform: translateX(-50%) translateY(-10px); } 15% { opacity: 1; transform: translateX(-50%) translateY(0); } 85% { opacity: 1; } 100% { opacity: 0; } }
+
+.empty-page { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 400px; color: #ccc; }
+.empty-page .empty-icon { font-size: 64px; margin-bottom: 16px; }
+.empty-page .empty-text { font-size: 15px; }
+
+.service-modal .service-feature { display: flex; align-items: center; gap: 10px; padding: 8px 0; font-size: 13px; color: #555; }
+.service-modal .service-feature .check { color: #52C41A; font-weight: 700; }
+.service-modal .price-row { display: flex; align-items: baseline; gap: 4px; margin: 16px 0; }
+.service-modal .price { font-size: 28px; font-weight: 700; color: #FF6B6B; }
+.service-modal .price-unit { font-size: 13px; color: #999; }
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">AI</div>
+    AI直播运营
+  </div>
+  <div class="sidebar-menu">
+    <div class="sidebar-menu-item active" data-page="page-list" onclick="switchPage('page-list', this)">
+      <span class="menu-icon">📋</span> 直播稿管理
+    </div>
+    <div class="sidebar-menu-item" data-page="page-write" onclick="switchPage('page-write', this)">
+      <span class="menu-icon">✍️</span> 撰写直播稿
+    </div>
+    <div class="sidebar-menu-item" data-page="page-preview" onclick="switchPage('page-preview', this)">
+      <span class="menu-icon">👁️</span> 直播稿预览
+    </div>
+    <div class="sidebar-menu-item" data-page="page-teleprompter-nav" onclick="enterTeleprompter()">
+      <span class="menu-icon">📺</span> 提词器模式
+    </div>
+    <div class="sidebar-menu-item" data-page="page-empty" onclick="switchPage('page-empty', this)">
+      <span class="menu-icon">🤖</span> 商品AI能力
+    </div>
+    <div class="sidebar-menu-item" data-page="page-empty2" onclick="switchPage('page-empty2', this)">
+      <span class="menu-icon">⚙️</span> 应用控制管理
+    </div>
+    <div class="sidebar-menu-item" data-page="page-empty3" onclick="switchPage('page-empty3', this)">
+      <span class="menu-icon">🛒</span> 服务购买
+    </div>
+    <div class="sidebar-menu-item" data-page="page-empty4" onclick="switchPage('page-empty4', this)">
+      <span class="menu-icon">📒</span> 通讯录管理
+    </div>
+    <div class="sidebar-menu-item" data-page="page-empty5" onclick="switchPage('page-empty5', this)">
+      <span class="menu-icon">💬</span> 群聊管理
+    </div>
+    <div class="sidebar-menu-item" data-page="page-empty6" onclick="switchPage('page-empty6', this)">
+      <span class="menu-icon">📊</span> 数据统计
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-breadcrumb" id="breadcrumb">直播 / <span>直播稿管理</span></div>
+    <div class="topbar-right">
+      <span>运营管理员</span>
+      <div class="topbar-avatar">管</div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- 页面1：直播稿管理列表 -->
+    <div class="page active" id="page-list">
+      <div class="card">
+        <div class="filter-row">
+          <div class="filter-group">
+            <label>直播场次</label>
+            <select id="filter-session">
+              <option value="">全部场次</option>
+              <option value="s1">2026年第18期直播</option>
+              <option value="s2">2026年第17期直播</option>
+              <option value="s3">2026年第16期直播</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label>主播名称</label>
+            <input type="text" id="filter-anchor" placeholder="请输入主播名称">
+          </div>
+          <div class="filter-group">
+            <label>创建时间</label>
+            <div style="display:flex;gap:6px;align-items:center;">
+              <input type="date" id="filter-date-start"> <span style="color:#999">~</span> <input type="date" id="filter-date-end">
+            </div>
+          </div>
+          <div class="filter-group">
+            <label>直播稿状态</label>
+            <select id="filter-status">
+              <option value="">全部</option>
+              <option value="draft">草稿</option>
+              <option value="confirmed">已确认</option>
+              <option value="expired">已过期</option>
+            </select>
+          </div>
+          <div class="filter-group" style="flex-direction:row;align-items:flex-end;gap:8px;">
+            <button class="btn btn-primary" onclick="doFilter()">筛选</button>
+            <button class="btn btn-default" onclick="resetFilter()">重置</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+          <div style="font-size:15px;font-weight:600;">直播稿列表</div>
+          <button class="btn btn-primary" onclick="goWritePage()">+ 撰写直播稿</button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>直播稿编号</th>
+              <th>直播场次</th>
+              <th>直播间</th>
+              <th>主播</th>
+              <th>商品数量</th>
+              <th>字数</th>
+              <th>状态</th>
+              <th>创建时间</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="script-table-body">
+            <tr>
+              <td>ZBG20260507001</td>
+              <td>2026年第18期直播</td>
+              <td>品牌旗舰直播间</td>
+              <td>小美</td>
+              <td>4</td>
+              <td>2,856</td>
+              <td><span class="status-tag status-draft">草稿</span></td>
+              <td>2026-05-07 10:30</td>
+              <td>
+                <button class="btn btn-text" onclick="goPreviewPage()">查看</button>
+                <button class="btn btn-text" onclick="goWritePage()">编辑</button>
+                <button class="btn btn-text" onclick="confirmScript(this)">设为正式稿</button>
+                <button class="btn btn-text" onclick="copyLink()">复制链接</button>
+                <button class="btn btn-text danger" onclick="deleteScript(this)">删除</button>
+              </td>
+            </tr>
+            <tr>
+              <td>ZBG20260506002</td>
+              <td>2026年第17期直播</td>
+              <td>品牌旗舰直播间</td>
+              <td>小美</td>
+              <td>3</td>
+              <td>3,120</td>
+              <td><span class="status-tag status-confirmed">已确认</span></td>
+              <td>2026-05-06 14:20</td>
+              <td>
+                <button class="btn btn-text" onclick="goPreviewPage()">查看</button>
+                <button class="btn btn-text" onclick="goWritePage()">编辑</button>
+                <button class="btn btn-text" onclick="confirmScript(this)">设为正式稿</button>
+                <button class="btn btn-text" onclick="copyLink()">复制链接</button>
+                <button class="btn btn-text danger" onclick="deleteScript(this)">删除</button>
+              </td>
+            </tr>
+            <tr>
+              <td>ZBG20260505003</td>
+              <td>2026年第16期直播</td>
+              <td>促销专场直播间</td>
+              <td>阿强</td>
+              <td>5</td>
+              <td>4,230</td>
+              <td><span class="status-tag status-expired">已过期</span></td>
+              <td>2026-05-05 09:15</td>
+              <td>
+                <button class="btn btn-text" onclick="goPreviewPage()">查看</button>
+                <button class="btn btn-text" onclick="goWritePage()">编辑</button>
+                <button class="btn btn-text" onclick="confirmScript(this)">设为正式稿</button>
+                <button class="btn btn-text" onclick="copyLink()">复制链接</button>
+                <button class="btn btn-text danger" onclick="deleteScript(this)">删除</button>
+              </td>
+            </tr>
+            <tr>
+              <td>ZBG20260504004</td>
+              <td>2026年第15期直播</td>
+              <td>新品发布直播间</td>
+              <td>小美</td>
+              <td>2</td>
+              <td>1,980</td>
+              <td><span class="status-tag status-confirmed">已确认</span></td>
+              <td>2026-05-04 16:45</td>
+              <td>
+                <button class="btn btn-text" onclick="goPreviewPage()">查看</button>
+                <button class="btn btn-text" onclick="goWritePage()">编辑</button>
+                <button class="btn btn-text" onclick="confirmScript(this)">设为正式稿</button>
+                <button class="btn btn-text" onclick="copyLink()">复制链接</button>
+                <button class="btn btn-text danger" onclick="deleteScript(this)">删除</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="pagination">
+          <span class="pagination-info">共 4 条</span>
+          <button>&lt;</button>
+          <button class="active">1</button>
+          <button>&gt;</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 页面2：撰写直播稿 -->
+    <div class="page" id="page-write">
+      <div class="card">
+        <div class="card-title">基础信息</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>直播场次 <span class="required">*</span></label>
+            <select id="write-session" onchange="onSessionChange()">
+              <option value="">请选择直播场次</option>
+              <option value="s1">2026年第18期直播</option>
+              <option value="s2">2026年第17期直播</option>
+              <option value="s3">2026年第16期直播</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>直播间</label>
+            <input type="text" id="write-room" class="readonly" readonly placeholder="选择场次后自动带出">
+          </div>
+          <div class="form-group">
+            <label>主播</label>
+            <input type="text" id="write-anchor" class="readonly" readonly placeholder="选择场次后自动带出">
+          </div>
+          <div class="form-group">
+            <label>主播特性</label>
+            <div id="write-traits" class="tag-list" style="padding-top:6px;">
+              <span style="color:#ccc;font-size:13px;">选择场次后自动带出</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">商品选择</div>
+        <div class="product-list" id="product-list">
+          <div style="color:#ccc;font-size:13px;text-align:center;padding:20px;">请先选择直播场次</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">生成配置</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>直播主题 <span class="required">*</span></label>
+            <input type="text" id="write-theme" placeholder="请输入直播主题">
+          </div>
+          <div class="form-group">
+            <label>目标用户</label>
+            <select id="write-target">
+              <option value="new">新客</option>
+              <option value="old">老客</option>
+              <option value="agent">代理</option>
+              <option value="store">门店客户</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>直播目标</label>
+            <select id="write-goal">
+              <option value="convert">成交转化</option>
+              <option value="group">引导加群</option>
+              <option value="explain">活动讲解</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>话术风格</label>
+            <select id="write-style">
+              <option value="pro">专业</option>
+              <option value="warm">亲切</option>
+              <option value="promo">促销</option>
+              <option value="story">故事化</option>
+            </select>
+          </div>
+          <div class="form-group full">
+            <label>生成要求</label>
+            <textarea id="write-require" placeholder="请输入补充要求，如：重点突出价格优势、更口语化一点..."></textarea>
+          </div>
+          <div class="form-group">
+            <label>字数要求</label>
+            <input type="number" id="write-wordcount" value="3000" min="500" max="10000">
+          </div>
+        </div>
+        <div class="generate-footer">
+          <div class="remain-count">本月剩余生成次数：<strong>87</strong>/100</div>
+          <button class="btn btn-primary btn-lg" onclick="doGenerate()">🤖 AI生成</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 页面3：直播稿预览 -->
+    <div class="page" id="page-preview">
+      <div class="preview-layout">
+        <div class="preview-content">
+          <div class="card">
+            <h2 style="font-size:18px;margin-bottom:4px;" id="preview-title">2026年第18期直播 - 品牌旗舰专场</h2>
+            <p style="font-size:13px;color:#999;margin-bottom:20px;">创建时间：2026-05-07 10:30</p>
+
+            <div class="script-section">
+              <div class="script-section-title">🎙️ 开场话术</div>
+              <p>各位家人们，大家下午好！欢迎来到我们的品牌旗舰直播间，我是你们的主播小美！今天呢，我们为大家准备了一场超级划算的品牌专场直播，不仅有超多爆款商品，还有限时秒杀和满减优惠，绝对让你们买到手软！大家记得先点个关注，别错过任何一个福利哦！</p>
+            </div>
+
+            <div class="script-section">
+              <div class="script-section-title">🏢 品牌介绍</div>
+              <p>我们这个品牌呢，已经有15年的历史了，一直专注于家居清洁领域。我们的产品采用的是德国进口原料，通过了国际SGS认证，品质绝对有保障。很多老客户用了都说好，回购率高达85%以上。今天直播间里的每一款产品，都是我们精挑细选的王牌爆款。</p>
+            </div>
+
+            <div class="script-section">
+              <div class="script-section-title">🛍️ 商品讲解</div>
+
+              <div class="product-block">
+                <div class="product-label">📦 商品1：多功能清洁喷雾</div>
+                <p>首先给大家介绍的是我们的明星产品——多功能清洁喷雾！这款喷雾真的是家家户户都需要的神器。厨房油污、浴室水垢、客厅灰尘，一喷一擦就干净了，完全不需要二次清洗。它采用的是植物提取配方，不伤手、不伤表面，家里有宝宝和宠物的也可以放心使用。日常价89元一瓶，今天直播间只要39.9元！而且还买二送一，三瓶只要79.8元！这个价格真的只有今天才有，大家赶紧拍！</p>
+              </div>
+
+              <div class="product-block">
+                <div class="product-label">📦 商品2：纳米海绵擦</div>
+                <p>接下来是这款纳米海绵擦，真的是我个人的最爱！它只需要沾水就能去污，完全不需要任何清洁剂。不管是锅底的黑垢、墙面的涂鸦、还是鞋面的污渍，轻轻一擦就掉了。一包里面有10片，可以用很久。原价49元，今天直播间价19.9元一包，买三包再减10元！</p>
+              </div>
+
+              <div class="product-block">
+                <div class="product-label">📦 商品3：衣物除菌液</div>
+                <p>第三个给大家推荐的是衣物除菌液，特别适合现在这个季节使用。它能99.9%杀灭细菌和螨虫，洗衣服的时候加一瓶盖进去，全家的衣物都能安心穿。味道是淡淡的薰衣草香，非常好闻。日常价68元，今天只要35元，买两瓶再送一瓶旅行装！</p>
+              </div>
+
+              <div class="product-block">
+                <div class="product-label">📦 商品4：玻璃清洁刮</div>
+                <p>最后一个是一款玻璃清洁刮，这个真的是懒人必备！它的刮头是硅胶材质的，不会刮花玻璃表面。窗户、镜子、淋浴房，刮一下就干干净净，不留水痕。手柄可以旋转，高处也能轻松够到。原价59元，今天直播间专享价29.9元！</p>
+              </div>
+            </div>
+
+            <div class="script-section">
+              <div class="script-section-title">🎁 优惠活动介绍</div>
+              <p>家人们，除了单品优惠之外，我们今天还有三大福利活动！第一，全场满199减30，满299减60！第二，前100名下单的家人们额外赠送价值29元的清洁布套装！第三，分享直播间给3位好友，截图发到评论区，就能参与抽奖，有机会获得免单名额！这些福利都是限时限量的，大家抓紧时间！</p>
+            </div>
+
+            <div class="script-section">
+              <div class="script-section-title">💬 互动引导</div>
+              <p>来，家人们，想要哪款商品就在评论区扣它的编号！扣1是清洁喷雾，扣2是纳米海绵擦，扣3是除菌液，扣4是玻璃刮。我看到很多家人都在扣1，看来清洁喷雾是最受欢迎的！还没扣的家人们赶紧扣起来，让我看到你们的需求！另外，有什么问题也可以直接在评论区问我，我一一给大家解答。</p>
+            </div>
+
+            <div class="script-section">
+              <div class="script-section-title">💰 成交转化话术</div>
+              <p>家人们，我再强调一下，今天直播间的价格真的是全网最低，比双十一还便宜！而且我们承诺7天无理由退货，还有运费险，完全不用担心。你买回去用了不满意，随时可以退！但是这个价格只有今天直播期间有效，下了直播就恢复原价了。所以还在犹豫的家人们，真的不要再等了，现在下单就是最划算的！</p>
+            </div>
+
+            <div class="script-section">
+              <div class="script-section-title">👋 结尾话术</div>
+              <p>好的家人们，今天的直播就到这里啦！感谢每一位陪伴我们的家人，你们的支持是我们最大的动力！没有抢到的家人们也不要遗憾，记得点个关注，下次直播我们会带来更多好物和福利！已经下单的家人们，我们会在48小时内发货，请耐心等待哦。最后，大家记得加入我们的粉丝群，群内不定期有专属优惠和抽奖活动！我们下次直播再见，拜拜！</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="preview-panel">
+          <div class="panel-card">
+            <div class="panel-label">当前状态</div>
+            <div class="panel-value"><span class="status-tag status-draft" id="preview-status">草稿</span></div>
+          </div>
+          <div class="panel-card">
+            <div class="panel-label">字数统计</div>
+            <div class="panel-value" id="preview-wordcount">2,856字</div>
+          </div>
+          <div class="panel-card">
+            <div class="panel-label">版本</div>
+            <div class="panel-value" id="preview-version">第1版</div>
+          </div>
+          <div class="panel-card">
+            <div class="panel-label">预计时长</div>
+            <div class="panel-value">45分钟</div>
+          </div>
+          <div class="panel-card">
+            <div class="panel-actions">
+              <button class="btn btn-success" onclick="confirmUseScript()">✅ 确认使用</button>
+              <button class="btn btn-primary" onclick="toggleOptimize()">🔄 继续优化</button>
+              <button class="btn btn-default" onclick="enterTeleprompter()">📺 提词器模式</button>
+              <button class="btn btn-text" onclick="goWritePage()" style="text-align:center;">← 返回编辑</button>
+            </div>
+          </div>
+
+          <div class="panel-card optimize-area" id="optimize-area">
+            <div class="card-title" style="margin-bottom:12px;">对话式优化</div>
+            <div class="chat-box" id="chat-box">
+              <div class="chat-msg ai">
+                <div class="chat-avatar">AI</div>
+                <div class="chat-bubble">当前直播稿已生成完毕，包含4个商品讲解段落，共2,856字。您可以告诉我需要优化的方向，我会为您重新调整。</div>
+              </div>
+            </div>
+            <div class="quick-tags">
+              <span class="quick-tag" onclick="sendQuickOpt('更口语化')">更口语化</span>
+              <span class="quick-tag" onclick="sendQuickOpt('缩短时长')">缩短时长</span>
+              <span class="quick-tag" onclick="sendQuickOpt('强化卖点')">强化卖点</span>
+              <span class="quick-tag" onclick="sendQuickOpt('增加互动')">增加互动</span>
+              <span class="quick-tag" onclick="sendQuickOpt('合规优化')">合规优化</span>
+            </div>
+            <div class="chat-input-row">
+              <input type="text" id="chat-input" placeholder="输入优化要求..." onkeydown="if(event.key==='Enter')sendOptMsg()">
+              <button class="btn btn-primary" onclick="sendOptMsg()">发送</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 空白占位页面 -->
+    <div class="page" id="page-empty">
+      <div class="empty-page"><div class="empty-icon">🤖</div><div class="empty-text">商品AI能力 - 开发中</div></div>
+    </div>
+    <div class="page" id="page-empty2">
+      <div class="empty-page"><div class="empty-icon">⚙️</div><div class="empty-text">应用控制管理 - 开发中</div></div>
+    </div>
+    <div class="page" id="page-empty3">
+      <div class="empty-page"><div class="empty-icon">🛒</div><div class="empty-text">服务购买 - 开发中</div></div>
+    </div>
+    <div class="page" id="page-empty4">
+      <div class="empty-page"><div class="empty-icon">📒</div><div class="empty-text">通讯录管理 - 开发中</div></div>
+    </div>
+    <div class="page" id="page-empty5">
+      <div class="empty-page"><div class="empty-icon">💬</div><div class="empty-text">群聊管理 - 开发中</div></div>
+    </div>
+    <div class="page" id="page-empty6">
+      <div class="empty-page"><div class="empty-icon">📊</div><div class="empty-text">数据统计 - 开发中</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- 提词器模式 -->
+<div class="teleprompter" id="teleprompter">
+  <div class="teleprompter-toolbar">
+    <div class="tool-group">
+      <button class="tool-btn back-btn" onclick="exitTeleprompter()">← 返回</button>
+      <span style="color:rgba(255,255,255,.7);font-size:13px;margin-left:8px;">提词器模式</span>
+    </div>
+    <div class="tool-group">
+      <span style="color:rgba(255,255,255,.6);font-size:12px;">字号</span>
+      <button class="tool-btn" onclick="setFontSize('small', this)">小</button>
+      <button class="tool-btn active" onclick="setFontSize('medium', this)">中</button>
+      <button class="tool-btn" onclick="setFontSize('large', this)">大</button>
+      <span style="color:rgba(255,255,255,.3);margin:0 4px;">|</span>
+      <button class="tool-btn" onclick="toggleTeleBg(this)">🌙 切换背景</button>
+      <button class="tool-btn" onclick="goFullscreen()">⛶ 全屏</button>
+    </div>
+  </div>
+  <div class="teleprompter-body font-medium" id="teleprompter-body">
+    <div class="teleprompter-section">
+      <div class="teleprompter-section-title">🎙️ 开场话术</div>
+      <p>各位家人们，大家下午好！欢迎来到我们的品牌旗舰直播间，我是你们的主播小美！今天呢，我们为大家准备了一场超级划算的品牌专场直播，不仅有超多爆款商品，还有限时秒杀和满减优惠，绝对让你们买到手软！大家记得先点个关注，别错过任何一个福利哦！</p>
+    </div>
+    <div class="teleprompter-section">
+      <div class="teleprompter-section-title">🏢 品牌介绍</div>
+      <p>我们这个品牌呢，已经有15年的历史了，一直专注于家居清洁领域。我们的产品采用的是德国进口原料，通过了国际SGS认证，品质绝对有保障。很多老客户用了都说好，回购率高达85%以上。今天直播间里的每一款产品，都是我们精挑细选的王牌爆款。</p>
+    </div>
+    <div class="teleprompter-section">
+      <div class="teleprompter-section-title">🛍️ 商品讲解</div>
+      <div class="teleprompter-product">
+        <div class="teleprompter-product-label">📦 商品1：多功能清洁喷雾</div>
+        <p>首先给大家介绍的是我们的明星产品——多功能清洁喷雾！这款喷雾真的是家家户户都需要的神器。厨房油污、浴室水垢、客厅灰尘，一喷一擦就干净了，完全不需要二次清洗。它采用的是植物提取配方，不伤手、不伤表面，家里有宝宝和宠物的也可以放心使用。日常价89元一瓶，今天直播间只要39.9元！而且还买二送一，三瓶只要79.8元！这个价格真的只有今天才有，大家赶紧拍！</p>
+      </div>
+      <div class="teleprompter-product">
+        <div class="teleprompter-product-label">📦 商品2：纳米海绵擦</div>
+        <p>接下来是这款纳米海绵擦，真的是我个人的最爱！它只需要沾水就能去污，完全不需要任何清洁剂。不管是锅底的黑垢、墙面的涂鸦、还是鞋面的污渍，轻轻一擦就掉了。一包里面有10片，可以用很久。原价49元，今天直播间价19.9元一包，买三包再减10元！</p>
+      </div>
+      <div class="teleprompter-product">
+        <div class="teleprompter-product-label">📦 商品3：衣物除菌液</div>
+        <p>第三个给大家推荐的是衣物除菌液，特别适合现在这个季节使用。它能99.9%杀灭细菌和螨虫，洗衣服的时候加一瓶盖进去，全家的衣物都能安心穿。味道是淡淡的薰衣草香，非常好闻。日常价68元，今天只要35元，买两瓶再送一瓶旅行装！</p>
+      </div>
+      <div class="teleprompter-product">
+        <div class="teleprompter-product-label">📦 商品4：玻璃清洁刮</div>
+        <p>最后一个是一款玻璃清洁刮，这个真的是懒人必备！它的刮头是硅胶材质的，不会刮花玻璃表面。窗户、镜子、淋浴房，刮一下就干干净净，不留水痕。手柄可以旋转，高处也能轻松够到。原价59元，今天直播间专享价29.9元！</p>
+      </div>
+    </div>
+    <div class="teleprompter-section">
+      <div class="teleprompter-section-title">🎁 优惠活动介绍</div>
+      <p>家人们，除了单品优惠之外，我们今天还有三大福利活动！第一，全场满199减30，满299减60！第二，前100名下单的家人们额外赠送价值29元的清洁布套装！第三，分享直播间给3位好友，截图发到评论区，就能参与抽奖，有机会获得免单名额！这些福利都是限时限量的，大家抓紧时间！</p>
+    </div>
+    <div class="teleprompter-section">
+      <div class="teleprompter-section-title">💬 互动引导</div>
+      <p>来，家人们，想要哪款商品就在评论区扣它的编号！扣1是清洁喷雾，扣2是纳米海绵擦，扣3是除菌液，扣4是玻璃刮。我看到很多家人都在扣1，看来清洁喷雾是最受欢迎的！还没扣的家人们赶紧扣起来，让我看到你们的需求！另外，有什么问题也可以直接在评论区问我，我一一给大家解答。</p>
+    </div>
+    <div class="teleprompter-section">
+      <div class="teleprompter-section-title">💰 成交转化话术</div>
+      <p>家人们，我再强调一下，今天直播间的价格真的是全网最低，比双十一还便宜！而且我们承诺7天无理由退货，还有运费险，完全不用担心。你买回去用了不满意，随时可以退！但是这个价格只有今天直播期间有效，下了直播就恢复原价了。所以还在犹豫的家人们，真的不要再等了，现在下单就是最划算的！</p>
+    </div>
+    <div class="teleprompter-section">
+      <div class="teleprompter-section-title">👋 结尾话术</div>
+      <p>好的家人们，今天的直播就到这里啦！感谢每一位陪伴我们的家人，你们的支持是我们最大的动力！没有抢到的家人们也不要遗憾，记得点个关注，下次直播我们会带来更多好物和福利！已经下单的家人们，我们会在48小时内发货，请耐心等待哦。最后，大家记得加入我们的粉丝群，群内不定期有专属优惠和抽奖活动！我们下次直播再见，拜拜！</p>
+    </div>
+  </div>
+  <div class="teleprompter-footer">
+    <span id="tele-title">2026年第18期直播 - 品牌旗舰专场</span>
+    <span>|</span>
+    <span id="tele-version">第1版</span>
+    <span>|</span>
+    <span>预计时长：45分钟</span>
+  </div>
+</div>
+
+<!-- 加载动画 -->
+<div class="loading-overlay" id="loading-overlay">
+  <div class="spinner"></div>
+  <div class="loading-text">AI正在生成直播稿，请稍候...</div>
+</div>
+
+<!-- 通用弹窗 -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal" id="modal-content"></div>
+</div>
+
+<!-- 复制成功提示 -->
+<div class="link-copied-toast" id="toast">链接已复制到剪贴板</div>
+
+<script>
+var currentPage = 'page-list';
+var scriptVersion = 1;
+var scriptConfirmed = false;
+
+var sessionData = {
+  s1: { room: '品牌旗舰直播间', anchor: '小美', traits: ['亲和力强', '家居达人', '话术亲切自然'], products: [
+    { name: '多功能清洁喷雾', price: '¥39.9', icon: '🧴' },
+    { name: '纳米海绵擦', price: '¥19.9', icon: '🧽' },
+    { name: '衣物除菌液', price: '¥35.0', icon: '🧴' },
+    { name: '玻璃清洁刮', price: '¥29.9', icon: '🪟' }
+  ]},
+  s2: { room: '品牌旗舰直播间', anchor: '小美', traits: ['亲和力强', '美妆达人', '话术专业'], products: [
+    { name: '精华液套装', price: '¥199.0', icon: '💧' },
+    { name: '面膜礼盒', price: '¥89.0', icon: '🧖' },
+    { name: '防晒霜', price: '¥69.0', icon: '☀️' }
+  ]},
+  s3: { room: '促销专场直播间', anchor: '阿强', traits: ['激情四射', '促销达人', '话术节奏快'], products: [
+    { name: '智能音箱', price: '¥299.0', icon: '🔊' },
+    { name: '蓝牙耳机', price: '¥159.0', icon: '🎧' },
+    { name: '充电宝', price: '¥79.0', icon: '🔋' },
+    { name: '数据线套装', price: '¥29.9', icon: '🔌' },
+    { name: '手机支架', price: '¥19.9', icon: '📱' }
+  ]}
+};
+
+var breadcrumbMap = {
+  'page-list': '直播 / <span>直播稿管理</span>',
+  'page-write': '直播 / <span>撰写直播稿</span>',
+  'page-preview': '直播 / <span>直播稿预览</span>',
+  'page-empty': '商品AI能力',
+  'page-empty2': '应用控制管理',
+  'page-empty3': '服务购买',
+  'page-empty4': '通讯录管理',
+  'page-empty5': '群聊管理',
+  'page-empty6': '数据统计'
+};
+
+function switchPage(pageId, menuItem) {
+  var pages = document.querySelectorAll('.page');
+  for (var i = 0; i < pages.length; i++) { pages[i].classList.remove('active'); }
+  var target = document.getElementById(pageId);
+  if (target) target.classList.add('active');
+
+  var items = document.querySelectorAll('.sidebar-menu-item');
+  for (var i = 0; i < items.length; i++) { items[i].classList.remove('active'); }
+  if (menuItem) menuItem.classList.add('active');
+
+  currentPage = pageId;
+  if (breadcrumbMap[pageId]) {
+    document.getElementById('breadcrumb').innerHTML = breadcrumbMap[pageId];
+  }
+}
+
+function goWritePage() {
+  var items = document.querySelectorAll('.sidebar-menu-item');
+  switchPage('page-write', items[1]);
+}
+
+function goPreviewPage() {
+  var items = document.querySelectorAll('.sidebar-menu-item');
+  switchPage('page-preview', items[2]);
+}
+
+function onSessionChange() {
+  var val = document.getElementById('write-session').value;
+  if (!val) {
+    document.getElementById('write-room').value = '';
+    document.getElementById('write-anchor').value = '';
+    document.getElementById('write-traits').innerHTML = '<span style="color:#ccc;font-size:13px;">选择场次后自动带出</span>';
+    document.getElementById('product-list').innerHTML = '<div style="color:#ccc;font-size:13px;text-align:center;padding:20px;">请先选择直播场次</div>';
+    return;
+  }
+  var data = sessionData[val];
+  document.getElementById('write-room').value = data.room;
+  document.getElementById('write-anchor').value = data.anchor;
+
+  var traitsHtml = '';
+  var traitClasses = ['', 'orange', 'green'];
+  for (var i = 0; i < data.traits.length; i++) {
+    traitsHtml += '<span class="tag ' + traitClasses[i % 3] + '">' + data.traits[i] + '</span>';
+  }
+  document.getElementById('write-traits').innerHTML = traitsHtml;
+
+  var productsHtml = '';
+  for (var i = 0; i < data.products.length; i++) {
+    var p = data.products[i];
+    productsHtml += '<label class="product-item" onclick="toggleProduct(this)">' +
+      '<input type="checkbox" name="product-check">' +
+      '<div class="product-img">' + p.icon + '</div>' +
+      '<div class="product-info"><div class="product-name">' + p.name + '</div><div class="product-price">' + p.price + '</div></div>' +
+      '</label>';
+  }
+  document.getElementById('product-list').innerHTML = productsHtml;
+}
+
+function toggleProduct(el) {
+  var cb = el.querySelector('input[type="checkbox"]');
+  if (event.target !== cb) { cb.checked = !cb.checked; }
+  if (cb.checked) { el.classList.add('selected'); } else { el.classList.remove('selected'); }
+}
+
+function doGenerate() {
+  var session = document.getElementById('write-session').value;
+  if (!session) { showModal('提示', '请先选择直播场次', null); return; }
+  var theme = document.getElementById('write-theme').value;
+  if (!theme) { showModal('提示', '请输入直播主题', null); return; }
+
+  var checked = document.querySelectorAll('#product-list input[type="checkbox"]:checked');
+  if (checked.length === 0) { showModal('提示', '请至少选择一个商品', null); return; }
+
+  document.getElementById('loading-overlay').classList.add('show');
+  setTimeout(function() {
+    document.getElementById('loading-overlay').classList.remove('show');
+    scriptVersion = 1;
+    scriptConfirmed = false;
+    document.getElementById('preview-version').textContent = '第1版';
+    document.getElementById('preview-status').className = 'status-tag status-draft';
+    document.getElementById('preview-status').textContent = '草稿';
+    goPreviewPage();
+  }, 3000);
+}
+
+function toggleOptimize() {
+  var area = document.getElementById('optimize-area');
+  area.classList.toggle('show');
+}
+
+function sendQuickOpt(text) {
+  document.getElementById('chat-input').value = text;
+  sendOptMsg();
+}
+
+function sendOptMsg() {
+  var input = document.getElementById('chat-input');
+  var text = input.value.trim();
+  if (!text) return;
+
+  var chatBox = document.getElementById('chat-box');
+  var userMsg = document.createElement('div');
+  userMsg.className = 'chat-msg user';
+  userMsg.innerHTML = '<div class="chat-avatar">我</div><div class="chat-bubble">' + escapeHtml(text) + '</div>';
+  chatBox.appendChild(userMsg);
+  input.value = '';
+
+  setTimeout(function() {
+    var aiMsg = document.createElement('div');
+    aiMsg.className = 'chat-msg ai';
+    aiMsg.innerHTML = '<div class="chat-avatar">AI</div><div class="chat-bubble">已根据您的要求重新优化直播稿，主要调整了「' + escapeHtml(text) + '」相关内容。版本已更新为第' + (scriptVersion + 1) + '版，请查看。</div>';
+    chatBox.appendChild(aiMsg);
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+    scriptVersion++;
+    document.getElementById('preview-version').textContent = '第' + scriptVersion + '版';
+    var teleVersion = document.getElementById('tele-version');
+    if (teleVersion) teleVersion.textContent = '第' + scriptVersion + '版';
+  }, 1000);
+
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+function escapeHtml(str) {
+  var div = document.createElement('div');
+  div.appendChild(document.createTextNode(str));
+  return div.innerHTML;
+}
+
+function confirmUseScript() {
+  showModal(
+    '确认使用',
+    '确认将此直播稿设为正式稿？确认后状态将变为"已确认"，并生成分享链接。',
+    function() {
+      scriptConfirmed = true;
+      document.getElementById('preview-status').className = 'status-tag status-confirmed';
+      document.getElementById('preview-status').textContent = '已确认';
+      closeModal();
+      setTimeout(function() {
+        showModal('操作成功', '直播稿已确认为正式稿！<br><br>分享链接：<br><input style="width:100%;padding:6px 10px;border:1px solid #DCDFE6;border-radius:4px;font-size:12px;color:#4F6EF7;margin-top:6px;" value="https://live.example.com/script/ZBG20260507001" readonly onclick="this.select()">', null);
+      }, 300);
+    }
+  );
+}
+
+function confirmScript(btn) {
+  var row = btn.closest('tr');
+  var statusCell = row.querySelector('.status-tag');
+  showModal('确认', '确定要将此直播稿设为正式稿吗？', function() {
+    statusCell.className = 'status-tag status-confirmed';
+    statusCell.textContent = '已确认';
+    closeModal();
+  });
+}
+
+function copyLink() {
+  var toast = document.getElementById('toast');
+  toast.classList.add('show');
+  setTimeout(function() { toast.classList.remove('show'); }, 2000);
+}
+
+function deleteScript(btn) {
+  showModal('确认删除', '确定要删除此直播稿吗？删除后不可恢复。', function() {
+    var row = btn.closest('tr');
+    row.style.transition = 'opacity .3s';
+    row.style.opacity = '0';
+    setTimeout(function() { row.remove(); }, 300);
+    closeModal();
+  });
+}
+
+function doFilter() {
+  showModal('筛选', '已按筛选条件过滤数据', null);
+}
+
+function resetFilter() {
+  document.getElementById('filter-session').value = '';
+  document.getElementById('filter-anchor').value = '';
+  document.getElementById('filter-date-start').value = '';
+  document.getElementById('filter-date-end').value = '';
+  document.getElementById('filter-status').value = '';
+}
+
+function enterTeleprompter() {
+  document.getElementById('teleprompter').classList.add('active');
+  document.getElementById('tele-version').textContent = '第' + scriptVersion + '版';
+}
+
+function exitTeleprompter() {
+  document.getElementById('teleprompter').classList.remove('active');
+  if (document.fullscreenElement) { document.exitFullscreen(); }
+}
+
+function setFontSize(size, btn) {
+  var body = document.getElementById('teleprompter-body');
+  body.className = body.className.replace(/font-\w+/, '');
+  body.classList.add('font-' + size);
+  var btns = btn.parentElement.querySelectorAll('.tool-btn');
+  for (var i = 0; i < btns.length; i++) { btns[i].classList.remove('active'); }
+  btn.classList.add('active');
+}
+
+function toggleTeleBg(btn) {
+  var body = document.getElementById('teleprompter-body');
+  body.classList.toggle('light-mode');
+}
+
+function goFullscreen() {
+  var el = document.getElementById('teleprompter');
+  if (el.requestFullscreen) { el.requestFullscreen(); }
+  else if (el.webkitRequestFullscreen) { el.webkitRequestFullscreen(); }
+}
+
+function showModal(title, bodyHtml, onConfirm) {
+  var html = '<div class="modal-title">' + title + '</div><div class="modal-body">' + bodyHtml + '</div>';
+  if (onConfirm) {
+    html += '<div class="modal-actions"><button class="btn btn-default" onclick="closeModal()">取消</button><button class="btn btn-primary" id="modal-confirm-btn">确认</button></div>';
+  } else {
+    html += '<div class="modal-actions"><button class="btn btn-primary" onclick="closeModal()">知道了</button></div>';
+  }
+  document.getElementById('modal-content').innerHTML = html;
+  document.getElementById('modal-overlay').classList.add('show');
+
+  if (onConfirm) {
+    document.getElementById('modal-confirm-btn').onclick = onConfirm;
+  }
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('show');
+}
+
+document.getElementById('modal-overlay').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    var tele = document.getElementById('teleprompter');
+    if (tele.classList.contains('active')) { exitTeleprompter(); return; }
+    closeModal();
+  }
+});
+</script>
+</body>
+</html>

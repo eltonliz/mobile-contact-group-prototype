@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI应用控制管理</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:#F5F7FA;color:#333;font-size:14px;display:flex;min-height:100vh}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-thumb{background:#c1c1c1;border-radius:3px}
+::-webkit-scrollbar-track{background:transparent}
+
+.sidebar{width:220px;background:#001529;color:#fff;flex-shrink:0;display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100}
+.sidebar-logo{height:60px;display:flex;align-items:center;padding:0 20px;border-bottom:1px solid rgba(255,255,255,.1);font-size:16px;font-weight:600;white-space:nowrap}
+.sidebar-logo .logo-icon{width:32px;height:32px;background:linear-gradient(135deg,#4F6EF7,#7B93FA);border-radius:8px;display:flex;align-items:center;justify-content:center;margin-right:10px;font-size:14px;font-weight:700;flex-shrink:0}
+.sidebar-nav{flex:1;padding:8px 0;overflow-y:auto}
+.nav-item{display:flex;align-items:center;padding:12px 20px;cursor:pointer;transition:all .2s;color:rgba(255,255,255,.65);font-size:14px;position:relative;margin:2px 8px;border-radius:6px}
+.nav-item:hover{color:#fff;background:rgba(255,255,255,.08)}
+.nav-item.active{color:#fff;background:#4F6EF7}
+.nav-item .nav-icon{width:20px;margin-right:10px;text-align:center;font-size:16px;flex-shrink:0}
+.nav-item .nav-arrow{margin-left:auto;font-size:12px;transition:transform .2s}
+
+.main-wrap{margin-left:220px;flex:1;display:flex;flex-direction:column;min-height:100vh}
+.topbar{height:60px;background:#fff;border-bottom:1px solid #e8e8e8;display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:sticky;top:0;z-index:50}
+.topbar-left{display:flex;align-items:center;gap:8px;font-size:13px;color:#999}
+.topbar-left span{color:#333}
+.topbar-right{display:flex;align-items:center;gap:16px}
+.topbar-right .avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#4F6EF7,#7B93FA);display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:600}
+
+.content{flex:1;padding:24px}
+
+.page{display:none}
+.page.active{display:block}
+
+.breadcrumb{font-size:13px;color:#999;margin-bottom:16px}
+.breadcrumb span{color:#333}
+.page-title{font-size:20px;font-weight:600;color:#1a1a1a;margin-bottom:20px}
+
+.filter-bar{background:#fff;border-radius:8px;padding:20px;margin-bottom:16px;display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px}
+.filter-item{display:flex;flex-direction:column;gap:6px}
+.filter-item label{font-size:12px;color:#999}
+.filter-item input,.filter-item select{height:36px;border:1px solid #d9d9d9;border-radius:6px;padding:0 12px;font-size:13px;outline:none;transition:border-color .2s;min-width:160px}
+.filter-item input:focus,.filter-item select:focus{border-color:#4F6EF7}
+.btn{height:36px;padding:0 16px;border-radius:6px;border:none;cursor:pointer;font-size:13px;display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:all .2s;white-space:nowrap}
+.btn-primary{background:#4F6EF7;color:#fff}
+.btn-primary:hover{background:#3d5bd6}
+.btn-default{background:#fff;color:#333;border:1px solid #d9d9d9}
+.btn-default:hover{border-color:#4F6EF7;color:#4F6EF7}
+.btn-danger{background:#FF6B6B;color:#fff}
+.btn-danger:hover{background:#e55555}
+.btn-success{background:#52C41A;color:#fff}
+.btn-success:hover{background:#3da614}
+.btn-sm{height:28px;padding:0 10px;font-size:12px}
+.btn-link{background:none;border:none;color:#4F6EF7;cursor:pointer;padding:0 4px;font-size:13px}
+.btn-link:hover{text-decoration:underline}
+.btn-link.danger{color:#FF6B6B}
+
+.table-wrap{background:#fff;border-radius:8px;overflow:hidden}
+.table-toolbar{padding:16px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #f0f0f0}
+.table-toolbar .title{font-size:15px;font-weight:600}
+table{width:100%;border-collapse:collapse}
+thead{background:#fafafa}
+th{padding:12px 16px;text-align:left;font-size:13px;color:#666;font-weight:500;border-bottom:1px solid #f0f0f0;white-space:nowrap}
+td{padding:12px 16px;font-size:13px;border-bottom:1px solid #f0f0f0;white-space:nowrap}
+tr:hover td{background:#fafbff}
+.status-tag{display:inline-block;padding:2px 10px;border-radius:10px;font-size:12px}
+.status-published{background:#f6ffed;color:#52C41A;border:1px solid #b7eb8f}
+.status-unpublished{background:#fff7e6;color:#fa8c16;border:1px solid #ffd591}
+.status-enabled{background:#f6ffed;color:#52C41A;border:1px solid #b7eb8f}
+.status-disabled{background:#fff1f0;color:#FF6B6B;border:1px solid #ffa39e}
+.status-success{background:#f6ffed;color:#52C41A;border:1px solid #b7eb8f}
+.status-fail{background:#fff1f0;color:#FF6B6B;border:1px solid #ffa39e}
+
+.pagination{padding:16px 20px;display:flex;justify-content:flex-end;align-items:center;gap:8px}
+.pagination .page-btn{width:32px;height:32px;border:1px solid #d9d9d9;border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;background:#fff;transition:all .2s}
+.pagination .page-btn:hover{border-color:#4F6EF7;color:#4F6EF7}
+.pagination .page-btn.active{background:#4F6EF7;color:#fff;border-color:#4F6EF7}
+.pagination .page-info{font-size:13px;color:#999;margin-right:8px}
+
+.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.45);z-index:1000;display:none;align-items:center;justify-content:center}
+.modal-overlay.show{display:flex}
+.modal{background:#fff;border-radius:12px;width:600px;max-height:85vh;display:flex;flex-direction:column;animation:modalIn .25s}
+.modal.wide{width:720px}
+@keyframes modalIn{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+.modal-header{padding:20px 24px;border-bottom:1px solid #f0f0f0;display:flex;justify-content:space-between;align-items:center}
+.modal-header h3{font-size:16px;font-weight:600}
+.modal-close{width:28px;height:28px;border:none;background:none;cursor:pointer;font-size:18px;color:#999;border-radius:4px;display:flex;align-items:center;justify-content:center}
+.modal-close:hover{background:#f5f5f5;color:#333}
+.modal-body{padding:24px;overflow-y:auto;flex:1}
+.modal-footer{padding:16px 24px;border-top:1px solid #f0f0f0;display:flex;justify-content:flex-end;gap:10px}
+
+.form-group{margin-bottom:18px}
+.form-group label{display:block;font-size:13px;color:#333;margin-bottom:6px;font-weight:500}
+.form-group label .required{color:#FF6B6B;margin-left:2px}
+.form-group input,.form-group select,.form-group textarea{width:100%;height:36px;border:1px solid #d9d9d9;border-radius:6px;padding:0 12px;font-size:13px;outline:none;transition:border-color .2s}
+.form-group textarea{height:80px;padding:8px 12px;resize:vertical}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:#4F6EF7}
+.switch-wrap{display:flex;align-items:center;gap:8px}
+.switch{width:40px;height:22px;background:#ccc;border-radius:11px;position:relative;cursor:pointer;transition:background .2s}
+.switch.on{background:#4F6EF7}
+.switch::after{content:'';position:absolute;width:18px;height:18px;background:#fff;border-radius:50%;top:2px;left:2px;transition:left .2s}
+.switch.on::after{left:20px}
+.switch-text{font-size:13px;color:#666}
+
+.info-card{background:#fff;border-radius:8px;padding:20px;margin-bottom:16px;border-left:4px solid #4F6EF7}
+.info-card .info-title{font-size:14px;font-weight:600;margin-bottom:8px;color:#4F6EF7}
+.info-card .info-desc{font-size:13px;color:#666;line-height:1.8}
+
+.stat-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:16px}
+.stat-card{background:#fff;border-radius:8px;padding:20px;display:flex;flex-direction:column}
+.stat-card .stat-label{font-size:13px;color:#999;margin-bottom:8px}
+.stat-card .stat-value{font-size:28px;font-weight:700;color:#1a1a1a}
+.stat-card .stat-sub{font-size:12px;color:#999;margin-top:4px}
+.stat-card.highlight .stat-value{color:#4F6EF7}
+
+.banner{background:linear-gradient(135deg,#4F6EF7 0%,#7B93FA 50%,#A5B4FC 100%);border-radius:12px;padding:40px 36px;margin-bottom:24px;color:#fff;position:relative;overflow:hidden}
+.banner::after{content:'';position:absolute;right:-40px;top:-40px;width:200px;height:200px;background:rgba(255,255,255,.08);border-radius:50%}
+.banner::before{content:'';position:absolute;right:60px;bottom:-60px;width:160px;height:160px;background:rgba(255,255,255,.05);border-radius:50%}
+.banner h2{font-size:24px;font-weight:700;margin-bottom:8px}
+.banner p{font-size:14px;opacity:.85}
+
+.app-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.app-card{background:#fff;border-radius:12px;padding:24px;transition:all .3s;border:1px solid #f0f0f0;position:relative;overflow:hidden}
+.app-card:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(79,110,247,.15);border-color:#4F6EF7}
+.app-card .app-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff;margin-bottom:16px}
+.app-card .app-name{font-size:16px;font-weight:600;margin-bottom:6px}
+.app-card .app-desc{font-size:13px;color:#999;line-height:1.6;margin-bottom:16px;min-height:42px}
+.app-card .app-tags{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.app-card .tag{padding:2px 10px;border-radius:10px;font-size:12px;background:#f0f2ff;color:#4F6EF7;border:1px solid #d6dfff}
+.app-card .tag.pro{background:#fff7e6;color:#fa8c16;border-color:#ffd591}
+.app-card .app-price{font-size:20px;font-weight:700;color:#FF6B6B;margin-bottom:16px}
+.app-card .app-price span{font-size:13px;font-weight:400;color:#999}
+.app-card .app-actions{display:flex;gap:10px}
+.app-card .app-actions .btn{flex:1}
+
+.icon-live{background:linear-gradient(135deg,#FF6B6B,#ee5a24)}
+.icon-image{background:linear-gradient(135deg,#4F6EF7,#7B93FA)}
+.icon-video{background:linear-gradient(135deg,#52C41A,#73d13d)}
+.icon-desc{background:linear-gradient(135deg,#fa8c16,#ffc53d)}
+.icon-point{background:linear-gradient(135deg,#9254de,#b37feb)}
+
+.version-tabs{display:flex;border-bottom:2px solid #f0f0f0;margin-bottom:20px}
+.version-tab{padding:10px 24px;cursor:pointer;font-size:14px;color:#999;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .2s}
+.version-tab.active{color:#4F6EF7;border-bottom-color:#4F6EF7;font-weight:600}
+.compare-table{width:100%;border-collapse:collapse;margin-bottom:20px}
+.compare-table th,.compare-table td{padding:10px 16px;border:1px solid #f0f0f0;text-align:center;font-size:13px}
+.compare-table th{background:#fafafa;color:#666;font-weight:500}
+.compare-table td:first-child{text-align:left;color:#333;font-weight:500}
+.compare-table .check{color:#52C41A;font-weight:700}
+.compare-table .cross{color:#d9d9d9}
+
+.price-display{text-align:center;padding:16px 0;margin-bottom:16px}
+.price-display .price{font-size:32px;font-weight:700;color:#FF6B6B}
+.price-display .price span{font-size:14px;font-weight:400;color:#999}
+.price-display .period{font-size:13px;color:#999;margin-top:4px}
+
+.agreement{display:flex;align-items:center;gap:8px;margin-bottom:16px;font-size:13px;color:#666}
+.agreement input[type=checkbox]{accent-color:#4F6EF7}
+.agreement a{color:#4F6EF7;text-decoration:none}
+
+.trial-info{background:#f0f2ff;border-radius:8px;padding:16px;margin-bottom:20px}
+.trial-info .trial-row{display:flex;justify-content:space-between;padding:6px 0;font-size:13px}
+.trial-info .trial-row .label{color:#999}
+.trial-info .trial-row .value{color:#333;font-weight:500}
+
+.toast{position:fixed;top:24px;right:24px;z-index:2000;display:flex;flex-direction:column;gap:8px}
+.toast-item{padding:12px 20px;border-radius:8px;font-size:13px;color:#fff;animation:toastIn .3s;display:flex;align-items:center;gap:8px;box-shadow:0 4px 12px rgba(0,0,0,.15)}
+.toast-item.success{background:#52C41A}
+.toast-item.error{background:#FF6B6B}
+.toast-item.info{background:#4F6EF7}
+@keyframes toastIn{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
+
+.search-select{position:relative}
+.search-select input{width:100%}
+.search-select .dropdown{position:absolute;top:100%;left:0;right:0;background:#fff;border:1px solid #d9d9d9;border-radius:6px;max-height:200px;overflow-y:auto;z-index:10;display:none;box-shadow:0 4px 12px rgba(0,0,0,.1)}
+.search-select .dropdown.show{display:block}
+.search-select .dropdown .option{padding:8px 12px;cursor:pointer;font-size:13px;transition:background .15s}
+.search-select .dropdown .option:hover{background:#f0f2ff;color:#4F6EF7}
+
+.detail-modal .detail-row{display:flex;padding:10px 0;border-bottom:1px solid #f5f5f5}
+.detail-modal .detail-label{width:120px;color:#999;font-size:13px;flex-shrink:0}
+.detail-modal .detail-value{font-size:13px;color:#333;flex:1}
+
+.empty-state{text-align:center;padding:60px 20px;color:#999}
+.empty-state .empty-icon{font-size:48px;margin-bottom:16px;opacity:.3}
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">AI</div>
+    <span>AI运营管理平台</span>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-item active" data-page="app-manage" onclick="switchPage('app-manage')">
+      <span class="nav-icon">📦</span>应用管理
+    </div>
+    <div class="nav-item" data-page="ai-control" onclick="switchPage('ai-control')">
+      <span class="nav-icon">🎛️</span>AI应用控制管理
+    </div>
+    <div class="nav-item" data-page="service-buy" onclick="switchPage('service-buy')">
+      <span class="nav-icon">🛒</span>服务购买页
+    </div>
+    <div class="nav-item" data-page="usage-record" onclick="switchPage('usage-record')">
+      <span class="nav-icon">📊</span>使用记录
+    </div>
+    <div class="nav-item" onclick="showToast('已返回主页','info')">
+      <span class="nav-icon">🏠</span>返回主页
+    </div>
+  </div>
+</div>
+
+<div class="main-wrap">
+  <div class="topbar">
+    <div class="topbar-left">
+      租户：<span>杭州XX科技有限公司</span>
+      <span style="margin:0 8px;color:#e8e8e8">|</span>
+      角色：<span>管理员</span>
+    </div>
+    <div class="topbar-right">
+      <span style="font-size:13px;color:#666">Admin</span>
+      <div class="avatar">A</div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- 页面1：应用管理 -->
+    <div class="page active" id="page-app-manage">
+      <div class="breadcrumb">产品 / <span>应用管理</span></div>
+      <div class="page-title">应用管理</div>
+      <div class="filter-bar">
+        <div class="filter-item">
+          <label>应用编号</label>
+          <input type="text" id="filter-app-code" placeholder="请输入应用编号">
+        </div>
+        <div class="filter-item">
+          <label>状态</label>
+          <select id="filter-app-status">
+            <option value="">全部</option>
+            <option value="已发布">已发布</option>
+            <option value="待发布">待发布</option>
+          </select>
+        </div>
+        <div class="filter-item" style="flex-direction:row;align-items:flex-end;gap:8px">
+          <button class="btn btn-primary" onclick="filterApps()">查询</button>
+          <button class="btn btn-default" onclick="resetAppFilter()">重置</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <div class="table-toolbar">
+          <div class="title">应用列表</div>
+          <button class="btn btn-primary" onclick="showNewAppModal()">+ 新建应用</button>
+        </div>
+        <div style="overflow-x:auto">
+          <table>
+            <thead>
+              <tr>
+                <th>应用编号</th>
+                <th>应用名称</th>
+                <th>供应商</th>
+                <th>版本</th>
+                <th>状态</th>
+                <th>创建时间</th>
+                <th>最后编辑时间</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="app-table-body"></tbody>
+          </table>
+        </div>
+        <div class="pagination" id="app-pagination"></div>
+      </div>
+    </div>
+
+    <!-- 页面2：AI应用控制管理 -->
+    <div class="page" id="page-ai-control">
+      <div class="breadcrumb">AI应用 / <span>控制管理</span></div>
+      <div class="page-title">AI应用控制管理</div>
+      <div class="info-card">
+        <div class="info-title">💡 功能说明</div>
+        <div class="info-desc">每个AI功能按钮都需要在控制管理中配置一条映射关系。用户点击AI按钮时，系统根据映射关系查询租户购买状态，决定跳转购买页还是进入功能页。</div>
+      </div>
+      <div class="table-wrap">
+        <div class="table-toolbar">
+          <div class="title">控制映射列表</div>
+          <button class="btn btn-primary" onclick="showControlModal()">+ 新增控制</button>
+        </div>
+        <div style="overflow-x:auto">
+          <table>
+            <thead>
+              <tr>
+                <th>控制编号</th>
+                <th>控制类型</th>
+                <th>控制名称</th>
+                <th>控制位置</th>
+                <th>关联应用编号</th>
+                <th>关联应用名称</th>
+                <th>是否启用</th>
+                <th>未购买跳转页</th>
+                <th>已购买跳转页</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="control-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 页面3：服务购买页 -->
+    <div class="page" id="page-service-buy">
+      <div class="breadcrumb">AI服务 / <span>服务市场</span></div>
+      <div class="page-title">AI服务市场</div>
+      <div class="banner">
+        <h2>AI赋能业务，提升运营效率</h2>
+        <p>一站式AI服务市场，为您的直播、商品、内容运营提供智能化解决方案</p>
+      </div>
+      <div class="app-grid" id="service-app-grid"></div>
+    </div>
+
+    <!-- 页面4：使用记录 -->
+    <div class="page" id="page-usage-record">
+      <div class="breadcrumb">AI服务 / <span>使用记录</span></div>
+      <div class="page-title">AI使用记录</div>
+      <div class="filter-bar">
+        <div class="filter-item">
+          <label>应用</label>
+          <select id="filter-usage-app">
+            <option value="">全部应用</option>
+            <option value="AI直播稿">AI直播稿</option>
+            <option value="AI生图">AI生图</option>
+            <option value="AI视频">AI视频</option>
+            <option value="AI商品介绍">AI商品介绍</option>
+            <option value="AI商品卖点">AI商品卖点</option>
+          </select>
+        </div>
+        <div class="filter-item">
+          <label>功能类型</label>
+          <select id="filter-usage-type">
+            <option value="">全部类型</option>
+            <option value="文本生成">文本生成</option>
+            <option value="图片生成">图片生成</option>
+            <option value="视频生成">视频生成</option>
+          </select>
+        </div>
+        <div class="filter-item">
+          <label>生成状态</label>
+          <select id="filter-usage-status">
+            <option value="">全部</option>
+            <option value="成功">成功</option>
+            <option value="失败">失败</option>
+          </select>
+        </div>
+        <div class="filter-item">
+          <label>时间范围</label>
+          <input type="date" id="filter-usage-start"> ~ <input type="date" id="filter-usage-end">
+        </div>
+        <div class="filter-item" style="flex-direction:row;align-items:flex-end;gap:8px">
+          <button class="btn btn-primary" onclick="filterUsage()">查询</button>
+          <button class="btn btn-default" onclick="resetUsageFilter()">重置</button>
+        </div>
+      </div>
+      <div class="stat-cards">
+        <div class="stat-card highlight">
+          <div class="stat-label">本月总使用次数</div>
+          <div class="stat-value">156</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">本月成功次数</div>
+          <div class="stat-value" style="color:#52C41A">148</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">本月失败次数</div>
+          <div class="stat-value" style="color:#FF6B6B">8</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">剩余额度</div>
+          <div class="stat-value">344<span style="font-size:14px;color:#999;font-weight:400"> / 500</span></div>
+          <div class="stat-sub">专业版月度额度</div>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <div style="overflow-x:auto">
+          <table>
+            <thead>
+              <tr>
+                <th>记录编号</th>
+                <th>租户ID</th>
+                <th>用户</th>
+                <th>应用名称</th>
+                <th>功能类型</th>
+                <th>生成时间</th>
+                <th>消耗次数</th>
+                <th>生成状态</th>
+                <th>失败原因</th>
+                <th>关联业务对象</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="usage-table-body"></tbody>
+          </table>
+        </div>
+        <div class="pagination" id="usage-pagination"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- 通用弹窗容器 -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModalOutside(event)">
+  <div class="modal" id="modal-container" onclick="event.stopPropagation()"></div>
+</div>
+
+<!-- Toast容器 -->
+<div class="toast" id="toast-container"></div>
+
+<script>
+var appData = [
+  {code:'APP_001',name:'商品管理系统',vendor:'内部研发',version:'V2.1',status:'已发布',createTime:'2026-01-15 10:30',editTime:'2026-04-20 14:22'},
+  {code:'APP_002',name:'订单管理平台',vendor:'内部研发',version:'V3.0',status:'已发布',createTime:'2026-02-08 09:15',editTime:'2026-04-18 16:45'},
+  {code:'APP_003',name:'客户关系系统',vendor:'第三方-SaaS',version:'V1.5',status:'待发布',createTime:'2026-03-01 11:00',editTime:'2026-03-01 11:00'},
+  {code:'APP_AI_LIVE_SCRIPT',name:'AI直播稿',vendor:'AI服务',version:'标准版/专业版',status:'已发布',createTime:'2026-05-01 08:00',editTime:'2026-05-01 08:00'},
+  {code:'APP_AI_IMAGE',name:'AI生图',vendor:'AI服务',version:'标准版/专业版',status:'已发布',createTime:'2026-05-01 08:00',editTime:'2026-05-01 08:00'},
+  {code:'APP_AI_VIDEO',name:'AI视频',vendor:'AI服务',version:'标准版/专业版',status:'已发布',createTime:'2026-05-01 08:00',editTime:'2026-05-01 08:00'},
+  {code:'APP_AI_PRODUCT_DESC',name:'AI商品介绍',vendor:'AI服务',version:'标准版/专业版',status:'已发布',createTime:'2026-05-01 08:00',editTime:'2026-05-01 08:00'},
+  {code:'APP_AI_SELLING_POINT',name:'AI商品卖点',vendor:'AI服务',version:'标准版/专业版',status:'已发布',createTime:'2026-05-01 08:00',editTime:'2026-05-01 08:00'}
+];
+
+var controlData = [
+  {id:'CTRL_001',type:'按钮',name:'撰写直播稿',position:'直播管理',appCode:'APP_AI_LIVE_SCRIPT',appName:'AI直播稿',enabled:true,unpaidPage:'服务购买页',paidPage:'直播稿生成页',versionLimit:'不限',permission:''},
+  {id:'CTRL_002',type:'按钮',name:'AI生图',position:'商品管理',appCode:'APP_AI_IMAGE',appName:'AI生图',enabled:true,unpaidPage:'服务购买页',paidPage:'AI生图弹窗',versionLimit:'不限',permission:''},
+  {id:'CTRL_003',type:'按钮',name:'AI生成视频',position:'商品管理',appCode:'APP_AI_VIDEO',appName:'AI视频',enabled:true,unpaidPage:'服务购买页',paidPage:'AI视频弹窗',versionLimit:'不限',permission:''},
+  {id:'CTRL_004',type:'按钮',name:'AI生成商品介绍',position:'商品管理',appCode:'APP_AI_PRODUCT_DESC',appName:'AI商品介绍',enabled:true,unpaidPage:'服务购买页',paidPage:'AI介绍弹窗',versionLimit:'不限',permission:''},
+  {id:'CTRL_005',type:'按钮',name:'AI生成卖点',position:'商品管理',appCode:'APP_AI_SELLING_POINT',appName:'AI商品卖点',enabled:true,unpaidPage:'服务购买页',paidPage:'AI卖点弹窗',versionLimit:'不限',permission:''}
+];
+
+var serviceApps = [
+  {code:'APP_AI_LIVE_SCRIPT',name:'AI直播稿',desc:'根据直播场次、主播、商品自动生成直播话术',price:'¥199/月',icon:'icon-live',iconText:'📝',tags:['标准版','专业版']},
+  {code:'APP_AI_IMAGE',name:'AI生图',desc:'文生图、图生图，一键生成商品图片',price:'¥99/月',icon:'icon-image',iconText:'🎨',tags:['标准版','专业版']},
+  {code:'APP_AI_VIDEO',name:'AI视频',desc:'AI生成商品短视频，支持多种风格',price:'¥149/月',icon:'icon-video',iconText:'🎬',tags:['标准版','专业版']},
+  {code:'APP_AI_PRODUCT_DESC',name:'AI商品介绍',desc:'自动生成商品详情页文案',price:'¥79/月',icon:'icon-desc',iconText:'📋',tags:['标准版','专业版']},
+  {code:'APP_AI_SELLING_POINT',name:'AI商品卖点',desc:'结构化生成商品卖点，支持多场景',price:'¥59/月',icon:'icon-point',iconText:'💎',tags:['标准版','专业版']}
+];
+
+var usageData = [
+  {id:'REC_001',tenantId:'T001',user:'张三',app:'AI直播稿',type:'文本生成',time:'2026-05-07 10:23:15',cost:1,status:'成功',failReason:'',bizObj:'直播场次#L20260507'},
+  {id:'REC_002',tenantId:'T001',user:'李四',app:'AI生图',type:'图片生成',time:'2026-05-07 10:18:42',cost:1,status:'成功',failReason:'',bizObj:'商品#P10086'},
+  {id:'REC_003',tenantId:'T001',user:'王五',app:'AI视频',type:'视频生成',time:'2026-05-07 09:55:30',cost:3,status:'成功',failReason:'',bizObj:'商品#P10092'},
+  {id:'REC_004',tenantId:'T001',user:'张三',app:'AI商品介绍',type:'文本生成',time:'2026-05-07 09:40:11',cost:1,status:'失败',failReason:'内容审核未通过',bizObj:'商品#P10045'},
+  {id:'REC_005',tenantId:'T001',user:'赵六',app:'AI商品卖点',type:'文本生成',time:'2026-05-07 09:22:08',cost:1,status:'成功',failReason:'',bizObj:'商品#P10078'},
+  {id:'REC_006',tenantId:'T001',user:'李四',app:'AI直播稿',type:'文本生成',time:'2026-05-06 17:30:55',cost:1,status:'成功',failReason:'',bizObj:'直播场次#L20260506'},
+  {id:'REC_007',tenantId:'T001',user:'王五',app:'AI生图',type:'图片生成',time:'2026-05-06 16:15:20',cost:1,status:'失败',failReason:'图片尺寸超限',bizObj:'商品#P10033'},
+  {id:'REC_008',tenantId:'T001',user:'张三',app:'AI视频',type:'视频生成',time:'2026-05-06 15:08:33',cost:3,status:'成功',failReason:'',bizObj:'商品#P10092'},
+  {id:'REC_009',tenantId:'T001',user:'赵六',app:'AI商品介绍',type:'文本生成',time:'2026-05-06 14:22:47',cost:1,status:'成功',failReason:'',bizObj:'商品#P10067'},
+  {id:'REC_010',tenantId:'T001',user:'李四',app:'AI商品卖点',type:'文本生成',time:'2026-05-06 11:55:19',cost:1,status:'失败',failReason:'模型服务超时',bizObj:'商品#P10055'}
+];
+
+function switchPage(pageId) {
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});
+  document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active')});
+  var page = document.getElementById('page-' + pageId);
+  if(page) page.classList.add('active');
+  var nav = document.querySelector('.nav-item[data-page="'+pageId+'"]');
+  if(nav) nav.classList.add('active');
+}
+
+function showToast(msg, type) {
+  type = type || 'info';
+  var container = document.getElementById('toast-container');
+  var item = document.createElement('div');
+  item.className = 'toast-item ' + type;
+  var icon = type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️';
+  item.innerHTML = icon + ' ' + msg;
+  container.appendChild(item);
+  setTimeout(function(){
+    item.style.opacity = '0';
+    item.style.transform = 'translateX(40px)';
+    item.style.transition = 'all .3s';
+    setTimeout(function(){ item.remove(); }, 300);
+  }, 2500);
+}
+
+function openModal(html, wide) {
+  var overlay = document.getElementById('modal-overlay');
+  var container = document.getElementById('modal-container');
+  container.className = wide ? 'modal wide' : 'modal';
+  container.innerHTML = html;
+  overlay.classList.add('show');
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('show');
+}
+
+function closeModalOutside(e) {
+  if(e.target === document.getElementById('modal-overlay')) closeModal();
+}
+
+function renderAppTable(data) {
+  var tbody = document.getElementById('app-table-body');
+  if(!data || data.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:40px;color:#999">暂无数据</td></tr>';
+    return;
+  }
+  var html = '';
+  data.forEach(function(app) {
+    var statusClass = app.status === '已发布' ? 'status-published' : 'status-unpublished';
+    var actionBtn = app.status === '已发布'
+      ? '<button class="btn-link danger" onclick="toggleAppStatus(\''+app.code+'\')">下架</button>'
+      : '<button class="btn-link" onclick="toggleAppStatus(\''+app.code+'\')">上架</button>';
+    html += '<tr>'
+      + '<td>'+app.code+'</td>'
+      + '<td><a class="btn-link" onclick="showAppDetail(\''+app.code+'\')">'+app.name+'</a></td>'
+      + '<td>'+app.vendor+'</td>'
+      + '<td>'+app.version+'</td>'
+      + '<td><span class="status-tag '+statusClass+'">'+app.status+'</span></td>'
+      + '<td>'+app.createTime+'</td>'
+      + '<td>'+app.editTime+'</td>'
+      + '<td><button class="btn-link" onclick="editApp(\''+app.code+'\')">编辑</button>'+actionBtn+'</td>'
+      + '</tr>';
+  });
+  tbody.innerHTML = html;
+}
+
+function filterApps() {
+  var code = document.getElementById('filter-app-code').value.trim().toLowerCase();
+  var status = document.getElementById('filter-app-status').value;
+  var filtered = appData.filter(function(app) {
+    var matchCode = !code || app.code.toLowerCase().indexOf(code) > -1;
+    var matchStatus = !status || app.status === status;
+    return matchCode && matchStatus;
+  });
+  renderAppTable(filtered);
+  showToast('查询完成，共'+filtered.length+'条记录','info');
+}
+
+function resetAppFilter() {
+  document.getElementById('filter-app-code').value = '';
+  document.getElementById('filter-app-status').value = '';
+  renderAppTable(appData);
+}
+
+function toggleAppStatus(code) {
+  var app = appData.find(function(a){return a.code===code});
+  if(app) {
+    app.status = app.status === '已发布' ? '待发布' : '已发布';
+    app.editTime = new Date().toLocaleString('zh-CN',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}).replace(/\//g,'-');
+    renderAppTable(appData);
+    showToast(app.name+'已'+app.status,'success');
+  }
+}
+
+function showAppDetail(code) {
+  var app = appData.find(function(a){return a.code===code});
+  if(!app) return;
+  var html = '<div class="modal-header"><h3>应用详情 - '+app.name+'</h3><button class="modal-close" onclick="closeModal()">✕</button></div>'
+    + '<div class="modal-body detail-modal">'
+    + '<div class="detail-row"><div class="detail-label">应用编号</div><div class="detail-value">'+app.code+'</div></div>'
+    + '<div class="detail-row"><div class="detail-label">应用名称</div><div class="detail-value">'+app.name+'</div></div>'
+    + '<div class="detail-row"><div class="detail-label">供应商</div><div class="detail-value">'+app.vendor+'</div></div>'
+    + '<div class="detail-row"><div class="detail-label">版本</div><div class="detail-value">'+app.version+'</div></div>'
+    + '<div class="detail-row"><div class="detail-label">状态</div><div class="detail-value"><span class="status-tag '+(app.status==='已发布'?'status-published':'status-unpublished')+'">'+app.status+'</span></div></div>'
+    + '<div class="detail-row"><div class="detail-label">创建时间</div><div class="detail-value">'+app.createTime+'</div></div>'
+    + '<div class="detail-row"><div class="detail-label">最后编辑</div><div class="detail-value">'+app.editTime+'</div></div>'
+    + '</div>'
+    + '<div class="modal-footer"><button class="btn btn-default" onclick="closeModal()">关闭</button></div>';
+  openModal(html);
+}
+
+function showNewAppModal() {
+  var html = '<div class="modal-header"><h3>新建应用</h3><button class="modal-close" onclick="closeModal()">✕</button></div>'
+    + '<div class="modal-body">'
+    + '<div class="form-group"><label>应用编号<span class="required">*</span></label><input type="text" id="new-app-code" placeholder="请输入应用编号，如 APP_XXX"></div>'
+    + '<div class="form-group"><label>应用名称<span class="required">*</span></label><input type="text" id="new-app-name" placeholder="请输入应用名称"></div>'
+    + '<div class="form-group"><label>供应商<span class="required">*</span></label><input type="text" id="new-app-vendor" placeholder="请输入供应商"></div>'
+    + '<div class="form-group"><label>版本</label><input type="text" id="new-app-version" placeholder="请输入版本号"></div>'
+    + '</div>'
+    + '<div class="modal-footer"><button class="btn btn-default" onclick="closeModal()">取消</button><button class="btn btn-primary" onclick="saveNewApp()">保存</button></div>';
+  openModal(html);
+}
+
+function saveNewApp() {
+  var code = document.getElementById('new-app-code').value.trim();
+  var name = document.getElementById('new-app-name').value.trim();
+  var vendor = document.getElementById('new-app-vendor').value.trim();
+  var version = document.getElementById('new-app-version').value.trim() || 'V1.0';
+  if(!code || !name || !vendor) {
+    showToast('请填写必填项','error');
+    return;
+  }
+  var now = new Date().toLocaleString('zh-CN',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}).replace(/\//g,'-');
+  appData.push({code:code,name:name,vendor:vendor,version:version,status:'待发布',createTime:now,editTime:now});
+  renderAppTable(appData);
+  closeModal();
+  showToast('应用创建成功','success');
+}
+
+function editApp(code) {
+  var app = appData.find(function(a){return a.code===code});
+  if(!app) return;
+  var html = '<div class="modal-header"><h3>编辑应用 - '+app.name+'</h3><button class="modal-close" onclick="closeModal()">✕</button></div>'
+    + '<div class="modal-body">'
+    + '<div class="form-group"><label>应用编号</label><input type="text" value="'+app.code+'" disabled></div>'
+    + '<div class="form-group"><label>应用名称<span class="required">*</span></label><input type="text" id="edit-app-name" value="'+app.name+'"></div>'
+    + '<div class="form-group"><label>供应商<span class="required">*</span></label><input type="text" id="edit-app-vendor" value="'+app.vendor+'"></div>'
+    + '<div class="form-group"><label>版本</label><input type="text" id="edit-app-version" value="'+app.version+'"></div>'
+    + '</div>'
+    + '<div class="modal-footer"><button class="btn btn-default" onclick="closeModal()">取消</button><button class="btn btn-primary" onclick="saveEditApp(\''+code+'\')">保存</button></div>';
+  openModal(html);
+}
+
+function saveEditApp(code) {
+  var app = appData.find(function(a){return a.code===code});
+  if(!app) return;
+  var name = document.getElementById('edit-app-name').value.trim();
+  var vendor = document.getElementById('edit-app-vendor').value.trim();
+  var version = document.getElementById('edit-app-version').value.trim();
+  if(!name || !vendor) { showToast('请填写必填项','error'); return; }
+  app.name = name;
+  app.vendor = vendor;
+  app.version = version;
+  app.editTime = new Date().toLocaleString('zh-CN',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}).replace(/\//g,'-');
+  renderAppTable(appData);
+  closeModal();
+  showToast('应用编辑成功','success');
+}
+
+function renderControlTable() {
+  var tbody = document.getElementById('control-table-body');
+  var html = '';
+  controlData.forEach(function(ctrl) {
+    var enabledClass = ctrl.enabled ? 'status-enabled' : 'status-disabled';
+    var enabledText = ctrl.enabled ? '已启用' : '已禁用';
+    var toggleText = ctrl.enabled ? '禁用' : '启用';
+    var toggleClass = ctrl.enabled ? 'danger' : '';
+    html += '<tr>'
+      + '<td>'+ctrl.id+'</td>'
+      + '<td>'+ctrl.type+'</td>'
+      + '<td>'+ctrl.name+'</td>'
+      + '<td>'+ctrl.position+'</td>'
+      + '<td>'+ctrl.appCode+'</td>'
+      + '<td>'+ctrl.appName+'</td>'
+      + '<td><span class="status-tag '+enabledClass+'">'+enabledText+'</span></td>'
+      + '<td>'+ctrl.unpaidPage+'</td>'
+      + '<td>'+ctrl.paidPage+'</td>'
+      + '<td>'
+      + '<button class="btn-link" onclick="editControl(\''+ctrl.id+'\')">编辑</button>'
+      + '<button class="btn-link '+toggleClass+'" onclick="toggleControl(\''+ctrl.id+'\')">'+toggleText+'</button>'
+      + '<button class="btn-link" onclick="viewControlRelation(\''+ctrl.id+'\')">查看关联</button>'
+      + '</td>'
+      + '</tr>';
+  });
+  tbody.innerHTML = html;
+}
+
+function showControlModal(editId) {
+  var ctrl = editId ? controlData.find(function(c){return c.id===editId}) : null;
+  var title = ctrl ? '编辑控制 - '+ctrl.name : '新增控制';
+  var appOptions = appData.filter(function(a){return a.code.indexOf('APP_AI')===0}).map(function(a){
+    var selected = ctrl && ctrl.appCode === a.code ? 'selected' : '';
+    return '<option value="'+a.code+'" '+selected+'>'+a.code+' - '+a.name+'</option>';
+  }).join('');
+
+  var html = '<div class="modal-header"><h3>'+title+'</h3><button class="modal-close" onclick="closeModal()">✕</button></div>'
+    + '<div class="modal-body">'
+    + '<div class="form-group"><label>控制类型<span class="required">*</span></label>'
+    + '<select id="ctrl-type">'
+    + '<option value="按钮" '+(ctrl&&ctrl.type==='按钮'?'selected':'')+'>按钮</option>'
+    + '<option value="菜单" '+(ctrl&&ctrl.type==='菜单'?'selected':'')+'>菜单</option>'
+    + '<option value="页面" '+(ctrl&&ctrl.type==='页面'?'selected':'')+'>页面</option>'
+    + '<option value="接口" '+(ctrl&&ctrl.type==='接口'?'selected':'')+'>接口</option>'
+    + '</select></div>'
+    + '<div class="form-group"><label>控制名称<span class="required">*</span></label><input type="text" id="ctrl-name" value="'+(ctrl?ctrl.name:'')+'" placeholder="请输入控制名称"></div>'
+    + '<div class="form-group"><label>控制位置<span class="required">*</span></label>'
+    + '<select id="ctrl-position">'
+    + '<option value="直播管理" '+(ctrl&&ctrl.position==='直播管理'?'selected':'')+'>直播管理</option>'
+    + '<option value="商品管理" '+(ctrl&&ctrl.position==='商品管理'?'selected':'')+'>商品管理</option>'
+    + '<option value="内容管理" '+(ctrl&&ctrl.position==='内容管理'?'selected':'')+'>内容管理</option>'
+    + '</select></div>'
+    + '<div class="form-group"><label>关联应用<span class="required">*</span></label>'
+    + '<select id="ctrl-app">'+appOptions+'</select></div>'
+    + '<div class="form-group"><label>是否启用</label>'
+    + '<div class="switch-wrap">'
+    + '<div class="switch '+(ctrl&&ctrl.enabled?'on':'on')+'" id="ctrl-enabled" onclick="this.classList.toggle(\'on\')"></div>'
+    + '<span class="switch-text" id="ctrl-enabled-text">'+(ctrl&&!ctrl.enabled?'已禁用':'已启用')+'</span>'
+    + '</div></div>'
+    + '<div class="form-group"><label>未购买跳转页</label><input type="text" id="ctrl-unpaid" value="'+(ctrl?ctrl.unpaidPage:'服务购买页')+'" placeholder="请输入未购买跳转页"></div>'
+    + '<div class="form-group"><label>已购买跳转页</label><input type="text" id="ctrl-paid" value="'+(ctrl?ctrl.paidPage:'')+'" placeholder="请输入已购买跳转页"></div>'
+    + '<div class="form-group"><label>版本限制</label>'
+    + '<select id="ctrl-version">'
+    + '<option value="不限" '+(ctrl&&ctrl.versionLimit==='不限'?'selected':'')+'>不限</option>'
+    + '<option value="标准版" '+(ctrl&&ctrl.versionLimit==='标准版'?'selected':'')+'>标准版</option>'
+    + '<option value="专业版" '+(ctrl&&ctrl.versionLimit==='专业版'?'selected':'')+'>专业版</option>'
+    + '<option value="企业版" '+(ctrl&&ctrl.versionLimit==='企业版'?'selected':'')+'>企业版</option>'
+    + '</select></div>'
+    + '<div class="form-group"><label>权限说明</label><textarea id="ctrl-permission" placeholder="请输入权限说明">'+(ctrl?ctrl.permission:'')+'</textarea></div>'
+    + '</div>'
+    + '<div class="modal-footer"><button class="btn btn-default" onclick="closeModal()">取消</button><button class="btn btn-primary" onclick="saveControl(\''+(editId||'')+'\')">保存</button></div>';
+  openModal(html, true);
+}
+
+function saveControl(editId) {
+  var name = document.getElementById('ctrl-name').value.trim();
+  var type = document.getElementById('ctrl-type').value;
+  var position = document.getElementById('ctrl-position').value;
+  var appCode = document.getElementById('ctrl-app').value;
+  var enabled = document.getElementById('ctrl-enabled').classList.contains('on');
+  var unpaidPage = document.getElementById('ctrl-unpaid').value.trim();
+  var paidPage = document.getElementById('ctrl-paid').value.trim();
+  var versionLimit = document.getElementById('ctrl-version').value;
+  var permission = document.getElementById('ctrl-permission').value.trim();
+
+  if(!name || !type || !position || !appCode) {
+    showToast('请填写必填项','error');
+    return;
+  }
+
+  var appObj = appData.find(function(a){return a.code===appCode});
+  var appName = appObj ? appObj.name : '';
+
+  if(editId) {
+    var ctrl = controlData.find(function(c){return c.id===editId});
+    if(ctrl) {
+      ctrl.type = type;
+      ctrl.name = name;
+      ctrl.position = position;
+      ctrl.appCode = appCode;
+      ctrl.appName = appName;
+      ctrl.enabled = enabled;
+      ctrl.unpaidPage = unpaidPage || '服务购买页';
+      ctrl.paidPage = paidPage;
+      ctrl.versionLimit = versionLimit;
+      ctrl.permission = permission;
+    }
+  } else {
+    var newId = 'CTRL_' + String(controlData.length + 1).padStart(3,'0');
+    controlData.push({
+      id:newId,type:type,name:name,position:position,appCode:appCode,appName:appName,
+      enabled:enabled,unpaidPage:unpaidPage||'服务购买页',paidPage:paidPage,versionLimit:versionLimit,permission:permission
+    });
+  }
+  renderControlTable();
+  closeModal();
+  showToast(editId ? '控制编辑成功' : '控制新增成功','success');
+}
+
+function editControl(id) {
+  showControlModal(id);
+}
+
+function toggleControl(id) {
+  var ctrl = controlData.find(function(c){return c.id===id});
+  if(ctrl) {
+    ctrl.enabled = !ctrl.enabled;
+    renderControlTable();
+    showToast(ctrl.name+'已'+(ctrl.enabled?'启用':'禁用'),'success');
+  }
+}
+
+function viewControlRelation(id) {
+  var ctrl = controlData.find(function(c){return c.id===id});
+  if(!ctrl) return;
+  var app = appData.find(function(a){return a.code===ctrl.appCode});
+  var html = '<div class="modal-header"><h3>关联详情 - '+ctrl.name+'</h3><button class="modal-close" onclick="closeModal()">✕</button></div>'
+    + '<div class="modal-body detail-modal">'
+    + '<h4 style="margin-bottom:12px;color:#4F6EF7">控制信息</h4>'
+    + '<div class="detail-row"><div class="detail-label">控制编号</div><div class="detail-value">'+ctrl.id+'</div></div>'
+    + '<div class="detail-row"><div class="detail-label">控制类型</div><div class="detail-value">'+ctrl.type+'</div></div>'
+    + '<div class="detail-row"><div class="detail-label">控制名称</div><div class="detail-value">'+ctrl.name+'</div></div>'
+    + '<div class="detail-row"><div class="detail-label">控制位置</div><div class="detail-value">'+ctrl.position+'</div></div>'
+    + '<div class="detail-row"><div class="detail-label">是否启用</div><div class="detail-value"><span class="status-tag '+(ctrl.enabled?'status-enabled':'status-disabled')+'">'+(ctrl.enabled?'已启用':'已禁用')+'</span></div></div>'
+    + '<h4 style="margin:16px 0 12px;color:#4F6EF7">关联应用</h4>'
+    + '<div class="detail-row"><div class="detail-label">应用编号</div><div class="detail-value">'+ctrl.appCode+'</div></div>'
+    + '<div class="detail-row"><div class="detail-label">应用名称</div><div class="detail-value">'+ctrl.appName+'</div></div>'
+    + (app ? '<div class="detail-row"><div class="detail-label">供应商</div><div class="detail-value">'+app.vendor+'</div></div>'
+    + '<div class="detail-row"><div class="detail-label">应用状态</div><div class="detail-value"><span class="status-tag '+(app.status==='已发布'?'status-published':'status-unpublished')+'">'+app.status+'</span></div></div>' : '')
+    + '<h4 style="margin:16px 0 12px;color:#4F6EF7">跳转配置</h4>'
+    + '<div class="detail-row"><div class="detail-label">未购买跳转</div><div class="detail-value">'+ctrl.unpaidPage+'</div></div>'
+    + '<div class="detail-row"><div class="detail-label">已购买跳转</div><div class="detail-value">'+ctrl.paidPage+'</div></div>'
+    + '<div class="detail-row"><div class="detail-label">版本限制</div><div class="detail-value">'+ctrl.versionLimit+'</div></div>'
+    + '</div>'
+    + '<div class="modal-footer"><button class="btn btn-default" onclick="closeModal()">关闭</button></div>';
+  openModal(html, true);
+}
+
+function renderServiceGrid() {
+  var grid = document.getElementById('service-app-grid');
+  var html = '';
+  serviceApps.forEach(function(app) {
+    var tagHtml = app.tags.map(function(t,i){
+      return '<span class="tag'+(i===1?' pro':'')+'">'+t+'</span>';
+    }).join('');
+    html += '<div class="app-card">'
+      + '<div class="app-icon '+app.icon+'">'+app.iconText+'</div>'
+      + '<div class="app-name">'+app.name+'</div>'
+      + '<div class="app-desc">'+app.desc+'</div>'
+      + '<div class="app-tags">'+tagHtml+'</div>'
+      + '<div class="app-price">'+app.price+'<span> 起</span></div>'
+      + '<div class="app-actions">'
+      + '<button class="btn btn-primary btn-sm" onclick="showBuyModal(\''+app.code+'\')">立即购买</button>'
+      + '<button class="btn btn-default btn-sm" onclick="showTrialModal(\''+app.code+'\')">申请试用</button>'
+      + '</div></div>';
+  });
+  grid.innerHTML = html;
+}
+
+function showBuyModal(code) {
+  var app = serviceApps.find(function(a){return a.code===code});
+  if(!app) return;
+  var html = '<div class="modal-header"><h3>购买服务 - '+app.name+'</h3><button class="modal-close" onclick="closeModal()">✕</button></div>'
+    + '<div class="modal-body">'
+    + '<div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">'
+    + '<div class="app-icon '+app.icon+'" style="width:40px;height:40px;font-size:18px;border-radius:10px">'+app.iconText+'</div>'
+    + '<div><div style="font-weight:600">'+app.name+'</div><div style="font-size:12px;color:#999">'+app.desc+'</div></div></div>'
+    + '<div class="version-tabs">'
+    + '<div class="version-tab active" onclick="switchVersionTab(this,\'standard\')">标准版</div>'
+    + '<div class="version-tab" onclick="switchVersionTab(this,\'pro\')">专业版</div></div>'
+    + '<div id="version-content-standard">'
+    + '<table class="compare-table">'
+    + '<thead><tr><th>功能项</th><th>标准版</th><th>专业版</th></tr></thead>'
+    + '<tbody>'
+    + '<tr><td>每月生成次数</td><td>100次</td><td class="check">500次 ✓</td></tr>'
+    + '<tr><td>模型等级</td><td>基础模型</td><td class="check">高级模型 ✓</td></tr>'
+    + '<tr><td>商品支持</td><td>单品支持</td><td class="check">多品支持 ✓</td></tr>'
+    + '<tr><td>优化轮次</td><td>3轮</td><td class="check">不限轮次 ✓</td></tr>'
+    + '<tr><td>提词器模式</td><td class="cross">✕</td><td class="check">✓</td></tr>'
+    + '<tr><td>合规检测</td><td class="cross">✕</td><td class="check">✓</td></tr>'
+    + '</tbody></table>'
+    + '<div class="price-display"><div class="price">¥199<span>/月</span></div><div class="period">标准版月度订阅</div></div>'
+    + '</div>'
+    + '<div id="version-content-pro" style="display:none">'
+    + '<table class="compare-table">'
+    + '<thead><tr><th>功能项</th><th>标准版</th><th>专业版</th></tr></thead>'
+    + '<tbody>'
+    + '<tr><td>每月生成次数</td><td>100次</td><td class="check">500次 ✓</td></tr>'
+    + '<tr><td>模型等级</td><td>基础模型</td><td class="check">高级模型 ✓</td></tr>'
+    + '<tr><td>商品支持</td><td>单品支持</td><td class="check">多品支持 ✓</td></tr>'
+    + '<tr><td>优化轮次</td><td>3轮</td><td class="check">不限轮次 ✓</td></tr>'
+    + '<tr><td>提词器模式</td><td class="cross">✕</td><td class="check">✓</td></tr>'
+    + '<tr><td>合规检测</td><td class="cross">✕</td><td class="check">✓</td></tr>'
+    + '</tbody></table>'
+    + '<div class="price-display"><div class="price">¥399<span>/月</span></div><div class="period">专业版月度订阅</div></div>'
+    + '</div>'
+    + '<div class="agreement"><input type="checkbox" id="buy-agreement"><label for="buy-agreement">我已阅读并同意 <a href="javascript:void(0)" onclick="showToast(\'服务协议内容\',\'info\')">《AI服务订阅协议》</a></label></div>'
+    + '</div>'
+    + '<div class="modal-footer"><button class="btn btn-default" onclick="closeModal()">取消</button><button class="btn btn-primary" onclick="confirmBuy(\''+code+'\')">确认购买</button></div>';
+  openModal(html, true);
+}
+
+function switchVersionTab(el, version) {
+  el.parentElement.querySelectorAll('.version-tab').forEach(function(t){t.classList.remove('active')});
+  el.classList.add('active');
+  document.getElementById('version-content-standard').style.display = version==='standard'?'block':'none';
+  document.getElementById('version-content-pro').style.display = version==='pro'?'block':'none';
+}
+
+function confirmBuy(code) {
+  var agreed = document.getElementById('buy-agreement').checked;
+  if(!agreed) {
+    showToast('请先阅读并同意服务协议','error');
+    return;
+  }
+  closeModal();
+  showToast('购买成功！服务已开通，可立即使用','success');
+}
+
+function showTrialModal(code) {
+  var app = serviceApps.find(function(a){return a.code===code});
+  if(!app) return;
+  var html = '<div class="modal-header"><h3>申请试用 - '+app.name+'</h3><button class="modal-close" onclick="closeModal()">✕</button></div>'
+    + '<div class="modal-body">'
+    + '<div class="trial-info">'
+    + '<div class="trial-row"><div class="label">试用周期</div><div class="value">7天</div></div>'
+    + '<div class="trial-row"><div class="label">试用额度</div><div class="value">标准版 20次生成</div></div>'
+    + '<div class="trial-row"><div class="label">试用模型</div><div class="value">基础模型</div></div>'
+    + '<div class="trial-row"><div class="label">适用版本</div><div class="value">标准版功能</div></div>'
+    + '</div>'
+    + '<div class="form-group"><label>手机号<span class="required">*</span></label><input type="text" id="trial-phone" placeholder="请输入手机号"></div>'
+    + '<div class="form-group"><label>验证码<span class="required">*</span></label><div style="display:flex;gap:10px"><input type="text" id="trial-code" placeholder="请输入验证码" style="flex:1"><button class="btn btn-default" onclick="sendTrialCode()" id="send-code-btn">发送验证码</button></div></div>'
+    + '<div class="form-group"><label>备注</label><textarea placeholder="选填，请描述您的使用场景"></textarea></div>'
+    + '</div>'
+    + '<div class="modal-footer"><button class="btn btn-default" onclick="closeModal()">取消</button><button class="btn btn-primary" onclick="submitTrial(\''+code+'\')">提交申请</button></div>';
+  openModal(html);
+}
+
+function sendTrialCode() {
+  var phone = document.getElementById('trial-phone').value.trim();
+  if(!phone || phone.length < 11) {
+    showToast('请输入正确的手机号','error');
+    return;
+  }
+  var btn = document.getElementById('send-code-btn');
+  btn.disabled = true;
+  btn.textContent = '60s';
+  var count = 60;
+  var timer = setInterval(function(){
+    count--;
+    btn.textContent = count + 's';
+    if(count <= 0) {
+      clearInterval(timer);
+      btn.disabled = false;
+      btn.textContent = '发送验证码';
+    }
+  }, 1000);
+  showToast('验证码已发送','success');
+}
+
+function submitTrial(code) {
+  var phone = document.getElementById('trial-phone').value.trim();
+  var codeVal = document.getElementById('trial-code').value.trim();
+  if(!phone || phone.length < 11) {
+    showToast('请输入正确的手机号','error');
+    return;
+  }
+  if(!codeVal) {
+    showToast('请输入验证码','error');
+    return;
+  }
+  closeModal();
+  showToast('试用申请已提交，预计1个工作日内开通','success');
+}
+
+function renderUsageTable(data, page) {
+  page = page || 1;
+  var pageSize = 5;
+  var total = data.length;
+  var totalPages = Math.ceil(total / pageSize);
+  var start = (page - 1) * pageSize;
+  var pageData = data.slice(start, start + pageSize);
+
+  var tbody = document.getElementById('usage-table-body');
+  var html = '';
+  if(pageData.length === 0) {
+    html = '<tr><td colspan="11" style="text-align:center;padding:40px;color:#999">暂无数据</td></tr>';
+  } else {
+    pageData.forEach(function(rec) {
+      var statusClass = rec.status === '成功' ? 'status-success' : 'status-fail';
+      html += '<tr>'
+        + '<td>'+rec.id+'</td>'
+        + '<td>'+rec.tenantId+'</td>'
+        + '<td>'+rec.user+'</td>'
+        + '<td>'+rec.app+'</td>'
+        + '<td>'+rec.type+'</td>'
+        + '<td>'+rec.time+'</td>'
+        + '<td>'+rec.cost+'</td>'
+        + '<td><span class="status-tag '+statusClass+'">'+rec.status+'</span></td>'
+        + '<td>'+(rec.failReason||'-')+'</td>'
+        + '<td>'+rec.bizObj+'</td>'
+        + '<td><button class="btn-link" onclick="showUsageDetail(\''+rec.id+'\')">查看详情</button></td>'
+        + '</tr>';
+    });
+  }
+  tbody.innerHTML = html;
+
+  var pagEl = document.getElementById('usage-pagination');
+  var pagHtml = '<span class="page-info">共 '+total+' 条</span>';
+  for(var i = 1; i <= totalPages; i++) {
+    pagHtml += '<div class="page-btn'+(i===page?' active':'')+'" onclick="goUsagePage('+i+')">'+i+'</div>';
+  }
+  pagEl.innerHTML = pagHtml;
+}
+
+var currentUsagePage = 1;
+var filteredUsageData = usageData;
+
+function goUsagePage(page) {
+  currentUsagePage = page;
+  renderUsageTable(filteredUsageData, page);
+}
+
+function filterUsage() {
+  var app = document.getElementById('filter-usage-app').value;
+  var type = document.getElementById('filter-usage-type').value;
+  var status = document.getElementById('filter-usage-status').value;
+  filteredUsageData = usageData.filter(function(rec) {
+    var matchApp = !app || rec.app === app;
+    var matchType = !type || rec.type === type;
+    var matchStatus = !status || rec.status === status;
+    return matchApp && matchType && matchStatus;
+  });
+  currentUsagePage = 1;
+  renderUsageTable(filteredUsageData, 1);
+  showToast('查询完成，共'+filteredUsageData.length+'条记录','info');
+}
+
+function resetUsageFilter() {
+  document.getElementById('filter-usage-app').value = '';
+  document.getElementById('filter-usage-type').value = '';
+  document.getElementById('filter-usage-status').value = '';
+  document.getElementById('filter-usage-start').value = '';
+  document.getElementById('filter-usage-end').value = '';
+  filteredUsageData = usageData;
+  currentUsagePage = 1;
+  renderUsageTable(usageData, 1);
+}
+
+function showUsageDetail(id) {
+  var rec = usageData.find(function(r){return r.id===id});
+  if(!rec) return;
+  var html = '<div class="modal-header"><h3>使用记录详情</h3><button class="modal-close" onclick="closeModal()">✕</button></div>'
+    + '<div class="modal-body detail-modal">'
+    + '<div class="detail-row"><div class="detail-label">记录编号</div><div class="detail-value">'+rec.id+'</div></div>'
+    + '<div class="detail-row"><div class="detail-label">租户ID</div><div class="detail-value">'+rec.tenantId+'</div></div>'
+    + '<div class="detail-row"><div class="detail-label">用户</div><div class="detail-value">'+rec.user+'</div></div>'
+    + '<div class="detail-row"><div class="detail-label">应用名称</div><div class="detail-value">'+rec.app+'</div></div>'
+    + '<div class="detail-row"><div class="detail-label">功能类型</div><div class="detail-value">'+rec.type+'</div></div>'
+    + '<div class="detail-row"><div class="detail-label">生成时间</div><div class="detail-value">'+rec.time+'</div></div>'
+    + '<div class="detail-row"><div class="detail-label">消耗次数</div><div class="detail-value">'+rec.cost+'</div></div>'
+    + '<div class="detail-row"><div class="detail-label">生成状态</div><div class="detail-value"><span class="status-tag '+(rec.status==='成功'?'status-success':'status-fail')+'">'+rec.status+'</span></div></div>'
+    + (rec.failReason ? '<div class="detail-row"><div class="detail-label">失败原因</div><div class="detail-value" style="color:#FF6B6B">'+rec.failReason+'</div></div>' : '')
+    + '<div class="detail-row"><div class="detail-label">关联业务</div><div class="detail-value">'+rec.bizObj+'</div></div>'
+    + '</div>'
+    + '<div class="modal-footer"><button class="btn btn-default" onclick="closeModal()">关闭</button></div>';
+  openModal(html);
+}
+
+renderAppTable(appData);
+renderControlTable();
+renderServiceGrid();
+renderUsageTable(usageData, 1);
+</script>
+</body>
+</html>

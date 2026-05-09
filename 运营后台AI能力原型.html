@@ -1,0 +1,1674 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<title>运营后台AI能力原型</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:1440px;height:100%;font-family:'PingFangSC-Regular','PingFang SC','Microsoft YaHei',sans-serif;background:#F0F2F5;color:rgba(0,0,0,0.647);font-size:14px;overflow-x:hidden;}
+::-webkit-scrollbar{width:6px;height:6px;}
+::-webkit-scrollbar-thumb{background:#D9D9D9;border-radius:3px;}
+::-webkit-scrollbar-track{background:transparent;}
+.logo-bar{position:fixed;top:0;left:0;width:141px;height:65px;background:#00284D;display:flex;align-items:center;justify-content:center;z-index:100;}
+.logo-bar span{color:#fff;font-size:16px;font-weight:600;letter-spacing:2px;}
+.sidebar{position:fixed;top:65px;left:0;width:141px;height:calc(100% - 65px);background:#001529;overflow-y:auto;z-index:99;}
+.sidebar .menu-item{color:rgba(255,255,255,0.698);font-size:14px;padding:0 16px;height:40px;line-height:40px;cursor:pointer;user-select:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:background .2s;}
+.sidebar .menu-item:hover{color:#fff;}
+.sidebar .menu-item.active{background:#000000;color:#fff;}
+.sidebar .menu-item .arrow{float:right;font-size:10px;transition:transform .2s;}
+.sidebar .menu-item .arrow.open{transform:rotate(90deg);}
+.sidebar .sub-menu{display:none;}
+.sidebar .sub-menu.show{display:block;}
+.sidebar .sub-menu .menu-item{padding-left:36px;height:40px;line-height:40px;font-size:13px;}
+.status-bar{position:fixed;top:0;left:141px;width:1285px;height:64px;background:#FAFAFA;border-bottom:1px solid #E8E8E8;display:flex;align-items:center;justify-content:space-between;padding:0 24px;z-index:98;}
+.breadcrumb{font-size:14px;color:rgba(0,0,0,0.447);}
+.breadcrumb .current{color:rgba(0,0,0,0.647);}
+.breadcrumb .sep{margin:0 8px;color:rgba(0,0,0,0.247);}
+.user-info{display:flex;align-items:center;gap:8px;cursor:pointer;}
+.user-info .avatar{width:28px;height:28px;border-radius:50%;background:#1890FF;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;}
+.user-info .name{font-size:14px;color:rgba(0,0,0,0.647);}
+.user-info .dropdown-arrow{font-size:10px;color:rgba(0,0,0,0.247);}
+.content-area{margin-left:151px;margin-top:64px;padding:16px 16px 24px 16px;min-height:calc(100vh - 64px);}
+.content-card{width:1265px;background:#fff;border-radius:4px;padding:24px;box-shadow:0 1px 4px rgba(0,0,0,0.04);}
+.page-title{font-family:'PingFangSC-Semibold','PingFang SC',sans-serif;font-size:20px;color:rgba(0,0,0,0.847);margin-bottom:20px;}
+.btn{display:inline-flex;align-items:center;justify-content:center;height:32px;padding:0 16px;border-radius:4px;font-size:14px;cursor:pointer;border:1px solid transparent;transition:all .2s;user-select:none;font-family:inherit;}
+.btn-primary{background:#1890FF;color:#fff;border-color:#1890FF;}
+.btn-primary:hover{background:#40A9FF;border-color:#40A9FF;}
+.btn-default{background:#fff;color:rgba(0,0,0,0.647);border-color:#D9D9D9;}
+.btn-default:hover{color:#1890FF;border-color:#1890FF;}
+.btn-link{background:transparent;color:#1890FF;border:none;padding:0 4px;height:auto;cursor:pointer;font-size:14px;font-family:inherit;}
+.btn-link:hover{color:#40A9FF;}
+.btn-sm{height:28px;padding:0 12px;font-size:13px;}
+.btn[disabled]{opacity:.5;cursor:not-allowed;}
+.filter-area{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:16px;align-items:center;}
+.filter-area label{font-size:14px;color:rgba(0,0,0,0.847);white-space:nowrap;}
+.filter-area .input,.filter-area .select{height:32px;border:1px solid #D9D9D9;border-radius:4px;padding:0 8px;font-size:14px;font-family:inherit;color:rgba(0,0,0,0.647);outline:none;transition:border-color .2s;}
+.filter-area .input:focus,.filter-area .select:focus{border-color:#1890FF;}
+.filter-area .input{width:180px;}
+.filter-area .select{width:160px;appearance:auto;}
+.filter-area .date-input{width:140px;}
+.table-wrap{width:100%;overflow-x:auto;}
+table{width:100%;border-collapse:collapse;table-layout:fixed;}
+thead th{background:#FAFAFA;height:54px;font-family:'PingFangSC-Semibold','PingFang SC',sans-serif;font-size:14px;color:rgba(0,0,0,0.847);text-align:left;padding:0 16px;border-bottom:1px solid #E8E8E8;white-space:nowrap;}
+tbody td{height:54px;padding:0 16px;border-bottom:1px solid #E8E8E8;font-size:14px;color:rgba(0,0,0,0.647);vertical-align:middle;}
+tbody tr:hover{background:#FAFAFA;}
+td .ops{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.status-tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:12px;}
+.status-tag.green{background:#F6FFED;color:#52C41A;border:1px solid #B7EB8F;}
+.status-tag.orange{background:#FFF7E6;color:#FA8C16;border:1px solid #FFD591;}
+.status-tag.red{background:#FFF1F0;color:#FF4D4F;border:1px solid #FFA39E;}
+.status-tag.blue{background:#E6F7FF;color:#1890FF;border:1px solid #91D5FF;}
+.status-tag.gray{background:#F5F5F5;color:#AAAAAA;border:1px solid #D9D9D9;}
+.pagination{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-top:16px;font-size:14px;}
+.pagination .pg-btn{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border:1px solid #D9D9D9;border-radius:4px;cursor:pointer;background:#fff;color:rgba(0,0,0,0.647);font-size:14px;}
+.pagination .pg-btn.active{background:#1890FF;color:#fff;border-color:#1890FF;}
+.pagination .pg-info{color:rgba(0,0,0,0.447);}
+.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.45);z-index:1000;display:none;align-items:center;justify-content:center;}
+.modal-overlay.show{display:flex;}
+.modal{background:#fff;border-radius:4px;box-shadow:0 8px 24px rgba(0,0,0,0.15);max-height:90vh;overflow-y:auto;position:relative;}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;border-bottom:1px solid #E8E8E8;}
+.modal-header h3{font-family:'PingFangSC-Semibold','PingFang SC',sans-serif;font-size:16px;color:rgba(0,0,0,0.847);}
+.modal-header .close-btn{width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:rgba(0,0,0,0.447);font-size:18px;border-radius:4px;}
+.modal-header .close-btn:hover{background:#F0F0F0;color:rgba(0,0,0,0.847);}
+.modal-body{padding:24px;}
+.modal-footer{padding:12px 24px;border-top:1px solid #E8E8E8;display:flex;justify-content:flex-end;gap:8px;}
+.form-group{margin-bottom:16px;}
+.form-group label{display:block;font-size:14px;color:rgba(0,0,0,0.847);margin-bottom:6px;}
+.form-group label .required{color:#FF4D4F;margin-right:2px;}
+.form-group .input,.form-group .select,.form-group textarea{width:100%;height:32px;border:1px solid #D9D9D9;border-radius:4px;padding:0 8px;font-size:14px;font-family:inherit;color:rgba(0,0,0,0.647);outline:none;transition:border-color .2s;}
+.form-group textarea{height:80px;padding:8px;resize:vertical;}
+.form-group .input:focus,.form-group .select:focus,.form-group textarea:focus{border-color:#1890FF;}
+.form-group .input[readonly]{background:#F5F5F5;color:#AAAAAA;}
+.form-row{display:flex;gap:16px;}
+.form-row .form-group{flex:1;}
+.toast{position:fixed;top:24px;left:50%;transform:translateX(-50%);z-index:2000;display:none;}
+.toast.show{display:block;animation:toastIn .3s;}
+.toast .toast-content{padding:10px 24px;border-radius:4px;font-size:14px;color:#fff;box-shadow:0 4px 12px rgba(0,0,0,0.15);}
+.toast .toast-content.success{background:#52C41A;}
+.toast .toast-content.error{background:#FF4D4F;}
+.toast .toast-content.info{background:#1890FF;}
+@keyframes toastIn{from{opacity:0;transform:translateY(-10px);}to{opacity:1;transform:translateY(0);}}
+.loading-mask{position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(255,255,255,0.85);display:none;align-items:center;justify-content:center;flex-direction:column;gap:12px;z-index:10;border-radius:4px;}
+.loading-mask.show{display:flex;}
+.spinner{width:36px;height:36px;border:3px solid #E8E8E8;border-top-color:#1890FF;border-radius:50%;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.loading-text{font-size:14px;color:#1890FF;}
+.page-section{display:none;}
+.page-section.active{display:block;}
+.tree-panel{width:280px;border:1px solid #E8E8E8;border-radius:4px;padding:12px;overflow-y:auto;max-height:600px;flex-shrink:0;}
+.tree-node{cursor:pointer;padding:4px 8px;border-radius:4px;font-size:14px;color:rgba(0,0,0,0.647);transition:background .15s;}
+.tree-node:hover{background:#E6F7FF;}
+.tree-node.active{background:#E6F7FF;color:#1890FF;}
+.tree-node .arrow{display:inline-block;width:16px;font-size:10px;text-align:center;transition:transform .2s;}
+.tree-node .arrow.open{transform:rotate(90deg);}
+.tree-children{padding-left:20px;display:none;}
+.tree-children.show{display:block;}
+.stat-cards{display:flex;gap:16px;margin-bottom:24px;flex-wrap:wrap;}
+.stat-card{flex:1;min-width:180px;background:#fff;border:1px solid #E8E8E8;border-radius:4px;padding:16px;text-align:center;}
+.stat-card .label{font-size:14px;color:rgba(0,0,0,0.447);margin-bottom:8px;}
+.stat-card .value{font-family:'PingFangSC-Semibold','PingFang SC',sans-serif;font-size:28px;color:rgba(0,0,0,0.847);}
+.bar-chart{display:flex;align-items:flex-end;gap:8px;height:160px;padding:12px 0;border-bottom:1px solid #E8E8E8;}
+.bar-chart .bar-col{display:flex;flex-direction:column;align-items:center;flex:1;}
+.bar-chart .bar{width:32px;border-radius:2px 2px 0 0;background:#1890FF;transition:height .3s;}
+.bar-chart .bar-label{font-size:11px;color:rgba(0,0,0,0.447);margin-top:6px;white-space:nowrap;}
+.service-cards{display:flex;gap:16px;flex-wrap:wrap;}
+.service-card{width:280px;border:1px solid #E8E8E8;border-radius:4px;overflow:hidden;transition:box-shadow .2s;}
+.service-card:hover{box-shadow:0 4px 12px rgba(0,0,0,0.1);}
+.service-card .card-header{padding:16px;background:linear-gradient(135deg,#1890FF,#40A9FF);color:#fff;text-align:center;}
+.service-card .card-header .icon{font-size:32px;margin-bottom:8px;}
+.service-card .card-header .name{font-size:16px;font-weight:600;}
+.service-card .card-body{padding:16px;}
+.service-card .card-body .version-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #F0F0F0;}
+.service-card .card-body .version-name{font-size:14px;color:rgba(0,0,0,0.847);}
+.service-card .card-body .version-price{font-family:'PingFangSC-Semibold','PingFang SC',sans-serif;font-size:16px;color:#FF4D4F;}
+.service-card .card-body .features{margin-top:12px;font-size:13px;color:rgba(0,0,0,0.647);line-height:1.8;}
+.service-card .card-footer{padding:12px 16px;display:flex;gap:8px;border-top:1px solid #F0F0F0;}
+.preview-section{border:1px solid #E8E8E8;border-radius:4px;padding:16px;margin-bottom:16px;}
+.preview-section h4{font-family:'PingFangSC-Semibold','PingFang SC',sans-serif;font-size:14px;color:rgba(0,0,0,0.847);margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid #F0F0F0;}
+.preview-section p{font-size:14px;color:rgba(0,0,0,0.647);line-height:1.8;}
+.teleprompter-view{position:fixed;top:0;left:0;width:100%;height:100%;background:#1a1a2e;z-index:2000;display:none;flex-direction:column;}
+.teleprompter-view.show{display:flex;}
+.teleprompter-header{padding:16px 24px;display:flex;justify-content:space-between;align-items:center;background:#16213e;}
+.teleprompter-header h3{color:#fff;font-size:18px;}
+.teleprompter-body{flex:1;overflow-y:auto;padding:40px 80px;color:#fff;font-size:28px;line-height:1.8;}
+.teleprompter-body .section-title{font-size:24px;color:#1890FF;margin:24px 0 12px;font-weight:600;}
+.teleprompter-body .section-content{margin-bottom:24px;}
+.teleprompter-controls{padding:16px 24px;background:#16213e;display:flex;align-items:center;gap:16px;justify-content:center;}
+.teleprompter-controls .speed-label{color:rgba(255,255,255,0.698);font-size:14px;}
+.teleprompter-controls input[type=range]{width:200px;accent-color:#1890FF;}
+.image-grid{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px;}
+.image-grid .img-item{width:120px;height:120px;border:1px solid #E8E8E8;border-radius:4px;display:flex;align-items:center;justify-content:center;background:#FAFAFA;cursor:pointer;transition:border-color .2s;overflow:hidden;}
+.image-grid .img-item:hover{border-color:#1890FF;}
+.image-grid .img-item .placeholder-img{color:#D9D9D9;font-size:32px;}
+.checkbox-group{display:flex;flex-wrap:wrap;gap:8px;}
+.checkbox-group label{display:flex;align-items:center;gap:4px;font-size:14px;color:rgba(0,0,0,0.647);cursor:pointer;padding:4px 8px;border:1px solid #D9D9D9;border-radius:4px;transition:all .2s;}
+.checkbox-group label:hover{border-color:#1890FF;}
+.checkbox-group label.checked{background:#E6F7FF;border-color:#1890FF;color:#1890FF;}
+.checkbox-group input{display:none;}
+.optimize-area{display:flex;gap:8px;margin-top:12px;}
+.optimize-area .input{flex:1;height:32px;border:1px solid #D9D9D9;border-radius:4px;padding:0 12px;font-size:14px;font-family:inherit;outline:none;}
+.optimize-area .input:focus{border-color:#1890FF;}
+</style>
+</head>
+<body>
+
+<div class="logo-bar"><span>Logo</span></div>
+
+<div class="sidebar" id="sidebar">
+<div class="menu-item" data-page="workspace" onclick="navTo('workspace')">工作台</div>
+<div class="menu-item" onclick="toggleSub(this)"><span>直播</span><span class="arrow">&#9654;</span></div>
+<div class="sub-menu">
+<div class="menu-item" data-page="anchor-mgr" onclick="navTo('anchor-mgr')">主播管理</div>
+<div class="menu-item" data-page="session-mgr" onclick="navTo('session-mgr')">场次管理</div>
+<div class="menu-item" data-page="live-room" onclick="navTo('live-room')">直播间</div>
+<div class="menu-item" data-page="ai-script" onclick="navTo('ai-script')">AI主播稿管理</div>
+</div>
+<div class="menu-item" onclick="toggleSub(this)"><span>商品</span><span class="arrow">&#9654;</span></div>
+<div class="sub-menu">
+<div class="menu-item" data-page="product-mgr" onclick="navTo('product-mgr')">商品管理</div>
+</div>
+<div class="menu-item" onclick="toggleSub(this)"><span>产品</span><span class="arrow">&#9654;</span></div>
+<div class="sub-menu">
+<div class="menu-item" data-page="version-mgr" onclick="navTo('version-mgr')">版本管理</div>
+<div class="menu-item" data-page="resource-mgr" onclick="navTo('resource-mgr')">资源管理</div>
+</div>
+<div class="menu-item" onclick="toggleSub(this)"><span>销售</span><span class="arrow">&#9654;</span></div>
+<div class="sub-menu">
+<div class="menu-item" data-page="customer-mgr" onclick="navTo('customer-mgr')">客户管理</div>
+<div class="menu-item" data-page="version-sub" onclick="navTo('version-sub')">版本订阅</div>
+<div class="menu-item" data-page="resource-sub" onclick="navTo('resource-sub')">资源订阅</div>
+<div class="menu-item" data-page="contract-mgr" onclick="navTo('contract-mgr')">合同管理</div>
+</div>
+<div class="menu-item" onclick="toggleSub(this)"><span>财务</span><span class="arrow">&#9654;</span></div>
+<div class="sub-menu">
+<div class="menu-item" data-page="trade-mgr" onclick="navTo('trade-mgr')">交易管理</div>
+</div>
+<div class="menu-item" onclick="toggleSub(this)"><span>内容</span><span class="arrow">&#9654;</span></div>
+<div class="sub-menu">
+<div class="menu-item" data-page="article-mgr" onclick="navTo('article-mgr')">文章管理</div>
+<div class="menu-item" data-page="comment-mgr" onclick="navTo('comment-mgr')">评论管理</div>
+<div class="menu-item" data-page="agreement-mgr" onclick="navTo('agreement-mgr')">协议管理</div>
+</div>
+<div class="menu-item" onclick="toggleSub(this)"><span>AI应用</span><span class="arrow">&#9654;</span></div>
+<div class="sub-menu">
+<div class="menu-item" data-page="app-mgr" onclick="navTo('app-mgr')">应用管理</div>
+<div class="menu-item" data-page="ai-ctrl" onclick="navTo('ai-ctrl')">AI控制管理</div>
+<div class="menu-item" data-page="service-buy" onclick="navTo('service-buy')">服务购买</div>
+<div class="menu-item" data-page="usage-log" onclick="navTo('usage-log')">使用记录</div>
+</div>
+<div class="menu-item" onclick="toggleSub(this)"><span>通讯录</span><span class="arrow">&#9654;</span></div>
+<div class="sub-menu">
+<div class="menu-item" data-page="contacts-mgr" onclick="navTo('contacts-mgr')">通讯录管理</div>
+<div class="menu-item" data-page="auto-group" onclick="navTo('auto-group')">自动建群</div>
+<div class="menu-item" data-page="group-mgr" onclick="navTo('group-mgr')">群聊管理</div>
+<div class="menu-item" data-page="group-push" onclick="navTo('group-push')">群聊推送</div>
+<div class="menu-item" data-page="data-stats" onclick="navTo('data-stats')">数据统计</div>
+</div>
+<div class="menu-item" onclick="toggleSub(this)"><span>系统</span><span class="arrow">&#9654;</span></div>
+<div class="sub-menu">
+<div class="menu-item" data-page="account-mgr" onclick="navTo('account-mgr')">账号管理</div>
+<div class="menu-item" data-page="role-mgr" onclick="navTo('role-mgr')">角色管理</div>
+<div class="menu-item" data-page="perm-mgr" onclick="navTo('perm-mgr')">权限管理</div>
+<div class="menu-item" data-page="menu-mgr" onclick="navTo('menu-mgr')">菜单管理</div>
+</div>
+</div>
+
+<div class="status-bar">
+<div class="breadcrumb" id="breadcrumb"><span class="current">工作台</span></div>
+<div class="user-info"><div class="avatar">A</div><span class="name">admin</span><span class="dropdown-arrow">&#9660;</span></div>
+</div>
+
+<div class="content-area">
+
+<div class="page-section active" id="page-workspace">
+<div class="content-card">
+<div class="page-title">工作台</div>
+<div class="stat-cards">
+<div class="stat-card"><div class="label">今日直播场次</div><div class="value">8</div></div>
+<div class="stat-card"><div class="label">进行中直播</div><div class="value">3</div></div>
+<div class="stat-card"><div class="label">AI生成次数</div><div class="value">126</div></div>
+<div class="stat-card"><div class="label">通讯录总数</div><div class="value">2,847</div></div>
+<div class="stat-card"><div class="label">活跃群聊</div><div class="value">56</div></div>
+</div>
+<div style="margin-top:24px;">
+<div class="page-title" style="font-size:16px;">快捷操作</div>
+<div style="display:flex;gap:12px;flex-wrap:wrap;">
+<button class="btn btn-primary" onclick="navTo('ai-script')">撰写直播稿</button>
+<button class="btn btn-default" onclick="navTo('product-mgr')">商品管理</button>
+<button class="btn btn-default" onclick="navTo('contacts-mgr')">通讯录管理</button>
+<button class="btn btn-default" onclick="navTo('service-buy')">服务购买</button>
+</div>
+</div>
+</div>
+</div>
+
+<div class="page-section" id="page-ai-script">
+<div class="content-card">
+<div class="page-title">AI主播稿管理</div>
+<div class="filter-area">
+<button class="btn btn-primary" onclick="openWriteScript()">撰写直播稿</button>
+<label>稿件状态</label>
+<select class="select" id="scriptStatusFilter"><option value="">全部</option><option>草稿</option><option>已确认</option><option>已过期</option></select>
+<label>关联主播</label><input class="input" placeholder="搜索主播名称"/>
+<button class="btn btn-default" onclick="showToast('筛选完成','info')">查询</button>
+<button class="btn btn-default">重置</button>
+</div>
+<div class="table-wrap">
+<table>
+<thead><tr><th style="width:100px">稿件编号</th><th style="width:100px">关联场次</th><th style="width:80px">关联主播</th><th style="width:140px">直播主题</th><th style="width:140px">生成时间</th><th style="width:80px">稿件状态</th><th style="width:260px">操作</th></tr></thead>
+<tbody>
+<tr><td>SC001</td><td>LC20250101</td><td>主播A</td><td>春季新品发布</td><td>2025-01-15 10:30</td><td><span class="status-tag green">已确认</span></td><td class="ops"><a class="btn-link" onclick="viewScript('SC001')">查看</a><a class="btn-link" onclick="editScript()">编辑</a><a class="btn-link" onclick="viewHistory('LC20250101','春季新品发布','主播A')">历史稿件</a><a class="btn-link" onclick="openTeleprompter()">提词器</a></td></tr>
+<tr><td>SC002</td><td>LC20250102</td><td>主播B</td><td>年货节专场</td><td>2025-01-16 14:00</td><td><span class="status-tag orange">草稿</span></td><td class="ops"><a class="btn-link" onclick="viewScript('SC002')">查看</a><a class="btn-link" onclick="editScript()">编辑</a><a class="btn-link" onclick="viewHistory('LC20250102','年货节专场','主播B')">历史稿件</a><a class="btn-link" onclick="openTeleprompter()">提词器</a></td></tr>
+<tr><td>SC003</td><td>LC20250103</td><td>主播C</td><td>美妆好物推荐</td><td>2025-01-10 09:00</td><td><span class="status-tag gray">已过期</span></td><td class="ops"><a class="btn-link" onclick="viewScript('SC003')">查看</a><a class="btn-link" onclick="editScript()">编辑</a><a class="btn-link" onclick="viewHistory('LC20250103','美妆好物推荐','主播C')">历史稿件</a><a class="btn-link" onclick="openTeleprompter()">提词器</a></td></tr>
+<tr><td>SC004</td><td>LC20250104</td><td>主播A</td><td>数码产品专场</td><td>2025-01-18 16:00</td><td><span class="status-tag green">已确认</span></td><td class="ops"><a class="btn-link" onclick="viewScript('SC004')">查看</a><a class="btn-link" onclick="editScript()">编辑</a><a class="btn-link" onclick="viewHistory('LC20250104','数码产品专场','主播A')">历史稿件</a><a class="btn-link" onclick="openTeleprompter()">提词器</a></td></tr>
+<tr><td>SC005</td><td>LC20250105</td><td>主播D</td><td>家居生活馆</td><td>2025-01-19 11:00</td><td><span class="status-tag orange">草稿</span></td><td class="ops"><a class="btn-link" onclick="viewScript('SC005')">查看</a><a class="btn-link" onclick="editScript()">编辑</a><a class="btn-link" onclick="viewHistory('LC20250105','家居生活馆','主播D')">历史稿件</a><a class="btn-link" onclick="openTeleprompter()">提词器</a></td></tr>
+</tbody>
+</table>
+</div>
+<div class="pagination"><span class="pg-info">共 5 条</span><div class="pg-btn active">1</div></div>
+</div>
+</div>
+
+<div class="page-section" id="page-anchor-mgr">
+<div class="content-card">
+<div class="page-title">主播管理</div>
+<div class="filter-area">
+<button class="btn btn-primary" onclick="openModal('anchorModal')">新建主播</button>
+<label>主播名称</label><input class="input" placeholder="搜索主播名称"/>
+<label>创建时间</label><input class="input date-input" type="date"/> — <input class="input date-input" type="date"/>
+<label>资质状态</label><select class="select"><option value="">全部</option><option>已认证</option><option>待认证</option><option>已过期</option></select>
+<button class="btn btn-default" onclick="showToast('查询完成','info')">查询</button><button class="btn btn-default">重置</button>
+</div>
+<div class="table-wrap">
+<table>
+<thead><tr><th style="width:90px">主播编号</th><th style="width:80px">主播名称</th><th style="width:60px">主播头像</th><th style="width:100px">历史总GMV</th><th style="width:80px">累计粉丝数</th><th style="width:70px">违规次数</th><th style="width:90px">累计直播天数</th><th style="width:80px">直播计划</th><th style="width:80px">资质状态</th><th style="width:200px">操作</th></tr></thead>
+<tbody>
+<tr><td>ZB001</td><td>主播A</td><td><div style="width:36px;height:36px;border-radius:50%;background:#1890FF;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;">A</div></td><td>¥1,280,000</td><td>52,300</td><td>0</td><td>128</td><td>3场/周</td><td><span class="status-tag green">已认证</span></td><td class="ops"><a class="btn-link" onclick="openModal('anchorModal')">编辑</a><a class="btn-link">查看数据</a><a class="btn-link">查看资质</a></td></tr>
+<tr><td>ZB002</td><td>主播B</td><td><div style="width:36px;height:36px;border-radius:50%;background:#FA8C16;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;">B</div></td><td>¥860,000</td><td>38,100</td><td>1</td><td>96</td><td>2场/周</td><td><span class="status-tag green">已认证</span></td><td class="ops"><a class="btn-link" onclick="openModal('anchorModal')">编辑</a><a class="btn-link">查看数据</a><a class="btn-link">查看资质</a></td></tr>
+<tr><td>ZB003</td><td>主播C</td><td><div style="width:36px;height:36px;border-radius:50%;background:#52C41A;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;">C</div></td><td>¥520,000</td><td>21,600</td><td>0</td><td>64</td><td>2场/周</td><td><span class="status-tag orange">待认证</span></td><td class="ops"><a class="btn-link" onclick="openModal('anchorModal')">编辑</a><a class="btn-link">查看数据</a><a class="btn-link">查看资质</a></td></tr>
+<tr><td>ZB004</td><td>主播D</td><td><div style="width:36px;height:36px;border-radius:50%;background:#722ED1;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;">D</div></td><td>¥340,000</td><td>15,800</td><td>2</td><td>45</td><td>1场/周</td><td><span class="status-tag red">已过期</span></td><td class="ops"><a class="btn-link" onclick="openModal('anchorModal')">编辑</a><a class="btn-link">查看数据</a><a class="btn-link">查看资质</a></td></tr>
+</tbody>
+</table>
+</div>
+<div class="pagination"><span class="pg-info">共 4 条</span><div class="pg-btn active">1</div></div>
+</div>
+</div>
+
+<div class="page-section" id="page-session-mgr">
+<div class="content-card">
+<div class="page-title">场次管理</div>
+<div class="filter-area">
+<button class="btn btn-primary">新建场次</button>
+<label>场次名称</label><input class="input" placeholder="搜索场次"/>
+<label>状态</label><select class="select"><option value="">全部</option><option>待开播</option><option>直播中</option><option>已结束</option></select>
+<button class="btn btn-default" onclick="showToast('查询完成','info')">查询</button>
+</div>
+<div class="table-wrap">
+<table>
+<thead><tr><th style="width:100px">场次编号</th><th style="width:140px">场次名称</th><th style="width:100px">直播间</th><th style="width:80px">主播</th><th style="width:160px">场次时间</th><th style="width:80px">状态</th><th style="width:160px">操作</th></tr></thead>
+<tbody>
+<tr><td>LC001</td><td>春季新品发布</td><td>直播间1</td><td>主播A</td><td>2025-01-20 10:00~12:00</td><td><span class="status-tag blue">直播中</span></td><td class="ops"><a class="btn-link">查看</a><a class="btn-link" onclick="openWriteScript()">撰写直播稿</a></td></tr>
+<tr><td>LC002</td><td>年货节专场</td><td>直播间2</td><td>主播B</td><td>2025-01-21 14:00~16:00</td><td><span class="status-tag orange">待开播</span></td><td class="ops"><a class="btn-link">查看</a><a class="btn-link" onclick="openWriteScript()">撰写直播稿</a></td></tr>
+<tr><td>LC003</td><td>美妆好物推荐</td><td>直播间1</td><td>主播C</td><td>2025-01-18 09:00~11:00</td><td><span class="status-tag gray">已结束</span></td><td class="ops"><a class="btn-link">查看</a><a class="btn-link" onclick="openWriteScript()">撰写直播稿</a></td></tr>
+</tbody>
+</table>
+</div>
+<div class="pagination"><span class="pg-info">共 3 条</span><div class="pg-btn active">1</div></div>
+</div>
+</div>
+
+<div class="page-section" id="page-live-room">
+<div class="content-card">
+<div class="page-title">直播间</div>
+<div class="filter-area">
+<button class="btn btn-primary">新建直播间</button>
+<label>直播间名称</label><input class="input" placeholder="搜索"/>
+<label>状态</label><select class="select"><option value="">全部</option><option>启用</option><option>停用</option></select>
+<button class="btn btn-default" onclick="showToast('查询完成','info')">查询</button>
+</div>
+<div class="table-wrap">
+<table>
+<thead><tr><th style="width:100px">直播间编号</th><th style="width:140px">直播间名称</th><th style="width:140px">直播间主题</th><th style="width:100px">关联商品数</th><th style="width:80px">状态</th><th style="width:120px">操作</th></tr></thead>
+<tbody>
+<tr><td>LR001</td><td>品牌旗舰直播间</td><td>春季新品发布</td><td>12</td><td><span class="status-tag green">启用</span></td><td class="ops"><a class="btn-link">编辑</a><a class="btn-link">查看</a></td></tr>
+<tr><td>LR002</td><td>年货专场直播间</td><td>年货节专场</td><td>8</td><td><span class="status-tag green">启用</span></td><td class="ops"><a class="btn-link">编辑</a><a class="btn-link">查看</a></td></tr>
+<tr><td>LR003</td><td>美妆体验直播间</td><td>美妆好物推荐</td><td>15</td><td><span class="status-tag gray">停用</span></td><td class="ops"><a class="btn-link">编辑</a><a class="btn-link">查看</a></td></tr>
+</tbody>
+</table>
+</div>
+<div class="pagination"><span class="pg-info">共 3 条</span><div class="pg-btn active">1</div></div>
+</div>
+</div>
+
+<div class="page-section" id="page-product-mgr">
+<div class="content-card">
+<div class="page-title">商品管理</div>
+<div class="filter-area">
+<button class="btn btn-primary">新建商品</button>
+<label>商品名</label><input class="input" placeholder="搜索商品"/>
+<label>状态</label><select class="select"><option value="">全部</option><option>上架</option><option>下架</option></select>
+<button class="btn btn-default" onclick="showToast('查询完成','info')">查询</button>
+</div>
+<div class="table-wrap">
+<table>
+<thead><tr><th style="width:90px">商品编号</th><th style="width:60px">商品主图</th><th style="width:140px">商品名</th><th style="width:90px">建议售价</th><th style="width:80px">总库存</th><th style="width:90px">商品图文介绍</th><th style="width:80px">商品视频</th><th style="width:260px">操作</th></tr></thead>
+<tbody>
+<tr><td>SP001</td><td><div style="width:40px;height:40px;background:#F0F0F0;border-radius:4px;display:flex;align-items:center;justify-content:center;color:#D9D9D9;font-size:20px;">&#9634;</div></td><td>春季新款连衣裙</td><td>¥299</td><td>500</td><td><span class="status-tag green">已添加</span></td><td><span class="status-tag gray">未添加</span></td><td class="ops"><a class="btn-link">编辑</a><a class="btn-link" onclick="checkAiPermission('image')">AI生图</a><a class="btn-link" onclick="checkAiPermission('video')">AI视频</a><a class="btn-link" onclick="checkAiPermission('desc')">AI商品介绍</a><a class="btn-link" onclick="checkAiPermission('selling')">AI卖点</a></td></tr>
+<tr><td>SP002</td><td><div style="width:40px;height:40px;background:#F0F0F0;border-radius:4px;display:flex;align-items:center;justify-content:center;color:#D9D9D9;font-size:20px;">&#9634;</div></td><td>保湿精华液30ml</td><td>¥189</td><td>800</td><td><span class="status-tag green">已添加</span></td><td><span class="status-tag green">已添加</span></td><td class="ops"><a class="btn-link">编辑</a><a class="btn-link" onclick="checkAiPermission('image')">AI生图</a><a class="btn-link" onclick="checkAiPermission('video')">AI视频</a><a class="btn-link" onclick="checkAiPermission('desc')">AI商品介绍</a><a class="btn-link" onclick="checkAiPermission('selling')">AI卖点</a></td></tr>
+<tr><td>SP003</td><td><div style="width:40px;height:40px;background:#F0F0F0;border-radius:4px;display:flex;align-items:center;justify-content:center;color:#D9D9D9;font-size:20px;">&#9634;</div></td><td>智能蓝牙耳机Pro</td><td>¥459</td><td>300</td><td><span class="status-tag gray">未添加</span></td><td><span class="status-tag gray">未添加</span></td><td class="ops"><a class="btn-link">编辑</a><a class="btn-link" onclick="checkAiPermission('image')">AI生图</a><a class="btn-link" onclick="checkAiPermission('video')">AI视频</a><a class="btn-link" onclick="checkAiPermission('desc')">AI商品介绍</a><a class="btn-link" onclick="checkAiPermission('selling')">AI卖点</a></td></tr>
+<tr><td>SP004</td><td><div style="width:40px;height:40px;background:#F0F0F0;border-radius:4px;display:flex;align-items:center;justify-content:center;color:#D9D9D9;font-size:20px;">&#9634;</div></td><td>北欧风落地灯</td><td>¥688</td><td>150</td><td><span class="status-tag green">已添加</span></td><td><span class="status-tag gray">未添加</span></td><td class="ops"><a class="btn-link">编辑</a><a class="btn-link" onclick="checkAiPermission('image')">AI生图</a><a class="btn-link" onclick="checkAiPermission('video')">AI视频</a><a class="btn-link" onclick="checkAiPermission('desc')">AI商品介绍</a><a class="btn-link" onclick="checkAiPermission('selling')">AI卖点</a></td></tr>
+</tbody>
+</table>
+</div>
+<div class="pagination"><span class="pg-info">共 4 条</span><div class="pg-btn active">1</div></div>
+</div>
+</div>
+
+<div class="page-section" id="page-ai-ctrl">
+<div class="content-card">
+<div class="page-title">AI控制管理</div>
+<div class="table-wrap">
+<table>
+<thead><tr><th style="width:90px">控制编号</th><th style="width:80px">控制类型</th><th style="width:120px">控制名称</th><th style="width:100px">控制位置</th><th style="width:130px">关联应用编号</th><th style="width:120px">关联应用名称</th><th style="width:80px">是否启用</th><th style="width:100px">版本限制</th><th style="width:80px">操作</th></tr></thead>
+<tbody>
+<tr><td>CTL001</td><td>按钮</td><td>撰写直播稿</td><td>AI主播稿管理</td><td>APP_AI_LIVE_SCRIPT</td><td>AI直播稿</td><td><span class="status-tag green">启用</span></td><td>标准版及以上</td><td class="ops"><a class="btn-link" onclick="openModal('aiCtrlModal')">编辑</a></td></tr>
+<tr><td>CTL002</td><td>按钮</td><td>AI生图</td><td>商品管理</td><td>APP_AI_IMAGE</td><td>AI生图</td><td><span class="status-tag green">启用</span></td><td>专业版</td><td class="ops"><a class="btn-link" onclick="openModal('aiCtrlModal')">编辑</a></td></tr>
+<tr><td>CTL003</td><td>按钮</td><td>AI视频</td><td>商品管理</td><td>APP_AI_VIDEO</td><td>AI视频</td><td><span class="status-tag green">启用</span></td><td>专业版</td><td class="ops"><a class="btn-link" onclick="openModal('aiCtrlModal')">编辑</a></td></tr>
+<tr><td>CTL004</td><td>按钮</td><td>AI商品介绍</td><td>商品管理</td><td>APP_AI_PRODUCT_DESC</td><td>AI商品介绍</td><td><span class="status-tag green">启用</span></td><td>标准版及以上</td><td class="ops"><a class="btn-link" onclick="openModal('aiCtrlModal')">编辑</a></td></tr>
+<tr><td>CTL005</td><td>按钮</td><td>AI卖点</td><td>商品管理</td><td>APP_AI_SELLING_POINT</td><td>AI卖点</td><td><span class="status-tag green">启用</span></td><td>标准版及以上</td><td class="ops"><a class="btn-link" onclick="openModal('aiCtrlModal')">编辑</a></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<div class="page-section" id="page-service-buy">
+<div class="content-card">
+<div class="page-title">服务购买</div>
+<div class="service-cards">
+<div class="service-card">
+<div class="card-header"><div class="icon">&#9998;</div><div class="name">AI直播稿</div></div>
+<div class="card-body">
+<div class="version-row"><span class="version-name">标准版</span><span class="version-price">¥99/月</span></div>
+<div class="version-row"><span class="version-name">专业版</span><span class="version-price">¥299/月</span></div>
+<div class="features">功能权益：智能撰写直播稿<br/>使用额度：标准版50次/月，专业版200次/月<br/>支持话术风格自定义、多轮优化</div>
+</div>
+<div class="card-footer"><button class="btn btn-primary btn-sm" onclick="openPurchaseModal('AI直播稿','标准版','¥99/月')">立即购买</button><button class="btn btn-default btn-sm" onclick="showToast('试用申请已提交','success')">申请试用</button></div>
+</div>
+<div class="service-card">
+<div class="card-header" style="background:linear-gradient(135deg,#722ED1,#9254DE);"><div class="icon">&#128444;</div><div class="name">AI生图</div></div>
+<div class="card-body">
+<div class="version-row"><span class="version-name">标准版</span><span class="version-price">¥149/月</span></div>
+<div class="version-row"><span class="version-name">专业版</span><span class="version-price">¥399/月</span></div>
+<div class="features">功能权益：AI生成商品图片<br/>使用额度：标准版100次/月，专业版500次/月<br/>支持多种风格和比例选择</div>
+</div>
+<div class="card-footer"><button class="btn btn-primary btn-sm" onclick="openPurchaseModal('AI生图','专业版','¥399/月')">立即购买</button><button class="btn btn-default btn-sm" onclick="showToast('试用申请已提交','success')">申请试用</button></div>
+</div>
+<div class="service-card">
+<div class="card-header" style="background:linear-gradient(135deg,#FA8C16,#FFA940);"><div class="icon">&#127909;</div><div class="name">AI视频</div></div>
+<div class="card-body">
+<div class="version-row"><span class="version-name">标准版</span><span class="version-price">¥199/月</span></div>
+<div class="version-row"><span class="version-name">专业版</span><span class="version-price">¥499/月</span></div>
+<div class="features">功能权益：AI生成商品视频<br/>使用额度：标准版30次/月，专业版100次/月<br/>支持多种视频风格和时长</div>
+</div>
+<div class="card-footer"><button class="btn btn-primary btn-sm" onclick="openPurchaseModal('AI视频','专业版','¥499/月')">立即购买</button><button class="btn btn-default btn-sm" onclick="showToast('试用申请已提交','success')">申请试用</button></div>
+</div>
+<div class="service-card">
+<div class="card-header" style="background:linear-gradient(135deg,#52C41A,#73D13D);"><div class="icon">&#128196;</div><div class="name">AI商品介绍</div></div>
+<div class="card-body">
+<div class="version-row"><span class="version-name">标准版</span><span class="version-price">¥79/月</span></div>
+<div class="version-row"><span class="version-name">专业版</span><span class="version-price">¥199/月</span></div>
+<div class="features">功能权益：AI生成商品介绍文案<br/>使用额度：标准版80次/月，专业版300次/月<br/>支持多种介绍风格</div>
+</div>
+<div class="card-footer"><button class="btn btn-primary btn-sm" onclick="openPurchaseModal('AI商品介绍','标准版','¥79/月')">立即购买</button><button class="btn btn-default btn-sm" onclick="showToast('试用申请已提交','success')">申请试用</button></div>
+</div>
+<div class="service-card">
+<div class="card-header" style="background:linear-gradient(135deg,#FF4D4F,#FF7875);"><div class="icon">&#11088;</div><div class="name">AI卖点</div></div>
+<div class="card-body">
+<div class="version-row"><span class="version-name">标准版</span><span class="version-price">¥69/月</span></div>
+<div class="version-row"><span class="version-name">专业版</span><span class="version-price">¥179/月</span></div>
+<div class="features">功能权益：AI生成商品卖点<br/>使用额度：标准版100次/月，专业版400次/月<br/>支持卖点数量和风格自定义</div>
+</div>
+<div class="card-footer"><button class="btn btn-primary btn-sm" onclick="openPurchaseModal('AI卖点','标准版','¥69/月')">立即购买</button><button class="btn btn-default btn-sm" onclick="showToast('试用申请已提交','success')">申请试用</button></div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="page-section" id="page-usage-log">
+<div class="content-card">
+<div class="page-title">使用记录</div>
+<div class="filter-area">
+<label>功能类型</label><select class="select"><option value="">全部</option><option>AI直播稿</option><option>AI生图</option><option>AI视频</option><option>AI商品介绍</option><option>AI卖点</option></select>
+<label>生成状态</label><select class="select"><option value="">全部</option><option>成功</option><option>失败</option></select>
+<label>生成时间</label><input class="input date-input" type="date"/> — <input class="input date-input" type="date"/>
+<button class="btn btn-default" onclick="showToast('查询完成','info')">查询</button>
+</div>
+<div class="table-wrap">
+<table>
+<thead><tr><th style="width:90px">记录编号</th><th style="width:80px">租户</th><th style="width:80px">用户</th><th style="width:140px">应用编号</th><th style="width:90px">功能类型</th><th style="width:140px">生成时间</th><th style="width:80px">消耗次数</th><th style="width:80px">生成状态</th><th style="width:120px">关联业务对象</th><th style="width:80px">操作</th></tr></thead>
+<tbody>
+<tr><td>REC001</td><td>租户A</td><td>admin</td><td>APP_AI_LIVE_SCRIPT</td><td>AI直播稿</td><td>2025-01-15 10:30</td><td>1</td><td><span class="status-tag green">成功</span></td><td>SC001</td><td class="ops"><a class="btn-link" onclick="openModal('usageDetailModal')">查看详情</a></td></tr>
+<tr><td>REC002</td><td>租户A</td><td>admin</td><td>APP_AI_IMAGE</td><td>AI生图</td><td>2025-01-15 11:20</td><td>1</td><td><span class="status-tag green">成功</span></td><td>SP001</td><td class="ops"><a class="btn-link" onclick="openModal('usageDetailModal')">查看详情</a></td></tr>
+<tr><td>REC003</td><td>租户A</td><td>admin</td><td>APP_AI_VIDEO</td><td>AI视频</td><td>2025-01-16 09:15</td><td>1</td><td><span class="status-tag red">失败</span></td><td>SP002</td><td class="ops"><a class="btn-link" onclick="openModal('usageDetailModal')">查看详情</a></td></tr>
+<tr><td>REC004</td><td>租户A</td><td>admin</td><td>APP_AI_PRODUCT_DESC</td><td>AI商品介绍</td><td>2025-01-16 14:00</td><td>1</td><td><span class="status-tag green">成功</span></td><td>SP003</td><td class="ops"><a class="btn-link" onclick="openModal('usageDetailModal')">查看详情</a></td></tr>
+<tr><td>REC005</td><td>租户A</td><td>admin</td><td>APP_AI_SELLING_POINT</td><td>AI卖点</td><td>2025-01-17 10:00</td><td>1</td><td><span class="status-tag green">成功</span></td><td>SP001</td><td class="ops"><a class="btn-link" onclick="openModal('usageDetailModal')">查看详情</a></td></tr>
+</tbody>
+</table>
+</div>
+<div class="pagination"><span class="pg-info">共 5 条</span><div class="pg-btn active">1</div></div>
+</div>
+</div>
+
+<div class="page-section" id="page-contacts-mgr">
+<div class="content-card">
+<div class="page-title">通讯录管理</div>
+<div style="display:flex;gap:16px;">
+<div class="tree-panel" id="contactsTree">
+<div class="tree-node" onclick="toggleTreeNode(this);selectContactsLevel('agent')"><span class="arrow open">&#9654;</span> 华东代理区</div>
+<div class="tree-children show">
+<div class="tree-node" onclick="toggleTreeNode(this);selectContactsLevel('store')"><span class="arrow">&#9654;</span> 上海旗舰门店</div>
+<div class="tree-children">
+<div class="tree-node" onclick="selectContactsLevel('clerk')">&#9679; 店员张三</div>
+<div class="tree-node" onclick="selectContactsLevel('clerk')">&#9679; 店员李四</div>
+</div>
+<div class="tree-node" onclick="toggleTreeNode(this);selectContactsLevel('store')"><span class="arrow">&#9654;</span> 杭州体验门店</div>
+<div class="tree-children">
+<div class="tree-node" onclick="selectContactsLevel('clerk')">&#9679; 店员王五</div>
+</div>
+</div>
+<div class="tree-node" onclick="toggleTreeNode(this);selectContactsLevel('agent')"><span class="arrow">&#9654;</span> 华南代理区</div>
+<div class="tree-children">
+<div class="tree-node" onclick="selectContactsLevel('store')"><span class="arrow">&#9654;</span> 深圳中心门店</div>
+<div class="tree-children">
+<div class="tree-node" onclick="selectContactsLevel('clerk')">&#9679; 店员赵六</div>
+</div>
+</div>
+</div>
+<div style="flex:1;overflow-x:auto;">
+<div id="contactsTable-agent" class="contacts-table-section">
+<table>
+<thead><tr><th>代理名称</th><th>名下门店数</th><th>名下客户数</th><th>状态</th></tr></thead>
+<tbody>
+<tr><td>华东代理区</td><td>2</td><td>1,280</td><td><span class="status-tag green">正常</span></td></tr>
+<tr><td>华南代理区</td><td>1</td><td>860</td><td><span class="status-tag green">正常</span></td></tr>
+</tbody>
+</table>
+</div>
+<div id="contactsTable-store" class="contacts-table-section" style="display:none;">
+<table>
+<thead><tr><th>门店名称</th><th>所属代理</th><th>成员数</th><th>客户数</th><th>状态</th></tr></thead>
+<tbody>
+<tr><td>上海旗舰门店</td><td>华东代理区</td><td>5</td><td>680</td><td><span class="status-tag green">正常</span></td></tr>
+<tr><td>杭州体验门店</td><td>华东代理区</td><td>3</td><td>600</td><td><span class="status-tag green">正常</span></td></tr>
+<tr><td>深圳中心门店</td><td>华南代理区</td><td>4</td><td>860</td><td><span class="status-tag green">正常</span></td></tr>
+</tbody>
+</table>
+</div>
+<div id="contactsTable-clerk" class="contacts-table-section" style="display:none;">
+<table>
+<thead><tr><th>姓名</th><th>所属门店</th><th>客户数</th><th>状态</th></tr></thead>
+<tbody>
+<tr><td>张三</td><td>上海旗舰门店</td><td>120</td><td><span class="status-tag green">正常</span></td></tr>
+<tr><td>李四</td><td>上海旗舰门店</td><td>95</td><td><span class="status-tag green">正常</span></td></tr>
+<tr><td>王五</td><td>杭州体验门店</td><td>88</td><td><span class="status-tag green">正常</span></td></tr>
+<tr><td>赵六</td><td>深圳中心门店</td><td>156</td><td><span class="status-tag green">正常</span></td></tr>
+</tbody>
+</table>
+</div>
+<div id="contactsTable-customer" class="contacts-table-section" style="display:none;">
+<table>
+<thead><tr><th>客户名称</th><th>归属店员</th><th>归属门店</th><th>手机号</th><th>状态</th></tr></thead>
+<tbody>
+<tr><td>客户甲</td><td>张三</td><td>上海旗舰门店</td><td>138****1234</td><td><span class="status-tag green">正常</span></td></tr>
+<tr><td>客户乙</td><td>李四</td><td>上海旗舰门店</td><td>139****5678</td><td><span class="status-tag green">正常</span></td></tr>
+<tr><td>客户丙</td><td>王五</td><td>杭州体验门店</td><td>137****9012</td><td><span class="status-tag orange">待激活</span></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="page-section" id="page-auto-group">
+<div class="content-card">
+<div class="page-title">自动建群</div>
+<div class="filter-area">
+<button class="btn btn-primary" onclick="autoDetectGroups()">自动检测</button>
+<label>建群类型</label><select class="select"><option value="">全部</option><option>门店服务群</option><option>店员客户群</option></select>
+<label>建群状态</label><select class="select"><option value="">全部</option><option>待确认</option><option>已建群</option><option>已忽略</option></select>
+<button class="btn btn-default" onclick="showToast('查询完成','info')">查询</button>
+</div>
+<div class="table-wrap">
+<table>
+<thead><tr><th style="width:100px">任务编号</th><th style="width:110px">建群类型</th><th style="width:140px">关联对象</th><th style="width:100px">建议成员数</th><th style="width:100px">建群状态</th><th style="width:160px">操作</th></tr></thead>
+<tbody>
+<tr><td>GRP001</td><td>门店服务群</td><td>上海旗舰门店</td><td>25</td><td><span class="status-tag orange">待确认</span></td><td class="ops"><a class="btn-link" onclick="confirmGroup(this)">确认建群</a><a class="btn-link" onclick="ignoreGroup(this)">忽略</a></td></tr>
+<tr><td>GRP002</td><td>店员客户群</td><td>张三-客户群</td><td>18</td><td><span class="status-tag orange">待确认</span></td><td class="ops"><a class="btn-link" onclick="confirmGroup(this)">确认建群</a><a class="btn-link" onclick="ignoreGroup(this)">忽略</a></td></tr>
+<tr><td>GRP003</td><td>门店服务群</td><td>杭州体验门店</td><td>15</td><td><span class="status-tag green">已建群</span></td><td class="ops"><a class="btn-link">查看详情</a></td></tr>
+<tr><td>GRP004</td><td>店员客户群</td><td>李四-客户群</td><td>22</td><td><span class="status-tag gray">已忽略</span></td><td class="ops"></td></tr>
+</tbody>
+</table>
+</div>
+<div class="pagination"><span class="pg-info">共 4 条</span><div class="pg-btn active">1</div></div>
+</div>
+</div>
+
+<div class="page-section" id="page-group-mgr">
+<div class="content-card">
+<div class="page-title">群聊管理</div>
+<div class="filter-area">
+<label>群名称</label><input class="input" placeholder="搜索群名称"/>
+<label>群类型</label><select class="select"><option value="">全部</option><option>门店服务群</option><option>店员客户群</option></select>
+<label>群状态</label><select class="select"><option value="">全部</option><option>活跃</option><option>不活跃</option></select>
+<button class="btn btn-default" onclick="showToast('查询完成','info')">查询</button>
+</div>
+<div class="table-wrap">
+<table>
+<thead><tr><th style="width:90px">群编号</th><th style="width:140px">群名称</th><th style="width:100px">群类型</th><th style="width:80px">成员数</th><th style="width:140px">创建时间</th><th style="width:80px">群状态</th><th style="width:160px">操作</th></tr></thead>
+<tbody>
+<tr><td>Q001</td><td>上海旗舰门店服务群</td><td>门店服务群</td><td>25</td><td>2025-01-10 09:00</td><td><span class="status-tag green">活跃</span></td><td class="ops"><a class="btn-link">查看详情</a><a class="btn-link" onclick="navTo('group-push')">推送内容</a></td></tr>
+<tr><td>Q002</td><td>张三客户群</td><td>店员客户群</td><td>18</td><td>2025-01-11 10:30</td><td><span class="status-tag green">活跃</span></td><td class="ops"><a class="btn-link">查看详情</a><a class="btn-link" onclick="navTo('group-push')">推送内容</a></td></tr>
+<tr><td>Q003</td><td>杭州体验门店服务群</td><td>门店服务群</td><td>15</td><td>2025-01-12 14:00</td><td><span class="status-tag gray">不活跃</span></td><td class="ops"><a class="btn-link">查看详情</a><a class="btn-link" onclick="navTo('group-push')">推送内容</a></td></tr>
+<tr><td>Q004</td><td>深圳中心门店服务群</td><td>门店服务群</td><td>20</td><td>2025-01-13 16:00</td><td><span class="status-tag green">活跃</span></td><td class="ops"><a class="btn-link">查看详情</a><a class="btn-link" onclick="navTo('group-push')">推送内容</a></td></tr>
+</tbody>
+</table>
+</div>
+<div class="pagination"><span class="pg-info">共 4 条</span><div class="pg-btn active">1</div></div>
+</div>
+</div>
+
+<div class="page-section" id="page-group-push">
+<div class="content-card">
+<div class="page-title">群聊推送</div>
+<div style="margin-bottom:24px;">
+<div class="form-row">
+<div class="form-group"><label><span class="required">*</span>选择群</label><select class="select"><option value="">请选择群</option><option>上海旗舰门店服务群</option><option>张三客户群</option><option>杭州体验门店服务群</option><option>深圳中心门店服务群</option></select></div>
+<div class="form-group"><label><span class="required">*</span>推送类型</label><select class="select" onchange="updatePushContentOptions(this)"><option value="">请选择</option><option value="coupon">优惠券</option><option value="product">商品</option><option value="activity">活动</option><option value="live">直播信息</option></select></div>
+<div class="form-group"><label><span class="required">*</span>选择内容</label><select class="select" id="pushContentSelect"><option value="">请先选择推送类型</option></select></div>
+</div>
+<div class="form-group"><label>推送内容预览</label><div id="pushPreview" style="min-height:80px;border:1px solid #E8E8E8;border-radius:4px;padding:12px;color:rgba(0,0,0,0.447);font-size:14px;">选择内容后显示预览</div></div>
+<div style="text-align:right;"><button class="btn btn-primary" onclick="sendPush()">立即推送</button></div>
+</div>
+<div style="border-top:1px solid #E8E8E8;padding-top:16px;">
+<div style="font-family:'PingFangSC-Semibold','PingFang SC',sans-serif;font-size:16px;color:rgba(0,0,0,0.847);margin-bottom:12px;">推送历史</div>
+<div class="table-wrap">
+<table>
+<thead><tr><th style="width:140px">推送时间</th><th style="width:120px">推送群</th><th style="width:80px">推送类型</th><th style="width:140px">推送内容</th><th style="width:80px">推送状态</th></tr></thead>
+<tbody>
+<tr><td>2025-01-17 10:00</td><td>上海旗舰门店服务群</td><td>优惠券</td><td>满200减50优惠券</td><td><span class="status-tag green">已推送</span></td></tr>
+<tr><td>2025-01-16 15:30</td><td>张三客户群</td><td>商品</td><td>春季新款连衣裙</td><td><span class="status-tag green">已推送</span></td></tr>
+<tr><td>2025-01-15 09:00</td><td>深圳中心门店服务群</td><td>直播信息</td><td>春季新品发布直播</td><td><span class="status-tag green">已推送</span></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+
+<div class="page-section" id="page-data-stats">
+<div class="content-card">
+<div class="page-title">数据统计</div>
+<div class="stat-cards">
+<div class="stat-card"><div class="label">代理数量</div><div class="value">2</div></div>
+<div class="stat-card"><div class="label">门店数量</div><div class="value">3</div></div>
+<div class="stat-card"><div class="label">店员数量</div><div class="value">12</div></div>
+<div class="stat-card"><div class="label">客户数量</div><div class="value">2,847</div></div>
+<div class="stat-card"><div class="label">已建群数量</div><div class="value">56</div></div>
+<div class="stat-card"><div class="label">群活跃度</div><div class="value">78%</div></div>
+</div>
+<div style="display:flex;gap:16px;margin-bottom:24px;">
+<div style="flex:1;border:1px solid #E8E8E8;border-radius:4px;padding:16px;">
+<div style="font-family:'PingFangSC-Semibold','PingFang SC',sans-serif;font-size:14px;color:rgba(0,0,0,0.847);margin-bottom:12px;">建群统计</div>
+<div class="bar-chart">
+<div class="bar-col"><div class="bar" style="height:40px;"></div><div class="bar-label">1月</div></div>
+<div class="bar-col"><div class="bar" style="height:65px;"></div><div class="bar-label">2月</div></div>
+<div class="bar-col"><div class="bar" style="height:80px;"></div><div class="bar-label">3月</div></div>
+<div class="bar-col"><div class="bar" style="height:55px;"></div><div class="bar-label">4月</div></div>
+<div class="bar-col"><div class="bar" style="height:95px;"></div><div class="bar-label">5月</div></div>
+<div class="bar-col"><div class="bar" style="height:110px;"></div><div class="bar-label">6月</div></div>
+</div>
+</div>
+<div style="flex:1;border:1px solid #E8E8E8;border-radius:4px;padding:16px;">
+<div style="font-family:'PingFangSC-Semibold','PingFang SC',sans-serif;font-size:14px;color:rgba(0,0,0,0.847);margin-bottom:12px;">推送统计</div>
+<div class="bar-chart">
+<div class="bar-col"><div class="bar" style="height:30px;background:#52C41A;"></div><div class="bar-label">1月</div></div>
+<div class="bar-col"><div class="bar" style="height:50px;background:#52C41A;"></div><div class="bar-label">2月</div></div>
+<div class="bar-col"><div class="bar" style="height:70px;background:#52C41A;"></div><div class="bar-label">3月</div></div>
+<div class="bar-col"><div class="bar" style="height:45px;background:#52C41A;"></div><div class="bar-label">4月</div></div>
+<div class="bar-col"><div class="bar" style="height:85px;background:#52C41A;"></div><div class="bar-label">5月</div></div>
+<div class="bar-col"><div class="bar" style="height:100px;background:#52C41A;"></div><div class="bar-label">6月</div></div>
+</div>
+</div>
+<div style="flex:1;border:1px solid #E8E8E8;border-radius:4px;padding:16px;">
+<div style="font-family:'PingFangSC-Semibold','PingFang SC',sans-serif;font-size:14px;color:rgba(0,0,0,0.847);margin-bottom:12px;">转化统计</div>
+<div class="bar-chart">
+<div class="bar-col"><div class="bar" style="height:20px;background:#FA8C16;"></div><div class="bar-label">1月</div></div>
+<div class="bar-col"><div class="bar" style="height:35px;background:#FA8C16;"></div><div class="bar-label">2月</div></div>
+<div class="bar-col"><div class="bar" style="height:50px;background:#FA8C16;"></div><div class="bar-label">3月</div></div>
+<div class="bar-col"><div class="bar" style="height:40px;background:#FA8C16;"></div><div class="bar-label">4月</div></div>
+<div class="bar-col"><div class="bar" style="height:65px;background:#FA8C16;"></div><div class="bar-label">5月</div></div>
+<div class="bar-col"><div class="bar" style="height:80px;background:#FA8C16;"></div><div class="bar-label">6月</div></div>
+</div>
+</div>
+</div>
+<div style="font-family:'PingFangSC-Semibold','PingFang SC',sans-serif;font-size:16px;color:rgba(0,0,0,0.847);margin-bottom:12px;">各门店转化数据</div>
+<div class="table-wrap">
+<table>
+<thead><tr><th>门店名称</th><th>客户数</th><th>建群数</th><th>推送次数</th><th>转化率</th><th>GMV</th></tr></thead>
+<tbody>
+<tr><td>上海旗舰门店</td><td>680</td><td>18</td><td>45</td><td>23.5%</td><td>¥128,000</td></tr>
+<tr><td>杭州体验门店</td><td>600</td><td>12</td><td>32</td><td>18.2%</td><td>¥86,000</td></tr>
+<tr><td>深圳中心门店</td><td>860</td><td>26</td><td>58</td><td>28.7%</td><td>¥196,000</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<div class="page-section" id="page-app-mgr">
+<div class="content-card">
+<div class="page-title">应用管理</div>
+<div class="filter-area">
+<button class="btn btn-primary" onclick="openModal('appModal')">新建应用</button>
+<label>应用名称</label><input class="input" placeholder="搜索应用"/>
+<label>状态</label><select class="select"><option value="">全部</option><option>已上架</option><option>已下架</option><option>开发中</option></select>
+<button class="btn btn-default" onclick="showToast('查询完成','info')">查询</button>
+</div>
+<div class="table-wrap">
+<table>
+<thead><tr><th style="width:140px">应用编号</th><th style="width:120px">应用名称</th><th style="width:80px">供应商</th><th style="width:60px">版本</th><th style="width:80px">状态</th><th style="width:140px">最后编辑时间</th><th style="width:140px">最后发布时间</th><th style="width:140px">操作</th></tr></thead>
+<tbody>
+<tr><td>APP_AI_LIVE_SCRIPT</td><td>AI直播稿</td><td>官方</td><td>v2.1</td><td><span class="status-tag green">已上架</span></td><td>2025-01-15 10:00</td><td>2025-01-10 09:00</td><td class="ops"><a class="btn-link" onclick="openModal('appModal')">编辑</a><a class="btn-link" onclick="showToast('已下架','success')">下架</a></td></tr>
+<tr><td>APP_AI_IMAGE</td><td>AI生图</td><td>官方</td><td>v1.5</td><td><span class="status-tag green">已上架</span></td><td>2025-01-14 16:00</td><td>2025-01-12 14:00</td><td class="ops"><a class="btn-link" onclick="openModal('appModal')">编辑</a><a class="btn-link" onclick="showToast('已下架','success')">下架</a></td></tr>
+<tr><td>APP_AI_VIDEO</td><td>AI视频</td><td>官方</td><td>v1.2</td><td><span class="status-tag green">已上架</span></td><td>2025-01-13 11:00</td><td>2025-01-11 10:00</td><td class="ops"><a class="btn-link" onclick="openModal('appModal')">编辑</a><a class="btn-link" onclick="showToast('已下架','success')">下架</a></td></tr>
+<tr><td>APP_AI_PRODUCT_DESC</td><td>AI商品介绍</td><td>官方</td><td>v1.0</td><td><span class="status-tag green">已上架</span></td><td>2025-01-12 09:00</td><td>2025-01-09 08:00</td><td class="ops"><a class="btn-link" onclick="openModal('appModal')">编辑</a><a class="btn-link" onclick="showToast('已下架','success')">下架</a></td></tr>
+<tr><td>APP_AI_SELLING_POINT</td><td>AI卖点</td><td>官方</td><td>v1.0</td><td><span class="status-tag orange">开发中</span></td><td>2025-01-11 14:00</td><td>—</td><td class="ops"><a class="btn-link" onclick="openModal('appModal')">编辑</a><a class="btn-link" onclick="showToast('已上架','success')">上架</a></td></tr>
+</tbody>
+</table>
+</div>
+<div class="pagination"><span class="pg-info">共 5 条</span><div class="pg-btn active">1</div></div>
+</div>
+</div>
+
+<div class="page-section" id="page-version-mgr">
+<div class="content-card">
+<div class="page-title">版本管理</div>
+<div class="filter-area"><button class="btn btn-primary">新建版本</button><button class="btn btn-default" onclick="showToast('查询完成','info')">查询</button></div>
+<div class="table-wrap">
+<table>
+<thead><tr><th>版本编号</th><th>版本名称</th><th>版本类型</th><th>状态</th><th>创建时间</th><th>操作</th></tr></thead>
+<tbody>
+<tr><td>VER001</td><td>标准版</td><td>基础版</td><td><span class="status-tag green">已发布</span></td><td>2025-01-01</td><td class="ops"><a class="btn-link">编辑</a></td></tr>
+<tr><td>VER002</td><td>专业版</td><td>高级版</td><td><span class="status-tag green">已发布</span></td><td>2025-01-01</td><td class="ops"><a class="btn-link">编辑</a></td></tr>
+<tr><td>VER003</td><td>旗舰版</td><td>旗舰版</td><td><span class="status-tag orange">开发中</span></td><td>2025-01-10</td><td class="ops"><a class="btn-link">编辑</a></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<div class="page-section" id="page-resource-mgr">
+<div class="content-card">
+<div class="page-title">资源管理</div>
+<div class="filter-area"><button class="btn btn-primary">新建资源</button><button class="btn btn-default" onclick="showToast('查询完成','info')">查询</button></div>
+<div class="table-wrap">
+<table>
+<thead><tr><th>资源编号</th><th>资源名称</th><th>资源类型</th><th>状态</th><th>创建时间</th><th>操作</th></tr></thead>
+<tbody>
+<tr><td>RES001</td><td>AI算力资源</td><td>计算资源</td><td><span class="status-tag green">正常</span></td><td>2025-01-01</td><td class="ops"><a class="btn-link">编辑</a></td></tr>
+<tr><td>RES002</td><td>存储资源</td><td>存储资源</td><td><span class="status-tag green">正常</span></td><td>2025-01-01</td><td class="ops"><a class="btn-link">编辑</a></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<div class="page-section" id="page-customer-mgr">
+<div class="content-card">
+<div class="page-title">客户管理</div>
+<div class="filter-area"><button class="btn btn-primary">新建客户</button><label>客户名称</label><input class="input" placeholder="搜索"/><button class="btn btn-default" onclick="showToast('查询完成','info')">查询</button></div>
+<div class="table-wrap">
+<table>
+<thead><tr><th>客户编号</th><th>客户名称</th><th>联系人</th><th>手机号</th><th>状态</th><th>操作</th></tr></thead>
+<tbody>
+<tr><td>CUS001</td><td>华东代理商</td><td>王经理</td><td>138****1234</td><td><span class="status-tag green">正常</span></td><td class="ops"><a class="btn-link">编辑</a><a class="btn-link">查看</a></td></tr>
+<tr><td>CUS002</td><td>华南代理商</td><td>李经理</td><td>139****5678</td><td><span class="status-tag green">正常</span></td><td class="ops"><a class="btn-link">编辑</a><a class="btn-link">查看</a></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<div class="page-section" id="page-version-sub">
+<div class="content-card">
+<div class="page-title">版本订阅</div>
+<div class="table-wrap">
+<table>
+<thead><tr><th>订阅编号</th><th>客户名称</th><th>版本名称</th><th>订阅状态</th><th>到期时间</th><th>操作</th></tr></thead>
+<tbody>
+<tr><td>SUB001</td><td>华东代理商</td><td>专业版</td><td><span class="status-tag green">有效</span></td><td>2025-12-31</td><td class="ops"><a class="btn-link">查看</a></td></tr>
+<tr><td>SUB002</td><td>华南代理商</td><td>标准版</td><td><span class="status-tag green">有效</span></td><td>2025-06-30</td><td class="ops"><a class="btn-link">查看</a></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<div class="page-section" id="page-resource-sub">
+<div class="content-card">
+<div class="page-title">资源订阅</div>
+<div class="table-wrap">
+<table>
+<thead><tr><th>订阅编号</th><th>客户名称</th><th>资源名称</th><th>订阅数量</th><th>订阅状态</th><th>操作</th></tr></thead>
+<tbody>
+<tr><td>RSUB001</td><td>华东代理商</td><td>AI算力资源</td><td>100次/月</td><td><span class="status-tag green">有效</span></td><td class="ops"><a class="btn-link">查看</a></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<div class="page-section" id="page-contract-mgr">
+<div class="content-card">
+<div class="page-title">合同管理</div>
+<div class="filter-area"><button class="btn btn-primary">新建合同</button><button class="btn btn-default" onclick="showToast('查询完成','info')">查询</button></div>
+<div class="table-wrap">
+<table>
+<thead><tr><th>合同编号</th><th>合同名称</th><th>客户名称</th><th>合同金额</th><th>合同状态</th><th>操作</th></tr></thead>
+<tbody>
+<tr><td>CT001</td><td>华东代理年度合同</td><td>华东代理商</td><td>¥120,000</td><td><span class="status-tag green">已签署</span></td><td class="ops"><a class="btn-link">查看</a></td></tr>
+<tr><td>CT002</td><td>华南代理年度合同</td><td>华南代理商</td><td>¥80,000</td><td><span class="status-tag orange">待签署</span></td><td class="ops"><a class="btn-link">查看</a></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<div class="page-section" id="page-trade-mgr">
+<div class="content-card">
+<div class="page-title">交易管理</div>
+<div class="filter-area"><label>交易类型</label><select class="select"><option value="">全部</option><option>版本订阅</option><option>资源订阅</option><option>服务购买</option></select><label>交易时间</label><input class="input date-input" type="date"/> — <input class="input date-input" type="date"/><button class="btn btn-default" onclick="showToast('查询完成','info')">查询</button></div>
+<div class="table-wrap">
+<table>
+<thead><tr><th>交易编号</th><th>交易类型</th><th>交易对象</th><th>交易金额</th><th>交易时间</th><th>交易状态</th></tr></thead>
+<tbody>
+<tr><td>TX001</td><td>服务购买</td><td>AI直播稿-专业版</td><td>¥299</td><td>2025-01-15 10:00</td><td><span class="status-tag green">已完成</span></td></tr>
+<tr><td>TX002</td><td>版本订阅</td><td>专业版</td><td>¥2,988</td><td>2025-01-14 14:00</td><td><span class="status-tag green">已完成</span></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<div class="page-section" id="page-article-mgr">
+<div class="content-card">
+<div class="page-title">文章管理</div>
+<div class="filter-area"><button class="btn btn-primary">新建文章</button><label>文章标题</label><input class="input" placeholder="搜索"/><button class="btn btn-default" onclick="showToast('查询完成','info')">查询</button></div>
+<div class="table-wrap">
+<table>
+<thead><tr><th>文章编号</th><th>文章标题</th><th>作者</th><th>发布时间</th><th>状态</th><th>操作</th></tr></thead>
+<tbody>
+<tr><td>ART001</td><td>春季新品上市指南</td><td>admin</td><td>2025-01-15</td><td><span class="status-tag green">已发布</span></td><td class="ops"><a class="btn-link">编辑</a><a class="btn-link">查看</a></td></tr>
+<tr><td>ART002</td><td>直播带货技巧分享</td><td>admin</td><td>2025-01-14</td><td><span class="status-tag orange">草稿</span></td><td class="ops"><a class="btn-link">编辑</a><a class="btn-link">查看</a></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<div class="page-section" id="page-comment-mgr">
+<div class="content-card">
+<div class="page-title">评论管理</div>
+<div class="table-wrap">
+<table>
+<thead><tr><th>评论编号</th><th>评论内容</th><th>评论人</th><th>评论时间</th><th>状态</th><th>操作</th></tr></thead>
+<tbody>
+<tr><td>CMT001</td><td>非常实用的直播稿！</td><td>用户A</td><td>2025-01-16 10:00</td><td><span class="status-tag green">已通过</span></td><td class="ops"><a class="btn-link">查看</a><a class="btn-link" onclick="showToast('已删除','success')">删除</a></td></tr>
+<tr><td>CMT002</td><td>商品图片很漂亮</td><td>用户B</td><td>2025-01-15 14:30</td><td><span class="status-tag orange">待审核</span></td><td class="ops"><a class="btn-link">审核</a><a class="btn-link">查看</a></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<div class="page-section" id="page-agreement-mgr">
+<div class="content-card">
+<div class="page-title">协议管理</div>
+<div class="filter-area"><button class="btn btn-primary">新建协议</button><button class="btn btn-default" onclick="showToast('查询完成','info')">查询</button></div>
+<div class="table-wrap">
+<table>
+<thead><tr><th>协议编号</th><th>协议名称</th><th>协议类型</th><th>版本</th><th>状态</th><th>操作</th></tr></thead>
+<tbody>
+<tr><td>AGR001</td><td>用户服务协议</td><td>用户协议</td><td>v3.0</td><td><span class="status-tag green">已发布</span></td><td class="ops"><a class="btn-link">编辑</a><a class="btn-link">查看</a></td></tr>
+<tr><td>AGR002</td><td>隐私保护协议</td><td>隐私协议</td><td>v2.1</td><td><span class="status-tag green">已发布</span></td><td class="ops"><a class="btn-link">编辑</a><a class="btn-link">查看</a></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<div class="page-section" id="page-account-mgr">
+<div class="content-card">
+<div class="page-title">账号管理</div>
+<div class="filter-area"><button class="btn btn-primary">新建账号</button><label>用户名</label><input class="input" placeholder="搜索"/><button class="btn btn-default" onclick="showToast('查询完成','info')">查询</button></div>
+<div class="table-wrap">
+<table>
+<thead><tr><th>账号编号</th><th>用户名</th><th>角色</th><th>状态</th><th>最后登录</th><th>操作</th></tr></thead>
+<tbody>
+<tr><td>ACC001</td><td>admin</td><td>超级管理员</td><td><span class="status-tag green">正常</span></td><td>2025-01-17 09:00</td><td class="ops"><a class="btn-link">编辑</a><a class="btn-link">重置密码</a></td></tr>
+<tr><td>ACC002</td><td>operator01</td><td>运营人员</td><td><span class="status-tag green">正常</span></td><td>2025-01-16 16:00</td><td class="ops"><a class="btn-link">编辑</a><a class="btn-link">重置密码</a></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<div class="page-section" id="page-role-mgr">
+<div class="content-card">
+<div class="page-title">角色管理</div>
+<div class="filter-area"><button class="btn btn-primary">新建角色</button></div>
+<div class="table-wrap">
+<table>
+<thead><tr><th>角色编号</th><th>角色名称</th><th>角色描述</th><th>成员数</th><th>操作</th></tr></thead>
+<tbody>
+<tr><td>ROLE001</td><td>超级管理员</td><td>拥有全部权限</td><td>1</td><td class="ops"><a class="btn-link">编辑</a><a class="btn-link">查看权限</a></td></tr>
+<tr><td>ROLE002</td><td>运营人员</td><td>负责日常运营</td><td>3</td><td class="ops"><a class="btn-link">编辑</a><a class="btn-link">查看权限</a></td></tr>
+<tr><td>ROLE003</td><td>主播</td><td>主播相关权限</td><td>4</td><td class="ops"><a class="btn-link">编辑</a><a class="btn-link">查看权限</a></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<div class="page-section" id="page-perm-mgr">
+<div class="content-card">
+<div class="page-title">权限管理</div>
+<div class="table-wrap">
+<table>
+<thead><tr><th>权限编号</th><th>权限名称</th><th>权限类型</th><th>关联角色</th><th>操作</th></tr></thead>
+<tbody>
+<tr><td>PERM001</td><td>AI功能使用</td><td>功能权限</td><td>超级管理员,运营人员</td><td class="ops"><a class="btn-link">编辑</a></td></tr>
+<tr><td>PERM002</td><td>通讯录管理</td><td>功能权限</td><td>超级管理员,运营人员</td><td class="ops"><a class="btn-link">编辑</a></td></tr>
+<tr><td>PERM003</td><td>商品管理</td><td>功能权限</td><td>超级管理员</td><td class="ops"><a class="btn-link">编辑</a></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<div class="page-section" id="page-menu-mgr">
+<div class="content-card">
+<div class="page-title">菜单管理</div>
+<div class="filter-area"><button class="btn btn-primary">新建菜单</button></div>
+<div class="table-wrap">
+<table>
+<thead><tr><th>菜单编号</th><th>菜单名称</th><th>菜单层级</th><th>排序</th><th>状态</th><th>操作</th></tr></thead>
+<tbody>
+<tr><td>MENU001</td><td>直播</td><td>一级</td><td>2</td><td><span class="status-tag green">启用</span></td><td class="ops"><a class="btn-link">编辑</a></td></tr>
+<tr><td>MENU002</td><td>AI主播稿管理</td><td>二级</td><td>4</td><td><span class="status-tag green">启用</span></td><td class="ops"><a class="btn-link">编辑</a></td></tr>
+<tr><td>MENU003</td><td>通讯录</td><td>一级</td><td>8</td><td><span class="status-tag green">启用</span></td><td class="ops"><a class="btn-link">编辑</a></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+</div>
+
+<div class="toast" id="toast"><div class="toast-content" id="toastContent"></div></div>
+
+<div class="modal-overlay" id="anchorModal">
+<div class="modal" style="width:640px;">
+<div class="modal-header"><h3>新建主播</h3><div class="close-btn" onclick="closeModal('anchorModal')">&#10005;</div></div>
+<div class="modal-body">
+<div class="form-row">
+<div class="form-group"><label><span class="required">*</span>主播名称</label><input class="input" placeholder="请输入主播名称"/></div>
+<div class="form-group"><label>主播头像</label><div style="width:80px;height:80px;border:1px dashed #D9D9D9;border-radius:4px;display:flex;align-items:center;justify-content:center;color:#D9D9D9;cursor:pointer;">上传</div></div>
+</div>
+<div class="form-row">
+<div class="form-group"><label>主播人设</label><input class="input" placeholder="如：专业测评博主"/></div>
+<div class="form-group"><label>擅长品类</label><select class="select"><option value="">请选择</option><option>美妆</option><option>数码</option><option>服饰</option><option>家居</option><option>食品</option></select></div>
+</div>
+<div class="form-row">
+<div class="form-group"><label>话术风格</label><select class="select"><option value="">请选择</option><option>专业严谨</option><option>活泼有趣</option><option>亲切温暖</option><option>激情带货</option></select></div>
+<div class="form-group"><label>直播计划</label><input class="input" placeholder="如：3场/周"/></div>
+</div>
+<div class="form-group"><label>资质信息</label><textarea placeholder="请输入资质相关信息"></textarea></div>
+</div>
+<div class="modal-footer"><button class="btn btn-default" onclick="closeModal('anchorModal')">取消</button><button class="btn btn-primary" onclick="closeModal('anchorModal');showToast('主播创建成功','success')">确定</button></div>
+</div>
+</div>
+
+<div class="modal-overlay" id="writeScriptModal">
+<div class="modal" style="width:800px;">
+<div class="modal-header"><h3>撰写直播稿</h3><div class="close-btn" onclick="closeModal('writeScriptModal')">&#10005;</div></div>
+<div class="modal-body" id="writeScriptBody">
+<div id="scriptFormStep">
+<div class="form-row">
+<div class="form-group"><label><span class="required">*</span>直播场次</label><select class="select" onchange="autoFillScript(this)"><option value="">请选择场次</option><option value="1">LC001-春季新品发布</option><option value="2">LC002-年货节专场</option><option value="3">LC003-美妆好物推荐</option></select></div>
+<div class="form-group"><label>直播间</label><input class="input" id="scriptRoom" readonly placeholder="自动填充"/></div>
+</div>
+<div class="form-row">
+<div class="form-group"><label>主播</label><input class="input" id="scriptAnchor" readonly placeholder="自动填充"/></div>
+<div class="form-group"><label>主播特性</label><input class="input" id="scriptTrait" readonly placeholder="自动填充"/></div>
+</div>
+<div class="form-group"><label><span class="required">*</span>商品列表</label>
+<div class="checkbox-group" id="scriptProducts">
+<label onclick="toggleCheckbox(this)"><input type="checkbox" value="SP001"/>春季新款连衣裙</label>
+<label onclick="toggleCheckbox(this)"><input type="checkbox" value="SP002"/>保湿精华液30ml</label>
+<label onclick="toggleCheckbox(this)"><input type="checkbox" value="SP003"/>智能蓝牙耳机Pro</label>
+<label onclick="toggleCheckbox(this)"><input type="checkbox" value="SP004"/>北欧风落地灯</label>
+</div>
+</div>
+<div class="form-group"><label><span class="required">*</span>直播主题</label><input class="input" id="scriptTheme" placeholder="请输入直播主题"/></div>
+<div class="form-row">
+<div class="form-group"><label>目标用户</label><select class="select"><option value="">请选择</option><option>年轻女性</option><option>职场白领</option><option>家庭主妇</option><option>数码爱好者</option><option>全年龄段</option></select></div>
+<div class="form-group"><label>直播目标</label><select class="select"><option value="">请选择</option><option>品牌曝光</option><option>商品销售</option><option>粉丝增长</option><option>用户互动</option></select></div>
+</div>
+<div class="form-row">
+<div class="form-group"><label>话术风格</label><select class="select"><option value="">请选择</option><option>专业严谨</option><option>活泼有趣</option><option>亲切温暖</option><option>激情带货</option></select></div>
+<div class="form-group"><label>字数要求</label><input class="input" type="number" placeholder="如：3000" value="3000"/></div>
+</div>
+<div class="form-group"><label>生成要求</label><textarea placeholder="请输入特殊要求，如重点突出某款商品、强调优惠力度等"></textarea></div>
+<div style="text-align:right;margin-top:16px;"><button class="btn btn-primary" onclick="generateScript()">AI生成</button></div>
+</div>
+<div id="scriptPreviewStep" style="display:none;position:relative;">
+<div class="loading-mask" id="scriptLoading"><div class="spinner"></div><div class="loading-text">AI生成中...</div></div>
+<div class="preview-section"><h4>开场话术</h4><p>各位宝宝们好呀！欢迎来到今天的直播间！我是你们的主播，今天给大家带来超级划算的好物，千万别走开哦！</p></div>
+<div class="preview-section"><h4>品牌介绍</h4><p>我们品牌一直致力于为消费者提供高品质的产品，每一件商品都经过严格筛选，品质有保障！</p></div>
+<div class="preview-section"><h4>商品讲解</h4><p>首先给大家介绍这款春季新款连衣裙，采用优质面料，穿着舒适透气，版型修身显瘦，原价599，今天直播间只要299！限量100件，手慢无！</p><p>接下来是这款保湿精华液，30ml大容量，深层补水锁水，让肌肤水润一整天，直播间专享价189元！</p></div>
+<div class="preview-section"><h4>优惠活动</h4><p>今天直播间满200减50！下单还有机会抽取神秘大奖！前50名下单的宝宝额外赠送小样一份！</p></div>
+<div class="preview-section"><h4>互动引导</h4><p>宝宝们，想要的扣1！觉得好看的扣2！分享给闺蜜的扣3！点赞过万我再加一波福利！</p></div>
+<div class="preview-section"><h4>成交转化</h4><p>数量有限，先到先得！点击下方链接立即下单！3、2、1，上链接！还没抢到的宝宝赶紧了，库存不多了！</p></div>
+<div class="preview-section"><h4>结尾话术</h4><p>感谢各位宝宝今天的陪伴！没有抢到的也不要遗憾，关注主播不迷路，下次直播更精彩！拜拜～</p></div>
+<div class="optimize-area"><input class="input" id="optimizeInput" placeholder="输入调整要求，如：开场更活泼一些、增加优惠力度..."/><button class="btn btn-primary btn-sm" onclick="regenerateScript()">重新生成</button></div>
+<div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px;">
+<button class="btn btn-default" onclick="backToScriptForm()">返回编辑</button>
+<button class="btn btn-primary" onclick="confirmSaveScript()">确认保存</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="modal-overlay" id="viewScriptModal">
+<div class="modal" style="width:700px;">
+<div class="modal-header"><h3>查看直播稿</h3><div class="close-btn" onclick="closeModal('viewScriptModal')">&#10005;</div></div>
+<div class="modal-body" id="viewScriptBody">
+<div class="preview-section"><h4>开场话术</h4><p>各位宝宝们好呀！欢迎来到今天的直播间！</p></div>
+<div class="preview-section"><h4>品牌介绍</h4><p>我们品牌一直致力于为消费者提供高品质的产品。</p></div>
+<div class="preview-section"><h4>商品讲解</h4><p>春季新款连衣裙，优质面料，直播间专享价299元！</p></div>
+<div class="preview-section"><h4>优惠活动</h4><p>满200减50！前50名下单赠送小样！</p></div>
+<div class="preview-section"><h4>互动引导</h4><p>想要的扣1！点赞过万加福利！</p></div>
+<div class="preview-section"><h4>成交转化</h4><p>3、2、1，上链接！库存不多！</p></div>
+<div class="preview-section"><h4>结尾话术</h4><p>感谢陪伴！关注主播不迷路！</p></div>
+</div>
+<div class="modal-footer"><button class="btn btn-default" onclick="closeModal('viewScriptModal')">关闭</button><button class="btn btn-primary" onclick="closeModal('viewScriptModal');openTeleprompter()">提词器模式</button></div>
+</div>
+</div>
+
+<div class="modal-overlay" id="historyScriptModal">
+<div class="modal" style="width:900px;">
+<div class="modal-header"><h3>历史稿件</h3><div class="close-btn" onclick="closeModal('historyScriptModal')">&#10005;</div></div>
+<div class="modal-body">
+<div style="margin-bottom:16px;padding:12px 16px;background:#FAFAFA;border-radius:4px;font-size:14px;color:rgba(0,0,0,0.647);">
+<span style="color:rgba(0,0,0,0.847);font-weight:600;" id="historySessionInfo">场次：LC20250101 - 春季新品发布</span>&nbsp;&nbsp;|&nbsp;&nbsp;<span id="historyAnchorInfo">主播：主播A</span>&nbsp;&nbsp;|&nbsp;&nbsp;<span id="historyCountInfo">共 3 版稿件</span>
+</div>
+<div class="table-wrap">
+<table>
+<thead><tr><th style="width:90px">稿件编号</th><th style="width:130px">生成时间</th><th style="width:80px">版本</th><th style="width:80px">字数</th><th style="width:90px">稿件状态</th><th style="width:100px">生成方式</th><th style="width:80px">是否正式稿</th><th style="width:160px">操作</th></tr></thead>
+<tbody id="historyScriptList">
+</tbody>
+</table>
+</div>
+</div>
+<div class="modal-footer"><button class="btn btn-default" onclick="closeModal('historyScriptModal')">关闭</button></div>
+</div>
+</div>
+
+<div class="modal-overlay" id="historyDetailModal">
+<div class="modal" style="width:700px;">
+<div class="modal-header"><h3 id="historyDetailTitle">稿件详情 - SC001</h3><div class="close-btn" onclick="closeModal('historyDetailModal')">&#10005;</div></div>
+<div class="modal-body" id="historyDetailBody">
+</div>
+<div class="modal-footer">
+<button class="btn btn-default" onclick="closeModal('historyDetailModal')">关闭</button>
+<button class="btn btn-default" onclick="setAsCurrentScript()">设为正式稿</button>
+<button class="btn btn-primary" onclick="closeModal('historyDetailModal');openTeleprompter()">提词器模式</button>
+</div>
+</div>
+</div>
+
+<div class="modal-overlay" id="aiImageModal">
+<div class="modal" style="width:720px;">
+<div class="modal-header"><h3>AI生图</h3><div class="close-btn" onclick="closeModal('aiImageModal')">&#10005;</div></div>
+<div class="modal-body" style="position:relative;">
+<div class="loading-mask" id="aiImageLoading"><div class="spinner"></div><div class="loading-text">AI生成中...</div></div>
+<div class="form-row">
+<div class="form-group"><label>商品名称</label><input class="input" readonly value="春季新款连衣裙"/></div>
+<div class="form-group"><label>商品主图</label><div style="display:flex;align-items:center;gap:8px;"><div style="width:48px;height:48px;border:1px solid #E8E8E8;border-radius:4px;display:flex;align-items:center;justify-content:center;color:#D9D9D9;">&#9634;</div><button class="btn btn-default btn-sm">上传</button></div></div>
+</div>
+<div class="form-group"><label><span class="required">*</span>生成描述</label><textarea placeholder="请描述想要生成的图片效果">春季新款连衣裙，白色背景，模特优雅展示，高级感</textarea></div>
+<div class="form-row">
+<div class="form-group"><label>图片风格</label><select class="select"><option>高级感</option><option>简约</option><option>直播风</option><option>电商风</option></select></div>
+<div class="form-group"><label>图片比例</label><select class="select"><option>1:1</option><option>3:4</option><option>9:16</option><option>16:9</option></select></div>
+<div class="form-group"><label>生成数量</label><select class="select"><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
+</div>
+<div style="text-align:right;margin:12px 0;"><button class="btn btn-primary" onclick="generateAiImage()">生成</button></div>
+<div id="aiImageResult" style="display:none;">
+<div style="font-size:14px;color:rgba(0,0,0,0.847);margin-bottom:8px;">生成结果</div>
+<div class="image-grid">
+<div class="img-item"><div class="placeholder-img">&#127912;</div></div>
+<div class="img-item"><div class="placeholder-img">&#127912;</div></div>
+<div class="img-item"><div class="placeholder-img">&#127912;</div></div>
+<div class="img-item"><div class="placeholder-img">&#127912;</div></div>
+</div>
+<div style="text-align:right;margin-top:12px;"><button class="btn btn-primary" onclick="closeModal('aiImageModal');showToast('已应用到商品','success')">应用到商品</button></div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="modal-overlay" id="aiVideoModal">
+<div class="modal" style="width:720px;">
+<div class="modal-header"><h3>AI视频</h3><div class="close-btn" onclick="closeModal('aiVideoModal')">&#10005;</div></div>
+<div class="modal-body" style="position:relative;">
+<div class="loading-mask" id="aiVideoLoading"><div class="spinner"></div><div class="loading-text">AI生成中...</div></div>
+<div class="form-row">
+<div class="form-group"><label>商品名称</label><input class="input" readonly value="春季新款连衣裙"/></div>
+<div class="form-group"><label>视频风格</label><select class="select"><option>产品展示</option><option>使用场景</option><option>开箱测评</option><option>创意短片</option></select></div>
+</div>
+<div class="form-row">
+<div class="form-group"><label>视频时长</label><select class="select"><option>15秒</option><option>30秒</option><option>60秒</option></select></div>
+<div class="form-group"><label>视频比例</label><select class="select"><option>16:9</option><option>9:16</option><option>1:1</option></select></div>
+</div>
+<div class="form-group"><label><span class="required">*</span>生成描述</label><textarea placeholder="请描述想要生成的视频效果">连衣裙多角度展示，模特走秀，场景切换</textarea></div>
+<div style="text-align:right;margin:12px 0;"><button class="btn btn-primary" onclick="generateAiVideo()">生成</button></div>
+<div id="aiVideoResult" style="display:none;">
+<div style="font-size:14px;color:rgba(0,0,0,0.847);margin-bottom:8px;">生成结果</div>
+<div style="width:320px;height:180px;border:1px solid #E8E8E8;border-radius:4px;display:flex;align-items:center;justify-content:center;background:#FAFAFA;margin-bottom:12px;">
+<span style="font-size:48px;color:#D9D9D9;">&#9654;</span>
+</div>
+<div style="text-align:right;"><button class="btn btn-primary" onclick="closeModal('aiVideoModal');showToast('已应用到商品','success')">应用到商品</button></div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="modal-overlay" id="aiDescModal">
+<div class="modal" style="width:680px;">
+<div class="modal-header"><h3>AI商品介绍</h3><div class="close-btn" onclick="closeModal('aiDescModal')">&#10005;</div></div>
+<div class="modal-body" style="position:relative;">
+<div class="loading-mask" id="aiDescLoading"><div class="spinner"></div><div class="loading-text">AI生成中...</div></div>
+<div class="form-row">
+<div class="form-group"><label>商品名称</label><input class="input" readonly value="春季新款连衣裙"/></div>
+<div class="form-group"><label>商品类目</label><select class="select"><option>服饰</option><option>美妆</option><option>数码</option><option>家居</option></select></div>
+</div>
+<div class="form-row">
+<div class="form-group"><label>目标人群</label><select class="select"><option>年轻女性</option><option>职场白领</option><option>全年龄段</option></select></div>
+<div class="form-group"><label>介绍风格</label><select class="select"><option>专业详细</option><option>简洁明了</option><option>生动有趣</option><option>种草推荐</option></select></div>
+</div>
+<div style="text-align:right;margin:12px 0;"><button class="btn btn-primary" onclick="generateAiDesc()">生成</button></div>
+<div id="aiDescResult" style="display:none;">
+<div style="font-size:14px;color:rgba(0,0,0,0.847);margin-bottom:8px;">生成结果</div>
+<div style="border:1px solid #E8E8E8;border-radius:4px;padding:16px;font-size:14px;color:rgba(0,0,0,0.647);line-height:1.8;">
+春季新款连衣裙，采用进口雪纺面料，轻盈飘逸，穿着舒适透气。修身A字版型，显瘦不挑身材，腰部收腰设计，完美勾勒身材曲线。多色可选，满足不同风格需求。无论是日常通勤还是约会出游，都能轻松驾驭，让你成为人群中的焦点！
+</div>
+<div style="text-align:right;margin-top:12px;"><button class="btn btn-primary" onclick="closeModal('aiDescModal');showToast('已回填商品介绍','success')">回填商品介绍</button></div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="modal-overlay" id="aiSellingModal">
+<div class="modal" style="width:640px;">
+<div class="modal-header"><h3>AI卖点</h3><div class="close-btn" onclick="closeModal('aiSellingModal')">&#10005;</div></div>
+<div class="modal-body" style="position:relative;">
+<div class="loading-mask" id="aiSellingLoading"><div class="spinner"></div><div class="loading-text">AI生成中...</div></div>
+<div class="form-row">
+<div class="form-group"><label>商品名称</label><input class="input" readonly value="春季新款连衣裙"/></div>
+<div class="form-group"><label>卖点数量</label><select class="select"><option>3</option><option>5</option></select></div>
+</div>
+<div class="form-group"><label>卖点风格</label><select class="select"><option>简洁有力</option><option>详细描述</option><option>数据支撑</option><option>情感共鸣</option></select></div>
+<div style="text-align:right;margin:12px 0;"><button class="btn btn-primary" onclick="generateAiSelling()">生成</button></div>
+<div id="aiSellingResult" style="display:none;">
+<div style="font-size:14px;color:rgba(0,0,0,0.847);margin-bottom:8px;">生成结果</div>
+<div style="border:1px solid #E8E8E8;border-radius:4px;padding:16px;">
+<div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:12px;"><span style="background:#1890FF;color:#fff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;">1</span><span style="font-size:14px;color:rgba(0,0,0,0.647);line-height:1.6;">进口雪纺面料 — 轻盈飘逸，穿着舒适透气，亲肤不刺激</span></div>
+<div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:12px;"><span style="background:#1890FF;color:#fff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;">2</span><span style="font-size:14px;color:rgba(0,0,0,0.647);line-height:1.6;">修身A字版型 — 显瘦不挑身材，收腰设计完美勾勒曲线</span></div>
+<div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:12px;"><span style="background:#1890FF;color:#fff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;">3</span><span style="font-size:14px;color:rgba(0,0,0,0.647);line-height:1.6;">多色可选 — 5种流行色，满足不同风格需求，百搭不撞衫</span></div>
+</div>
+<div style="text-align:right;margin-top:12px;"><button class="btn btn-primary" onclick="closeModal('aiSellingModal');showToast('已一键回填','success')">一键回填</button></div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="modal-overlay" id="purchaseModal">
+<div class="modal" style="width:480px;">
+<div class="modal-header"><h3>确认购买</h3><div class="close-btn" onclick="closeModal('purchaseModal')">&#10005;</div></div>
+<div class="modal-body">
+<div style="text-align:center;padding:16px 0;">
+<div style="font-size:16px;color:rgba(0,0,0,0.847);margin-bottom:12px;" id="purchaseServiceName">AI直播稿 - 标准版</div>
+<div style="font-family:'PingFangSC-Semibold','PingFang SC',sans-serif;font-size:32px;color:#FF4D4F;margin-bottom:8px;" id="purchasePrice">¥99/月</div>
+<div style="font-size:14px;color:rgba(0,0,0,0.447);">购买后即可使用该AI功能</div>
+</div>
+<div style="border:1px solid #E8E8E8;border-radius:4px;padding:12px;margin-top:16px;">
+<div style="font-size:14px;color:rgba(0,0,0,0.847);margin-bottom:8px;">功能权益</div>
+<div style="font-size:13px;color:rgba(0,0,0,0.647);line-height:1.8;">&#8226; 智能AI生成功能<br/>&#8226; 每月使用额度<br/>&#8226; 多轮优化支持<br/>&#8226; 一键应用/回填</div>
+</div>
+</div>
+<div class="modal-footer"><button class="btn btn-default" onclick="closeModal('purchaseModal')">取消</button><button class="btn btn-primary" onclick="closeModal('purchaseModal');showToast('购买成功，功能已开通','success')">确认购买</button></div>
+</div>
+</div>
+
+<div class="modal-overlay" id="noPermModal">
+<div class="modal" style="width:440px;">
+<div class="modal-header"><h3>服务未开通</h3><div class="close-btn" onclick="closeModal('noPermModal')">&#10005;</div></div>
+<div class="modal-body" style="text-align:center;">
+<div style="font-size:48px;margin-bottom:16px;">&#128274;</div>
+<div style="font-size:16px;color:rgba(0,0,0,0.847);margin-bottom:8px;" id="noPermServiceName">该AI功能尚未开通</div>
+<div style="font-size:14px;color:rgba(0,0,0,0.447);margin-bottom:16px;">请先购买对应服务后使用</div>
+<button class="btn btn-primary" onclick="closeModal('noPermModal');navTo('service-buy')">前往购买</button>
+</div>
+</div>
+</div>
+
+<div class="modal-overlay" id="aiCtrlModal">
+<div class="modal" style="width:560px;">
+<div class="modal-header"><h3>编辑AI控制</h3><div class="close-btn" onclick="closeModal('aiCtrlModal')">&#10005;</div></div>
+<div class="modal-body">
+<div class="form-group"><label>控制类型</label><select class="select"><option>按钮</option><option>菜单</option><option>页面</option><option>接口</option></select></div>
+<div class="form-group"><label>控制名称</label><input class="input" value="撰写直播稿"/></div>
+<div class="form-group"><label>控制位置</label><input class="input" value="AI主播稿管理"/></div>
+<div class="form-group"><label>关联应用编号</label><input class="input" value="APP_AI_LIVE_SCRIPT"/></div>
+<div class="form-group"><label>是否启用</label><select class="select"><option>启用</option><option>禁用</option></select></div>
+<div class="form-group"><label>版本限制</label><select class="select"><option>标准版及以上</option><option>专业版</option><option>旗舰版</option><option>无限制</option></select></div>
+</div>
+<div class="modal-footer"><button class="btn btn-default" onclick="closeModal('aiCtrlModal')">取消</button><button class="btn btn-primary" onclick="closeModal('aiCtrlModal');showToast('保存成功','success')">保存</button></div>
+</div>
+</div>
+
+<div class="modal-overlay" id="usageDetailModal">
+<div class="modal" style="width:560px;">
+<div class="modal-header"><h3>使用记录详情</h3><div class="close-btn" onclick="closeModal('usageDetailModal')">&#10005;</div></div>
+<div class="modal-body">
+<div class="form-group"><label>记录编号</label><input class="input" readonly value="REC001"/></div>
+<div class="form-group"><label>租户</label><input class="input" readonly value="租户A"/></div>
+<div class="form-group"><label>用户</label><input class="input" readonly value="admin"/></div>
+<div class="form-group"><label>应用编号</label><input class="input" readonly value="APP_AI_LIVE_SCRIPT"/></div>
+<div class="form-group"><label>功能类型</label><input class="input" readonly value="AI直播稿"/></div>
+<div class="form-group"><label>生成时间</label><input class="input" readonly value="2025-01-15 10:30"/></div>
+<div class="form-group"><label>消耗次数</label><input class="input" readonly value="1"/></div>
+<div class="form-group"><label>生成状态</label><input class="input" readonly value="成功"/></div>
+<div class="form-group"><label>关联业务对象</label><input class="input" readonly value="SC001"/></div>
+</div>
+<div class="modal-footer"><button class="btn btn-default" onclick="closeModal('usageDetailModal')">关闭</button></div>
+</div>
+</div>
+
+<div class="modal-overlay" id="appModal">
+<div class="modal" style="width:560px;">
+<div class="modal-header"><h3>新建应用</h3><div class="close-btn" onclick="closeModal('appModal')">&#10005;</div></div>
+<div class="modal-body">
+<div class="form-group"><label><span class="required">*</span>应用名称</label><input class="input" placeholder="请输入应用名称"/></div>
+<div class="form-group"><label>供应商</label><select class="select"><option>官方</option><option>第三方</option></select></div>
+<div class="form-group"><label>版本号</label><input class="input" placeholder="如：v1.0"/></div>
+<div class="form-group"><label>应用描述</label><textarea placeholder="请输入应用描述"></textarea></div>
+</div>
+<div class="modal-footer"><button class="btn btn-default" onclick="closeModal('appModal')">取消</button><button class="btn btn-primary" onclick="closeModal('appModal');showToast('应用创建成功','success')">确定</button></div>
+</div>
+</div>
+
+<div class="modal-overlay" id="confirmSaveModal">
+<div class="modal" style="width:440px;">
+<div class="modal-header"><h3>确认保存</h3><div class="close-btn" onclick="closeModal('confirmSaveModal')">&#10005;</div></div>
+<div class="modal-body" style="text-align:center;">
+<div style="font-size:48px;margin-bottom:16px;">&#9989;</div>
+<div style="font-size:16px;color:rgba(0,0,0,0.847);margin-bottom:8px;">直播稿保存成功！</div>
+<div style="font-size:14px;color:rgba(0,0,0,0.447);margin-bottom:16px;">已生成分享链接</div>
+<div style="border:1px solid #E8E8E8;border-radius:4px;padding:8px 12px;display:flex;align-items:center;gap:8px;">
+<input class="input" readonly value="https://live.example.com/script/SC006" style="flex:1;"/>
+<button class="btn btn-primary btn-sm" onclick="showToast('链接已复制','success')">复制</button>
+</div>
+</div>
+<div class="modal-footer"><button class="btn btn-default" onclick="closeModal('confirmSaveModal')">关闭</button><button class="btn btn-primary" onclick="closeModal('confirmSaveModal');openTeleprompter()">提词器模式</button></div>
+</div>
+</div>
+
+<div class="teleprompter-view" id="teleprompterView">
+<div class="teleprompter-header">
+<h3>提词器模式</h3>
+<div><button class="btn btn-default" style="color:#fff;background:rgba(255,255,255,0.15);border-color:rgba(255,255,255,0.3);" onclick="closeTeleprompter()">退出提词器</button></div>
+</div>
+<div class="teleprompter-body" id="teleprompterBody">
+<div class="section-title">开场话术</div>
+<div class="section-content">各位宝宝们好呀！欢迎来到今天的直播间！我是你们的主播，今天给大家带来超级划算的好物，千万别走开哦！</div>
+<div class="section-title">品牌介绍</div>
+<div class="section-content">我们品牌一直致力于为消费者提供高品质的产品，每一件商品都经过严格筛选，品质有保障！</div>
+<div class="section-title">商品讲解</div>
+<div class="section-content">首先给大家介绍这款春季新款连衣裙，采用优质面料，穿着舒适透气，版型修身显瘦，原价599，今天直播间只要299！限量100件，手慢无！</div>
+<div class="section-content">接下来是这款保湿精华液，30ml大容量，深层补水锁水，让肌肤水润一整天，直播间专享价189元！</div>
+<div class="section-title">优惠活动</div>
+<div class="section-content">今天直播间满200减50！下单还有机会抽取神秘大奖！前50名下单的宝宝额外赠送小样一份！</div>
+<div class="section-title">互动引导</div>
+<div class="section-content">宝宝们，想要的扣1！觉得好看的扣2！分享给闺蜜的扣3！点赞过万我再加一波福利！</div>
+<div class="section-title">成交转化</div>
+<div class="section-content">数量有限，先到先得！点击下方链接立即下单！3、2、1，上链接！还没抢到的宝宝赶紧了，库存不多了！</div>
+<div class="section-title">结尾话术</div>
+<div class="section-content">感谢各位宝宝今天的陪伴！没有抢到的也不要遗憾，关注主播不迷路，下次直播更精彩！拜拜～</div>
+</div>
+<div class="teleprompter-controls">
+<span class="speed-label">字体大小</span>
+<input type="range" min="18" max="48" value="28" oninput="document.getElementById('teleprompterBody').style.fontSize=this.value+'px'"/>
+<span class="speed-label">滚动速度</span>
+<input type="range" min="1" max="10" value="3" id="scrollSpeed"/>
+<button class="btn btn-primary btn-sm" onclick="toggleAutoScroll()">自动滚动</button>
+</div>
+</div>
+
+<script>
+var pageMap={
+'workspace':'工作台',
+'anchor-mgr':'直播 / 主播管理',
+'session-mgr':'直播 / 场次管理',
+'live-room':'直播 / 直播间',
+'ai-script':'直播 / AI主播稿管理',
+'product-mgr':'商品 / 商品管理',
+'version-mgr':'产品 / 版本管理',
+'resource-mgr':'产品 / 资源管理',
+'customer-mgr':'销售 / 客户管理',
+'version-sub':'销售 / 版本订阅',
+'resource-sub':'销售 / 资源订阅',
+'contract-mgr':'销售 / 合同管理',
+'trade-mgr':'财务 / 交易管理',
+'article-mgr':'内容 / 文章管理',
+'comment-mgr':'内容 / 评论管理',
+'agreement-mgr':'内容 / 协议管理',
+'app-mgr':'AI应用 / 应用管理',
+'ai-ctrl':'AI应用 / AI控制管理',
+'service-buy':'AI应用 / 服务购买',
+'usage-log':'AI应用 / 使用记录',
+'contacts-mgr':'通讯录 / 通讯录管理',
+'auto-group':'通讯录 / 自动建群',
+'group-mgr':'通讯录 / 群聊管理',
+'group-push':'通讯录 / 群聊推送',
+'data-stats':'通讯录 / 数据统计',
+'account-mgr':'系统 / 账号管理',
+'role-mgr':'系统 / 角色管理',
+'perm-mgr':'系统 / 权限管理',
+'menu-mgr':'系统 / 菜单管理'
+};
+var aiPermissions={image:false,video:false,desc:true,selling:true,script:true};
+
+var scriptHistoryData={
+'LC20250101':[
+{id:'SC001',time:'2025-01-15 10:30',ver:'V3',words:3200,status:'已确认',method:'AI生成+人工优化',isCurrent:true,content:{opening:'各位宝宝们好呀！欢迎来到今天的直播间！我是你们的主播，今天给大家带来超级划算的好物，千万别走开哦！',brand:'我们品牌一直致力于为消费者提供高品质的产品，每一件商品都经过严格筛选，品质有保障！',product:'首先给大家介绍这款春季新款连衣裙，采用优质面料，穿着舒适透气，版型修身显瘦，原价599，今天直播间只要299！限量100件，手慢无！\n接下来是这款保湿精华液，30ml大容量，深层补水锁水，让肌肤水润一整天，直播间专享价189元！',promo:'今天直播间满200减50！下单还有机会抽取神秘大奖！前50名下单的宝宝额外赠送小样一份！',interact:'宝宝们，想要的扣1！觉得好看的扣2！分享给闺蜜的扣3！点赞过万我再加一波福利！',convert:'数量有限，先到先得！点击下方链接立即下单！3、2、1，上链接！还没抢到的宝宝赶紧了，库存不多了！',closing:'感谢各位宝宝今天的陪伴！没有抢到的也不要遗憾，关注主播不迷路，下次直播更精彩！拜拜～'}},
+{id:'SC001-2',time:'2025-01-15 09:15',ver:'V2',words:2800,status:'草稿',method:'AI生成+人工优化',isCurrent:false,content:{opening:'大家好，欢迎来到直播间！',brand:'我们品牌专注品质好物。',product:'春季新款连衣裙，舒适面料，直播间价299元！保湿精华液，补水锁水，专享价189元！',promo:'满200减50，前50名送小样！',interact:'想要的扣1！',convert:'3、2、1，上链接！',closing:'感谢大家，下次见！'}},
+{id:'SC001-1',time:'2025-01-15 08:00',ver:'V1',words:2100,status:'草稿',method:'AI生成',isCurrent:false,content:{opening:'欢迎来到直播间！',brand:'品牌介绍。',product:'连衣裙299元，精华液189元。',promo:'满200减50。',interact:'扣1下单。',convert:'上链接！',closing:'谢谢观看！'}}
+],
+'LC20250102':[
+{id:'SC002',time:'2025-01-16 14:00',ver:'V2',words:3500,status:'草稿',method:'AI生成+人工优化',isCurrent:false,content:{opening:'亲们好！年货节来啦！今天全场超低价，年货一站购齐！',brand:'我们精选了今年最火的年货好物，品质保证，价格超值！',product:'第一款：坚果礼盒装，8种坚果混合，原价199，今天只要99！\n第二款：进口红酒，法国原瓶进口，直播间专属价168元！\n第三款：保暖四件套，亲肤面料，直播间价239元！',promo:'年货节全场满300减80！满500减150！下单就送福袋！',interact:'想要的扣1！要福袋的扣福袋！分享给家人一起囤年货！',convert:'年货节限量供应！3、2、1，上链接！手慢无！',closing:'年货节限时优惠，错过等一年！关注主播，更多好货等着你！'}},
+{id:'SC002-1',time:'2025-01-16 10:30',ver:'V1',words:2600,status:'草稿',method:'AI生成',isCurrent:false,content:{opening:'欢迎来到年货节直播间！',brand:'精选年货好物。',product:'坚果礼盒99元，红酒168元，四件套239元。',promo:'满300减80，满500减150。',interact:'扣1下单！',convert:'上链接！',closing:'谢谢大家！'}}
+],
+'LC20250103':[
+{id:'SC003',time:'2025-01-10 09:00',ver:'V2',words:2900,status:'已过期',method:'AI生成+人工优化',isCurrent:false,content:{opening:'美妆达人们好！今天带来超值美妆好物推荐！',brand:'我们只推荐亲测好用的美妆产品！',product:'保湿精华液30ml，深层补水，直播间价189元！\n口红套装3支装，显白不拔干，直播间价129元！',promo:'美妆专区满200减30！前30名送化妆包！',interact:'想要的扣1！色号问题扣色号！',convert:'限量供应！3、2、1，上链接！',closing:'感谢美妆达人们的支持！关注我，更多好物推荐！'}},
+{id:'SC003-1',time:'2025-01-09 16:00',ver:'V1',words:2200,status:'已过期',method:'AI生成',isCurrent:false,content:{opening:'欢迎来到美妆推荐！',brand:'精选美妆好物。',product:'精华液189元，口红套装129元。',promo:'满200减30。',interact:'扣1下单。',convert:'上链接！',closing:'谢谢！'}}
+],
+'LC20250104':[
+{id:'SC004',time:'2025-01-18 16:00',ver:'V3',words:3800,status:'已确认',method:'AI生成+多轮优化',isCurrent:true,content:{opening:'数码控们集合啦！今天数码专场，硬核好物超值价！',brand:'我们只推荐真正好用的数码产品，每款都经过深度测评！',product:'智能蓝牙耳机Pro，主动降噪，续航40小时，原价699，直播间只要459！\n机械键盘RGB版，热插拔轴体，直播间价329元！\n4K高清摄像头，直播必备，直播间价259元！',promo:'数码专场满500减100！前20名下单送收纳包！下单即送延保半年！',interact:'数码控们扣1！想要耳机的扣耳机！想要键盘的扣键盘！',convert:'数量有限！3、2、1，上链接！数码控们冲！',closing:'感谢数码控们的支持！关注主播，下次数码专场更精彩！'}},
+{id:'SC004-2',time:'2025-01-18 14:00',ver:'V2',words:3100,status:'草稿',method:'AI生成+人工优化',isCurrent:false,content:{opening:'数码专场来了！',brand:'推荐好用数码产品。',product:'蓝牙耳机Pro 459元，机械键盘329元，4K摄像头259元。',promo:'满500减100，送收纳包。',interact:'扣1下单！',convert:'上链接！',closing:'谢谢支持！'}},
+{id:'SC004-1',time:'2025-01-18 10:00',ver:'V1',words:2400,status:'草稿',method:'AI生成',isCurrent:false,content:{opening:'欢迎来到数码专场！',brand:'数码好物推荐。',product:'耳机459元，键盘329元。',promo:'满500减100。',interact:'扣1！',convert:'上链接！',closing:'谢谢！'}}
+],
+'LC20250105':[
+{id:'SC005',time:'2025-01-19 11:00',ver:'V2',words:3000,status:'草稿',method:'AI生成+人工优化',isCurrent:false,content:{opening:'家居控们好！今天家居生活馆，让家更温馨！',brand:'我们精选高颜值家居好物，品质生活从这里开始！',product:'北欧风落地灯，三档调光，直播间价688元！\n香薰蜡烛礼盒，4种香型，直播间价89元！\n棉麻抱枕套2只装，直播间价59元！',promo:'家居专场满400减60！前15名送香薰小样！',interact:'喜欢的扣1！想要落地灯的扣灯！',convert:'限量供应！3、2、1，上链接！',closing:'感谢家居控们！关注主播，更多家居好物！'}},
+{id:'SC005-1',time:'2025-01-19 09:00',ver:'V1',words:2300,status:'草稿',method:'AI生成',isCurrent:false,content:{opening:'欢迎来到家居馆！',brand:'精选家居好物。',product:'落地灯688元，香薰89元，抱枕59元。',promo:'满400减60。',interact:'扣1！',convert:'上链接！',closing:'谢谢！'}}
+]
+};
+var autoScrollInterval=null;
+
+function navTo(page){
+document.querySelectorAll('.page-section').forEach(function(el){el.classList.remove('active');});
+var target=document.getElementById('page-'+page);
+if(target)target.classList.add('active');
+document.querySelectorAll('.sidebar .menu-item').forEach(function(el){el.classList.remove('active');});
+document.querySelectorAll('.sidebar .menu-item[data-page="'+page+'"]').forEach(function(el){el.classList.add('active');});
+var breadcrumbText=pageMap[page]||page;
+var parts=breadcrumbText.split(' / ');
+var bc='';
+if(parts.length>1){
+bc='<span>'+parts[0]+'</span><span class="sep">/</span><span class="current">'+parts[1]+'</span>';
+}else{
+bc='<span class="current">'+parts[0]+'</span>';
+}
+document.getElementById('breadcrumb').innerHTML=bc;
+}
+
+function toggleSub(el){
+var subMenu=el.nextElementSibling;
+if(subMenu&&subMenu.classList.contains('sub-menu')){
+subMenu.classList.toggle('show');
+var arrow=el.querySelector('.arrow');
+if(arrow)arrow.classList.toggle('open');
+}
+}
+
+function openModal(id){document.getElementById(id).classList.add('show');}
+function closeModal(id){document.getElementById(id).classList.remove('show');}
+
+function showToast(msg,type){
+var toast=document.getElementById('toast');
+var content=document.getElementById('toastContent');
+content.textContent=msg;
+content.className='toast-content '+(type||'info');
+toast.classList.add('show');
+setTimeout(function(){toast.classList.remove('show');},2500);
+}
+
+function openWriteScript(){
+if(!aiPermissions.script){
+document.getElementById('noPermServiceName').textContent='AI直播稿功能尚未开通';
+openModal('noPermModal');
+return;
+}
+document.getElementById('scriptFormStep').style.display='block';
+document.getElementById('scriptPreviewStep').style.display='none';
+openModal('writeScriptModal');
+}
+
+function autoFillScript(sel){
+var data={'1':{room:'直播间1',anchor:'主播A',trait:'专业严谨,激情带货'},'2':{room:'直播间2',anchor:'主播B',trait:'活泼有趣,亲切温暖'},'3':{room:'直播间1',anchor:'主播C',trait:'专业严谨,种草推荐'}};
+var d=data[sel.value];
+if(d){
+document.getElementById('scriptRoom').value=d.room;
+document.getElementById('scriptAnchor').value=d.anchor;
+document.getElementById('scriptTrait').value=d.trait;
+var themes={'1':'春季新品发布','2':'年货节专场','3':'美妆好物推荐'};
+document.getElementById('scriptTheme').value=themes[sel.value]||'';
+}
+}
+
+function toggleCheckbox(label){
+var cb=label.querySelector('input');
+cb.checked=!cb.checked;
+label.classList.toggle('checked',cb.checked);
+}
+
+function generateScript(){
+var theme=document.getElementById('scriptTheme').value;
+if(!theme){showToast('请填写直播主题','error');return;}
+document.getElementById('scriptFormStep').style.display='none';
+document.getElementById('scriptPreviewStep').style.display='block';
+document.getElementById('scriptLoading').classList.add('show');
+setTimeout(function(){document.getElementById('scriptLoading').classList.remove('show');},2000);
+}
+
+function regenerateScript(){
+document.getElementById('scriptLoading').classList.add('show');
+setTimeout(function(){document.getElementById('scriptLoading').classList.remove('show');showToast('已根据调整要求重新生成','success');},2000);
+}
+
+function backToScriptForm(){
+document.getElementById('scriptFormStep').style.display='block';
+document.getElementById('scriptPreviewStep').style.display='none';
+}
+
+function confirmSaveScript(){
+closeModal('writeScriptModal');
+openModal('confirmSaveModal');
+}
+
+function viewScript(id){
+var scriptData=null;
+for(var key in scriptHistoryData){
+var list=scriptHistoryData[key];
+for(var i=0;i<list.length;i++){
+if(list[i].id===id){scriptData=list[i];break;}
+}
+if(scriptData)break;
+}
+if(!scriptData){openModal('viewScriptModal');return;}
+var c=scriptData.content;
+var html='<div class="preview-section"><h4>开场话术</h4><p>'+c.opening+'</p></div>';
+html+='<div class="preview-section"><h4>品牌介绍</h4><p>'+c.brand+'</p></div>';
+html+='<div class="preview-section"><h4>商品讲解</h4><p>'+c.product.replace(/\n/g,'</p><p>')+'</p></div>';
+html+='<div class="preview-section"><h4>优惠活动</h4><p>'+c.promo+'</p></div>';
+html+='<div class="preview-section"><h4>互动引导</h4><p>'+c.interact+'</p></div>';
+html+='<div class="preview-section"><h4>成交转化</h4><p>'+c.convert+'</p></div>';
+html+='<div class="preview-section"><h4>结尾话术</h4><p>'+c.closing+'</p></div>';
+document.getElementById('viewScriptBody').innerHTML=html;
+openModal('viewScriptModal');
+}
+
+function viewHistory(sessionId,theme,anchor){
+document.getElementById('historySessionInfo').textContent='场次：'+sessionId+' - '+theme;
+document.getElementById('historyAnchorInfo').textContent='主播：'+anchor;
+var list=scriptHistoryData[sessionId]||[];
+document.getElementById('historyCountInfo').textContent='共 '+list.length+' 版稿件';
+var html='';
+for(var i=0;i<list.length;i++){
+var s=list[i];
+var statusClass='gray';
+if(s.status==='已确认')statusClass='green';
+else if(s.status==='草稿')statusClass='orange';
+else if(s.status==='已过期')statusClass='gray';
+var currentTag=s.isCurrent?'<span class="status-tag blue">正式稿</span>':'<span style="color:#AAAAAA">-</span>';
+html+='<tr>';
+html+='<td>'+s.id+'</td>';
+html+='<td>'+s.time+'</td>';
+html+='<td>'+s.ver+'</td>';
+html+='<td>'+s.words+'</td>';
+html+='<td><span class="status-tag '+statusClass+'">'+s.status+'</span></td>';
+html+='<td>'+s.method+'</td>';
+html+='<td>'+currentTag+'</td>';
+html+='<td class="ops"><a class="btn-link" onclick="viewHistoryDetail(\''+sessionId+'\','+i+')">查看详情</a>';
+if(!s.isCurrent)html+='<a class="btn-link" onclick="setAsCurrentFromHistory(\''+sessionId+'\','+i+')">设为正式稿</a>';
+html+='</td>';
+html+='</tr>';
+}
+document.getElementById('historyScriptList').innerHTML=html;
+openModal('historyScriptModal');
+}
+
+function viewHistoryDetail(sessionId,index){
+var s=scriptHistoryData[sessionId][index];
+document.getElementById('historyDetailTitle').textContent='稿件详情 - '+s.id+' ('+s.ver+')';
+var c=s.content;
+var html='<div style="margin-bottom:12px;display:flex;gap:12px;font-size:13px;color:rgba(0,0,0,0.447);">';
+html+='<span>版本：'+s.ver+'</span><span>字数：'+s.words+'</span><span>生成方式：'+s.method+'</span><span>生成时间：'+s.time+'</span>';
+html+='</div>';
+html+='<div class="preview-section"><h4>开场话术</h4><p>'+c.opening+'</p></div>';
+html+='<div class="preview-section"><h4>品牌介绍</h4><p>'+c.brand+'</p></div>';
+html+='<div class="preview-section"><h4>商品讲解</h4><p>'+c.product.replace(/\n/g,'</p><p>')+'</p></div>';
+html+='<div class="preview-section"><h4>优惠活动</h4><p>'+c.promo+'</p></div>';
+html+='<div class="preview-section"><h4>互动引导</h4><p>'+c.interact+'</p></div>';
+html+='<div class="preview-section"><h4>成交转化</h4><p>'+c.convert+'</p></div>';
+html+='<div class="preview-section"><h4>结尾话术</h4><p>'+c.closing+'</p></div>';
+document.getElementById('historyDetailBody').innerHTML=html;
+document.getElementById('historyDetailModal').setAttribute('data-session',sessionId);
+document.getElementById('historyDetailModal').setAttribute('data-index',index);
+openModal('historyDetailModal');
+}
+
+function setAsCurrentScript(){
+var sessionId=document.getElementById('historyDetailModal').getAttribute('data-session');
+var index=parseInt(document.getElementById('historyDetailModal').getAttribute('data-index'));
+setAsCurrentFromHistory(sessionId,index);
+}
+
+function setAsCurrentFromHistory(sessionId,index){
+var list=scriptHistoryData[sessionId];
+for(var i=0;i<list.length;i++){
+list[i].isCurrent=(i===index);
+if(i===index){list[i].status='已确认';}
+else if(list[i].status==='已确认'){list[i].status='草稿';}
+}
+closeModal('historyDetailModal');
+viewHistory(sessionId,document.getElementById('historySessionInfo').textContent.split(' - ')[1]||'',document.getElementById('historyAnchorInfo').textContent.replace('主播：',''));
+showToast('已设为正式稿','success');
+}
+
+function editScript(){
+openModal('writeScriptModal');
+document.getElementById('scriptFormStep').style.display='none';
+document.getElementById('scriptPreviewStep').style.display='block';
+}
+
+function openTeleprompter(){
+closeModal('viewScriptModal');
+closeModal('confirmSaveModal');
+document.getElementById('teleprompterView').classList.add('show');
+}
+
+function closeTeleprompter(){
+document.getElementById('teleprompterView').classList.remove('show');
+if(autoScrollInterval){clearInterval(autoScrollInterval);autoScrollInterval=null;}
+}
+
+function toggleAutoScroll(){
+var body=document.getElementById('teleprompterBody');
+if(autoScrollInterval){
+clearInterval(autoScrollInterval);
+autoScrollInterval=null;
+showToast('自动滚动已停止','info');
+}else{
+var speed=document.getElementById('scrollSpeed').value;
+autoScrollInterval=setInterval(function(){body.scrollTop+=parseInt(speed);},50);
+showToast('自动滚动已开启','info');
+}
+}
+
+function checkAiPermission(type){
+var names={image:'AI生图',video:'AI视频',desc:'AI商品介绍',selling:'AI卖点'};
+if(!aiPermissions[type]){
+document.getElementById('noPermServiceName').textContent=names[type]+'功能尚未开通';
+openModal('noPermModal');
+return;
+}
+var modalMap={image:'aiImageModal',video:'aiVideoModal',desc:'aiDescModal',selling:'aiSellingModal'};
+var resultIds={image:'aiImageResult',video:'aiVideoResult',desc:'aiDescResult',selling:'aiSellingResult'};
+document.getElementById(resultIds[type]).style.display='none';
+openModal(modalMap[type]);
+}
+
+function generateAiImage(){
+document.getElementById('aiImageLoading').classList.add('show');
+setTimeout(function(){
+document.getElementById('aiImageLoading').classList.remove('show');
+document.getElementById('aiImageResult').style.display='block';
+},2000);
+}
+
+function generateAiVideo(){
+document.getElementById('aiVideoLoading').classList.add('show');
+setTimeout(function(){
+document.getElementById('aiVideoLoading').classList.remove('show');
+document.getElementById('aiVideoResult').style.display='block';
+},2000);
+}
+
+function generateAiDesc(){
+document.getElementById('aiDescLoading').classList.add('show');
+setTimeout(function(){
+document.getElementById('aiDescLoading').classList.remove('show');
+document.getElementById('aiDescResult').style.display='block';
+},2000);
+}
+
+function generateAiSelling(){
+document.getElementById('aiSellingLoading').classList.add('show');
+setTimeout(function(){
+document.getElementById('aiSellingLoading').classList.remove('show');
+document.getElementById('aiSellingResult').style.display='block';
+},2000);
+}
+
+function openPurchaseModal(name,version,price){
+document.getElementById('purchaseServiceName').textContent=name+' - '+version;
+document.getElementById('purchasePrice').textContent=price;
+openModal('purchaseModal');
+}
+
+function toggleTreeNode(el){
+var children=el.nextElementSibling;
+if(children&&children.classList.contains('tree-children')){
+children.classList.toggle('show');
+var arrow=el.querySelector('.arrow');
+if(arrow)arrow.classList.toggle('open');
+}
+}
+
+function selectContactsLevel(level){
+document.querySelectorAll('.contacts-table-section').forEach(function(el){el.style.display='none';});
+var target=document.getElementById('contactsTable-'+level);
+if(target)target.style.display='block';
+document.querySelectorAll('.tree-node').forEach(function(el){el.classList.remove('active');});
+event.target.classList.add('active');
+}
+
+function autoDetectGroups(){
+showToast('正在自动检测可建群对象...','info');
+setTimeout(function(){showToast('检测完成，发现2个可建群建议','success');},1500);
+}
+
+function confirmGroup(el){
+var row=el.closest('tr');
+var statusTd=row.querySelector('.status-tag');
+statusTd.className='status-tag green';
+statusTd.textContent='已建群';
+var opsTd=row.querySelector('.ops');
+opsTd.innerHTML='<a class="btn-link">查看详情</a>';
+showToast('建群成功','success');
+}
+
+function ignoreGroup(el){
+var row=el.closest('tr');
+var statusTd=row.querySelector('.status-tag');
+statusTd.className='status-tag gray';
+statusTd.textContent='已忽略';
+var opsTd=row.querySelector('.ops');
+opsTd.innerHTML='';
+showToast('已忽略','info');
+}
+
+function updatePushContentOptions(sel){
+var type=sel.value;
+var select=document.getElementById('pushContentSelect');
+var preview=document.getElementById('pushPreview');
+var options={coupon:['满200减50优惠券','新用户8折券','满100减20券'],product:['春季新款连衣裙','保湿精华液30ml','智能蓝牙耳机Pro'],activity:['春季大促活动','会员日特惠','新品首发活动'],live:['春季新品发布直播','年货节专场直播','美妆好物推荐直播']};
+select.innerHTML='<option value="">请选择内容</option>';
+if(options[type]){
+options[type].forEach(function(opt){
+var optEl=document.createElement('option');
+optEl.textContent=opt;
+select.appendChild(optEl);
+});
+}
+preview.textContent='选择内容后显示预览';
+select.onchange=function(){
+if(select.value){
+var typeLabels={coupon:'优惠券',product:'商品',activity:'活动',live:'直播信息'};
+preview.innerHTML='<div style="color:rgba(0,0,0,0.847);font-size:14px;margin-bottom:4px;">'+select.value+'</div><div style="color:rgba(0,0,0,0.447);font-size:13px;">类型：'+(typeLabels[type]||type)+'</div>';
+}else{
+preview.textContent='选择内容后显示预览';
+}
+};
+}
+
+function sendPush(){
+var select=document.getElementById('pushContentSelect');
+if(!select.value){showToast('请选择推送内容','error');return;}
+showToast('推送成功','success');
+}
+
+document.querySelectorAll('.modal-overlay').forEach(function(overlay){
+overlay.addEventListener('click',function(e){
+if(e.target===overlay){overlay.classList.remove('show');}
+});
+});
+</script>
+</body>
+</html>

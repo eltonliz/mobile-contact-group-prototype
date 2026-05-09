@@ -1,0 +1,572 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <title>直播间明细报表</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <link href="resources/css/axure_rp_page.css" type="text/css" rel="stylesheet"/>
+    <link href="data/styles.css" type="text/css" rel="stylesheet"/>
+    <link href="files/直播间明细报表/styles.css" type="text/css" rel="stylesheet"/>
+    <script src="resources/scripts/jquery-3.2.1.min.js"></script>
+    <script src="resources/scripts/axure/axQuery.js"></script>
+    <script src="resources/scripts/axure/globals.js"></script>
+    <script src="resources/scripts/axutils.js"></script>
+    <script src="resources/scripts/axure/annotation.js"></script>
+    <script src="resources/scripts/axure/axQuery.std.js"></script>
+    <script src="resources/scripts/axure/doc.js"></script>
+    <script src="resources/scripts/messagecenter.js"></script>
+    <script src="resources/scripts/axure/events.js"></script>
+    <script src="resources/scripts/axure/recording.js"></script>
+    <script src="resources/scripts/axure/action.js"></script>
+    <script src="resources/scripts/axure/expr.js"></script>
+    <script src="resources/scripts/axure/geometry.js"></script>
+    <script src="resources/scripts/axure/flyout.js"></script>
+    <script src="resources/scripts/axure/model.js"></script>
+    <script src="resources/scripts/axure/repeater.js"></script>
+    <script src="resources/scripts/axure/sto.js"></script>
+    <script src="resources/scripts/axure/utils.temp.js"></script>
+    <script src="resources/scripts/axure/variables.js"></script>
+    <script src="resources/scripts/axure/drag.js"></script>
+    <script src="resources/scripts/axure/move.js"></script>
+    <script src="resources/scripts/axure/visibility.js"></script>
+    <script src="resources/scripts/axure/style.js"></script>
+    <script src="resources/scripts/axure/adaptive.js"></script>
+    <script src="resources/scripts/axure/tree.js"></script>
+    <script src="resources/scripts/axure/init.temp.js"></script>
+    <script src="resources/scripts/axure/legacy.js"></script>
+    <script src="resources/scripts/axure/viewer.js"></script>
+    <script src="resources/scripts/axure/math.js"></script>
+    <script src="resources/scripts/axure/jquery.nicescroll.min.js"></script>
+    <script src="data/document.js"></script>
+    <script src="files/直播间明细报表/data.js"></script>
+    <script type="text/javascript">
+      $axure.utils.getTransparentGifPath = function() { return 'resources/images/transparent.gif'; };
+      $axure.utils.getOtherPath = function() { return 'resources/Other.html'; };
+      $axure.utils.getReloadPath = function() { return 'resources/reload.html'; };
+    </script>
+  </head>
+  <body>
+    <div id="base" class="">
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41410" class="ax_default shape">
+        <div id="u41410_div" class=""></div>
+        <div id="u41410_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41411" class="ax_default heading_3">
+        <div id="u41411_div" class=""></div>
+        <div id="u41411_text" class="text ">
+          <p style="font-size:14px;"><span style="color:rgba(0, 0, 0, 0.647058823529412);">经营报表&nbsp; </span><span style="font-size:12px;">销售订单明细报表</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41412" class="ax_default box_1">
+        <div id="u41412_div" class=""></div>
+        <div id="u41412_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41413" class="ax_default label">
+        <div id="u41413_div" class=""></div>
+        <div id="u41413_text" class="text ">
+          <p><span>时间范围：</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (统计时间) -->
+
+      <!-- Unnamed (下拉列表) -->
+      <div id="u41415" class="ax_default droplist">
+        <div id="u41415_div" class=""></div>
+        <select id="u41415_input" class="u41415_input">
+          <option class="u41415_input_option" value="自然日">自然日</option>
+          <option class="u41415_input_option" value="自然周">自然周</option>
+          <option class="u41415_input_option" value="自然月">自然月</option>
+          <option class="u41415_input_option" value="近7天">近7天</option>
+          <option class="u41415_input_option" value="近30天">近30天</option>
+          <option class="u41415_input_option" value="自定义">自定义</option>
+        </select>
+      </div>
+
+      <!-- Unnamed (动态面板) -->
+      <div id="u41416" class="ax_default">
+        <div id="u41416_state0" class="panel_state" data-label="自然日" style="">
+          <div id="u41416_state0_content" class="panel_state_content">
+
+            <!-- Unnamed (文本框) -->
+            <div id="u41417" class="ax_default text_field">
+              <div id="u41417_div" class=""></div>
+              <input id="u41417_input" type="date" value="" class="u41417_input"/>
+            </div>
+          </div>
+        </div>
+        <div id="u41416_state1" class="panel_state" data-label="近7天" style="visibility: hidden;">
+          <div id="u41416_state1_content" class="panel_state_content">
+
+            <!-- Unnamed (文本框) -->
+            <div id="u41418" class="ax_default text_field disabled">
+              <div id="u41418_div" class="disabled"></div>
+              <input id="u41418_input" type="date" value="2026-04-06" class="u41418_input" disabled/>
+            </div>
+
+            <!-- Unnamed (文本框) -->
+            <div id="u41419" class="ax_default text_field disabled">
+              <div id="u41419_div" class="disabled"></div>
+              <input id="u41419_input" type="date" value="2026-04-13" class="u41419_input" disabled/>
+            </div>
+          </div>
+        </div>
+        <div id="u41416_state2" class="panel_state" data-label="近30天" style="visibility: hidden;">
+          <div id="u41416_state2_content" class="panel_state_content">
+
+            <!-- Unnamed (文本框) -->
+            <div id="u41420" class="ax_default text_field disabled">
+              <div id="u41420_div" class="disabled"></div>
+              <input id="u41420_input" type="date" value="2026-03-14" class="u41420_input" disabled/>
+            </div>
+
+            <!-- Unnamed (文本框) -->
+            <div id="u41421" class="ax_default text_field disabled">
+              <div id="u41421_div" class="disabled"></div>
+              <input id="u41421_input" type="date" value="2026-04-13" class="u41421_input" disabled/>
+            </div>
+          </div>
+        </div>
+        <div id="u41416_state3" class="panel_state" data-label="自然周" style="visibility: hidden;">
+          <div id="u41416_state3_content" class="panel_state_content">
+
+            <!-- 自然周 (文本框) -->
+            <div id="u41422" class="ax_default text_field" data-label="自然周">
+              <div id="u41422_div" class=""></div>
+              <input id="u41422_input" type="date" value="" class="u41422_input"/>
+            </div>
+
+            <!-- Unnamed (文本框) -->
+            <div id="u41423" class="ax_default text_field">
+              <div id="u41423_div" class=""></div>
+              <input id="u41423_input" type="date" value="" class="u41423_input"/>
+            </div>
+          </div>
+        </div>
+        <div id="u41416_state4" class="panel_state" data-label="自然月" style="visibility: hidden;">
+          <div id="u41416_state4_content" class="panel_state_content">
+
+            <!-- 自然月 (下拉列表) -->
+            <div id="u41424" class="ax_default droplist" data-label="自然月">
+              <div id="u41424_div" class=""></div>
+              <select id="u41424_input" class="u41424_input">
+                <option class="u41424_input_option" value="2026-01">2026-01</option>
+                <option class="u41424_input_option" value="2026-02">2026-02</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div id="u41416_state5" class="panel_state" data-label="自定义" style="visibility: hidden;">
+          <div id="u41416_state5_content" class="panel_state_content">
+
+            <!-- Unnamed (文本框) -->
+            <div id="u41425" class="ax_default text_field">
+              <div id="u41425_div" class=""></div>
+              <input id="u41425_input" type="date" value="" class="u41425_input"/>
+            </div>
+
+            <!-- Unnamed (文本框) -->
+            <div id="u41426" class="ax_default text_field">
+              <div id="u41426_div" class=""></div>
+              <input id="u41426_input" type="date" value="" class="u41426_input"/>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="u41414" style="display:none; visibility:hidden;"></div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41427" class="ax_default box_1">
+        <div id="u41427_div" class=""></div>
+        <div id="u41427_text" class="text ">
+          <p><span>筛选</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41428" class="ax_default box_1">
+        <div id="u41428_div" class=""></div>
+        <div id="u41428_text" class="text ">
+          <p><span>导出</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41429" class="ax_default box_2">
+        <div id="u41429_div" class=""></div>
+        <div id="u41429_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41430" class="ax_default label">
+        <div id="u41430_div" class=""></div>
+        <div id="u41430_text" class="text ">
+          <p><span>直播间名称</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41431" class="ax_default label">
+        <div id="u41431_div" class=""></div>
+        <div id="u41431_text" class="text ">
+          <p><span>场次编号</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41432" class="ax_default label">
+        <div id="u41432_div" class=""></div>
+        <div id="u41432_text" class="text ">
+          <p><span>成交数量：0 成交金额：0.00 元售价金额：0.00 元优惠金额：0.00 元</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41433" class="ax_default label">
+        <div id="u41433_div" class=""></div>
+        <div id="u41433_text" class="text ">
+          <p><span>计划名称</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41434" class="ax_default label">
+        <div id="u41434_div" class=""></div>
+        <div id="u41434_text" class="text ">
+          <p><span>汇总维度：</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (复选框) -->
+      <div id="u41435" class="ax_default checkbox">
+        <label id="u41435_input_label" for="u41435_input" style="position: absolute; left: 0px;">
+          <img id="u41435_img" class="img " src="images/直播间明细报表/u41435.svg"/>
+          <div id="u41435_text" class="text ">
+            <p><span>主播</span></p>
+          </div>
+        </label>
+        <input id="u41435_input" type="checkbox" value="checkbox"/>
+      </div>
+
+      <!-- Unnamed (复选框) -->
+      <div id="u41436" class="ax_default checkbox">
+        <label id="u41436_input_label" for="u41436_input" style="position: absolute; left: 0px;">
+          <img id="u41436_img" class="img " src="images/直播间明细报表/u41436.svg"/>
+          <div id="u41436_text" class="text ">
+            <p><span>计划</span></p>
+          </div>
+        </label>
+        <input id="u41436_input" type="checkbox" value="checkbox"/>
+      </div>
+
+      <!-- Unnamed (复选框) -->
+      <div id="u41437" class="ax_default checkbox">
+        <label id="u41437_input_label" for="u41437_input" style="position: absolute; left: 0px;">
+          <img id="u41437_img" class="img " src="images/直播间明细报表/u41437.svg"/>
+          <div id="u41437_text" class="text ">
+            <p><span>场次</span></p>
+          </div>
+        </label>
+        <input id="u41437_input" type="checkbox" value="checkbox"/>
+      </div>
+
+      <!-- Unnamed (复选框) -->
+      <div id="u41438" class="ax_default checkbox">
+        <label id="u41438_input_label" for="u41438_input" style="position: absolute; left: 0px;">
+          <img id="u41438_img" class="img " src="images/直播间明细报表/u41438.svg"/>
+          <div id="u41438_text" class="text ">
+            <p><span>直播间</span></p>
+          </div>
+        </label>
+        <input id="u41438_input" type="checkbox" value="checkbox"/>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41439" class="ax_default label">
+        <div id="u41439_div" class=""></div>
+        <div id="u41439_text" class="text ">
+          <p><span>主播名称</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u41440" class="ax_default label">
+        <div id="u41440_div" class=""></div>
+        <div id="u41440_text" class="text ">
+          <p><span>主播名称</span></p>
+        </div>
+      </div>
+
+      <!-- 历史GMV (矩形) -->
+      <div id="u41441" class="ax_default heading_3" data-label="历史GMV">
+        <div id="u41441_div" class=""></div>
+        <div id="u41441_text" class="text ">
+          <p><span>累计观看时长</span></p>
+        </div>
+      </div>
+
+      <!-- 累计直播天数 (矩形) -->
+      <div id="u41442" class="ax_default heading_3" data-label="累计直播天数">
+        <div id="u41442_div" class=""></div>
+        <div id="u41442_text" class="text ">
+          <p><span>场次UV)</span></p>
+        </div>
+      </div>
+
+      <!-- 违规次数 (矩形) -->
+      <div id="u41443" class="ax_default heading_3" data-label="违规次数">
+        <div id="u41443_div" class=""></div>
+        <div id="u41443_text" class="text ">
+          <p><span>峰值在线人数</span></p>
+        </div>
+      </div>
+
+      <!-- 违规次数 (矩形) -->
+      <div id="u41444" class="ax_default heading_3" data-label="违规次数">
+        <div id="u41444_div" class=""></div>
+        <div id="u41444_text" class="text ">
+          <p><span>平均在线人数</span></p>
+        </div>
+      </div>
+
+      <!-- 累计粉丝数 (矩形) -->
+      <div id="u41445" class="ax_default heading_3" data-label="累计粉丝数">
+        <div id="u41445_div" class=""></div>
+        <div id="u41445_text" class="text ">
+          <p><span>开播时长</span></p>
+        </div>
+      </div>
+
+      <!-- 累计直播天数 (矩形) -->
+      <div id="u41446" class="ax_default heading_3" data-label="累计直播天数">
+        <div id="u41446_div" class=""></div>
+        <div id="u41446_text" class="text ">
+          <p><span>流量</span></p>
+        </div>
+      </div>
+
+      <!-- 历史GMV (矩形) -->
+      <div id="u41447" class="ax_default heading_3" data-label="历史GMV">
+        <div id="u41447_div" class=""></div>
+        <div id="u41447_text" class="text ">
+          <p><span>点赞数</span></p>
+        </div>
+      </div>
+
+      <!-- 累计直播天数 (矩形) -->
+      <div id="u41448" class="ax_default heading_3" data-label="累计直播天数">
+        <div id="u41448_div" class=""></div>
+        <div id="u41448_text" class="text ">
+          <p><span>评论数</span></p>
+        </div>
+      </div>
+
+      <!-- 违规次数 (矩形) -->
+      <div id="u41449" class="ax_default heading_3" data-label="违规次数">
+        <div id="u41449_div" class=""></div>
+        <div id="u41449_text" class="text ">
+          <p><span>分享数</span></p>
+        </div>
+      </div>
+
+      <!-- 违规次数 (矩形) -->
+      <div id="u41450" class="ax_default heading_3" data-label="违规次数">
+        <div id="u41450_div" class=""></div>
+        <div id="u41450_text" class="text ">
+          <p><span>互动UV</span></p>
+        </div>
+      </div>
+
+      <!-- 累计直播天数 (矩形) -->
+      <div id="u41451" class="ax_default heading_3" data-label="累计直播天数">
+        <div id="u41451_div" class=""></div>
+        <div id="u41451_text" class="text ">
+          <p><span>互动</span></p>
+        </div>
+      </div>
+
+      <!-- 违规次数 (矩形) -->
+      <div id="u41452" class="ax_default heading_3" data-label="违规次数">
+        <div id="u41452_div" class=""></div>
+        <div id="u41452_text" class="text ">
+          <p><span>互动率</span></p>
+        </div>
+      </div>
+
+      <!-- 违规次数 (矩形) -->
+      <div id="u41453" class="ax_default heading_3" data-label="违规次数">
+        <div id="u41453_div" class=""></div>
+        <div id="u41453_text" class="text ">
+          <p><span>主播转粉率</span></p>
+        </div>
+      </div>
+
+      <!-- 累计直播天数 (矩形) -->
+      <div id="u41454" class="ax_default heading_3" data-label="累计直播天数">
+        <div id="u41454_div" class=""></div>
+        <div id="u41454_text" class="text ">
+          <p><span>点击UV</span></p>
+        </div>
+      </div>
+
+      <!-- 累计直播天数 (矩形) -->
+      <div id="u41455" class="ax_default heading_3" data-label="累计直播天数">
+        <div id="u41455_div" class=""></div>
+        <div id="u41455_text" class="text ">
+          <p><span>小黄车</span></p>
+        </div>
+      </div>
+
+      <!-- 累计直播天数 (矩形) -->
+      <div id="u41456" class="ax_default heading_3" data-label="累计直播天数">
+        <div id="u41456_div" class=""></div>
+        <div id="u41456_text" class="text ">
+          <p><span>点击率</span></p>
+        </div>
+      </div>
+
+      <!-- 累计直播天数 (矩形) -->
+      <div id="u41457" class="ax_default heading_3" data-label="累计直播天数">
+        <div id="u41457_div" class=""></div>
+        <div id="u41457_text" class="text ">
+          <p><span>下单UV</span></p>
+        </div>
+      </div>
+
+      <!-- 累计直播天数 (矩形) -->
+      <div id="u41458" class="ax_default heading_3" data-label="累计直播天数">
+        <div id="u41458_div" class=""></div>
+        <div id="u41458_text" class="text ">
+          <p><span>下单率</span></p>
+        </div>
+      </div>
+
+      <!-- 累计直播天数 (矩形) -->
+      <div id="u41459" class="ax_default heading_3" data-label="累计直播天数">
+        <div id="u41459_div" class=""></div>
+        <div id="u41459_text" class="text ">
+          <p><span>成交</span></p>
+        </div>
+      </div>
+
+      <!-- 累计直播天数 (矩形) -->
+      <div id="u41460" class="ax_default heading_3" data-label="累计直播天数">
+        <div id="u41460_div" class=""></div>
+        <div id="u41460_text" class="text ">
+          <p><span>GMV</span></p>
+        </div>
+      </div>
+
+      <!-- 累计直播天数 (矩形) -->
+      <div id="u41461" class="ax_default heading_3" data-label="累计直播天数">
+        <div id="u41461_div" class=""></div>
+        <div id="u41461_text" class="text ">
+          <p><span>订单数</span></p>
+        </div>
+      </div>
+
+      <!-- 累计直播天数 (矩形) -->
+      <div id="u41462" class="ax_default heading_3" data-label="累计直播天数">
+        <div id="u41462_div" class=""></div>
+        <div id="u41462_text" class="text ">
+          <p><span>成交UV</span></p>
+        </div>
+      </div>
+
+      <!-- 累计直播天数 (矩形) -->
+      <div id="u41463" class="ax_default heading_3" data-label="累计直播天数">
+        <div id="u41463_div" class=""></div>
+        <div id="u41463_text" class="text ">
+          <p><span>支付转化率</span></p>
+        </div>
+      </div>
+
+      <!-- 累计直播天数 (矩形) -->
+      <div id="u41464" class="ax_default heading_3" data-label="累计直播天数">
+        <div id="u41464_div" class=""></div>
+        <div id="u41464_text" class="text ">
+          <p><span>UV价值</span></p>
+        </div>
+      </div>
+
+      <!-- 累计直播天数 (矩形) -->
+      <div id="u41465" class="ax_default heading_3" data-label="累计直播天数">
+        <div id="u41465_div" class=""></div>
+        <div id="u41465_text" class="text ">
+          <p><span>客单价</span></p>
+        </div>
+      </div>
+
+      <!-- 累计直播天数 (矩形) -->
+      <div id="u41466" class="ax_default heading_3" data-label="累计直播天数">
+        <div id="u41466_div" class=""></div>
+        <div id="u41466_text" class="text ">
+          <p><span>效率</span></p>
+        </div>
+      </div>
+
+      <!-- 累计直播天数 (矩形) -->
+      <div id="u41467" class="ax_default heading_3" data-label="累计直播天数">
+        <div id="u41467_div" class=""></div>
+        <div id="u41467_text" class="text ">
+          <p><span>小时GMV</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (垂直线) -->
+      <div id="u41468" class="ax_default line">
+        <img id="u41468_img" class="img " src="images/直播间明细报表/u41468.svg"/>
+        <div id="u41468_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (垂直线) -->
+      <div id="u41469" class="ax_default line">
+        <img id="u41469_img" class="img " src="images/直播间明细报表/u41468.svg"/>
+        <div id="u41469_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (垂直线) -->
+      <div id="u41470" class="ax_default line">
+        <img id="u41470_img" class="img " src="images/直播间明细报表/u41468.svg"/>
+        <div id="u41470_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (垂直线) -->
+      <div id="u41471" class="ax_default line">
+        <img id="u41471_img" class="img " src="images/直播间明细报表/u41468.svg"/>
+        <div id="u41471_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (垂直线) -->
+      <div id="u41472" class="ax_default line">
+        <img id="u41472_img" class="img " src="images/直播间明细报表/u41468.svg"/>
+        <div id="u41472_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+    </div>
+    <script src="resources/scripts/axure/ios.js"></script>
+  </body>
+</html>

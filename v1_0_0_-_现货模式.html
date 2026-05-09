@@ -1,0 +1,697 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <title>V1.0.0 - 现货模式</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <link href="resources/css/axure_rp_page.css" type="text/css" rel="stylesheet"/>
+    <link href="data/styles.css" type="text/css" rel="stylesheet"/>
+    <link href="files/v1_0_0_-_现货模式/styles.css" type="text/css" rel="stylesheet"/>
+    <script src="resources/scripts/jquery-3.2.1.min.js"></script>
+    <script src="resources/scripts/axure/axQuery.js"></script>
+    <script src="resources/scripts/axure/globals.js"></script>
+    <script src="resources/scripts/axutils.js"></script>
+    <script src="resources/scripts/axure/annotation.js"></script>
+    <script src="resources/scripts/axure/axQuery.std.js"></script>
+    <script src="resources/scripts/axure/doc.js"></script>
+    <script src="resources/scripts/messagecenter.js"></script>
+    <script src="resources/scripts/axure/events.js"></script>
+    <script src="resources/scripts/axure/recording.js"></script>
+    <script src="resources/scripts/axure/action.js"></script>
+    <script src="resources/scripts/axure/expr.js"></script>
+    <script src="resources/scripts/axure/geometry.js"></script>
+    <script src="resources/scripts/axure/flyout.js"></script>
+    <script src="resources/scripts/axure/model.js"></script>
+    <script src="resources/scripts/axure/repeater.js"></script>
+    <script src="resources/scripts/axure/sto.js"></script>
+    <script src="resources/scripts/axure/utils.temp.js"></script>
+    <script src="resources/scripts/axure/variables.js"></script>
+    <script src="resources/scripts/axure/drag.js"></script>
+    <script src="resources/scripts/axure/move.js"></script>
+    <script src="resources/scripts/axure/visibility.js"></script>
+    <script src="resources/scripts/axure/style.js"></script>
+    <script src="resources/scripts/axure/adaptive.js"></script>
+    <script src="resources/scripts/axure/tree.js"></script>
+    <script src="resources/scripts/axure/init.temp.js"></script>
+    <script src="resources/scripts/axure/legacy.js"></script>
+    <script src="resources/scripts/axure/viewer.js"></script>
+    <script src="resources/scripts/axure/math.js"></script>
+    <script src="resources/scripts/axure/jquery.nicescroll.min.js"></script>
+    <script src="data/document.js"></script>
+    <script src="files/v1_0_0_-_现货模式/data.js"></script>
+    <script type="text/javascript">
+      $axure.utils.getTransparentGifPath = function() { return 'resources/images/transparent.gif'; };
+      $axure.utils.getOtherPath = function() { return 'resources/Other.html'; };
+      $axure.utils.getReloadPath = function() { return 'resources/reload.html'; };
+    </script>
+  </head>
+  <body>
+    <div id="base" class="">
+
+      <!-- Unnamed (矩形) -->
+      <div id="u167" class="ax_default box_1">
+        <div id="u167_div" class=""></div>
+        <div id="u167_text" class="text ">
+          <p><span>①&nbsp; 租户线上销售：(购买的SAAS某版本：配置了(供应商、采购、店铺、门店、渠道)的权限菜单）基础班 ) </span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u168" class="ax_default sticky_1">
+        <div id="u168_div" class=""></div>
+        <div id="u168_text" class="text ">
+          <p><span>业务文字说明</span></p><p><span>租户画像：租户愿意备货，且有自己的货源，需要一套私域的在线商城，售卖商品</span></p><p><span>租户需求：私域卖场</span></p><p><span>1：租户管理自己的供应商</span></p><p><span>2：供应商管理货品、组合品，这里没有商品的描述什么的，主要是价格和供应商是否存在【账期 == 月结、季度结、半年结、年度结】</span></p><p><span>3：租户选择商品、定好采购价(含税、不含税)和数量，供应商要开票，库存接收地址，也就是门店。如果有云仓可以后期接入</span></p><p><span>4：租户提交采购单，支付采购单，供应商完成采购单履约</span></p><p><span>5：租户设置好售价、运费、渠道角色佣金(如果购买了渠道应用能力的话)</span></p><p><span>6：租户购买套餐中含有店铺(菜单那个店铺)，那么就可以在私域流量池中售卖（直播、APP、小程序、货架）都可以上</span></p><p><span>7：这时候就是B2C现货销售订单，买家支付完成后，根据渠道规则进行梳理结算明细</span></p><p><span>8：担保保交易完成，确认收货；可以入账各方(租户、供货商、支付渠道、渠道角色(经销商、店长、店员)、平台)</span></p><p><span>9：各方可以查看待结算明细、结算明细</span></p><p><span>10：各方允许进行提现</span></p><p><span>本次闭环内容</span></p><p><span>1：商品流（供应商-&gt;门店-&gt;店铺-&gt;线上店铺商品列表页面-&gt;商品详情页面）</span></p><p><span>2：订单正正向流 (商品详情页面 -&gt; 提交订单 -&gt; 手动支付假支付 -&gt; 商家处理流程-&gt; 商家完成履约)</span></p><p><span>3：订单逆向流程（买家会员中心-&gt;订单列表或订单详情-&gt;发起售后-&gt;商家售后处理-&gt;售后(仅退款、退货退款)）</span></p><p><span>本次需求不涵盖，预计会在下周5、6，与直播间、一同评审</span></p><p><span>1：支付</span></p><p><span>2：结算</span></p><p><span>3：营销（优惠券、兑换券）</span></p><p><span>4：采购单异常流</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u169" class="ax_default box_1">
+        <div id="u169_div" class=""></div>
+        <div id="u169_text" class="text ">
+          <p><span>供应商完成审核</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u170" class="ax_default box_1">
+        <div id="u170_div" class=""></div>
+        <div id="u170_text" class="text ">
+          <p><span>供应商发布商品</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u171" class="ax_default box_1">
+        <div id="u171_div" class=""></div>
+        <div id="u171_text" class="text ">
+          <p><span>租户采购商品</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (形状) -->
+      <div id="u172" class="ax_default box_1">
+        <img id="u172_img" class="img " src="images/v1_0_0_-_现货模式/u172.svg"/>
+        <div id="u172_text" class="text ">
+          <p><span>供应商</span></p><p><span>发货</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u173" class="ax_default box_1">
+        <div id="u173_div" class=""></div>
+        <div id="u173_text" class="text ">
+          <p><span>租户</span></p><p><span>签收</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u174" class="ax_default box_1">
+        <div id="u174_div" class=""></div>
+        <div id="u174_text" class="text ">
+          <p><span>租户</span></p><p><span>售价设置</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u175" class="ax_default box_1">
+        <div id="u175_div" class=""></div>
+        <div id="u175_text" class="text ">
+          <p><span>租户</span></p><p><span>渠道佣金设置</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u176" class="ax_default box_1">
+        <div id="u176_div" class=""></div>
+        <div id="u176_text" class="text ">
+          <p><span>租户</span></p><p><span>发布商城</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u177" class="ax_default box_1">
+        <div id="u177_div" class=""></div>
+        <div id="u177_text" class="text ">
+          <p><span>租户</span></p><p><span>会员浏览</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u178" class="ax_default box_1">
+        <div id="u178_div" class=""></div>
+        <div id="u178_text" class="text ">
+          <p><span>租户</span></p><p><span>会员下单支付</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u179" class="ax_default box_1">
+        <div id="u179_div" class=""></div>
+        <div id="u179_text" class="text ">
+          <p><span>租户</span></p><p><span>处理订单</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u180" class="ax_default box_1">
+        <div id="u180_div" class=""></div>
+        <div id="u180_text" class="text ">
+          <p><span>租户</span></p><p><span>履约订单</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u181" class="ax_default box_1">
+        <div id="u181_div" class=""></div>
+        <div id="u181_text" class="text ">
+          <p><span>租户</span></p><p><span>履约售后</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u182" class="ax_default box_1">
+        <div id="u182_div" class=""></div>
+        <div id="u182_text" class="text ">
+          <p><span>采购订单</span></p><p><span><br></span></p><p><span>采购ID</span></p><p><span>租户ID</span></p><p><span>供应商ID</span></p><p><span>批次编号</span></p><p><span>采购时间</span></p><p><span>采购人</span></p><p><span>采购类型（现货采购、以销定采）</span></p><p><span><br></span></p><p><span>—</span></p><p><span>地址ID</span></p><p><span>—</span></p><p><span>支付状态</span></p><p><span>支付方式</span></p><p><span><br></span></p><p><span><br></span></p><p><span><br></span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u183" class="ax_default box_1">
+        <div id="u183_div" class=""></div>
+        <div id="u183_text" class="text ">
+          <p><span>采购明细</span></p><p><span><br></span></p><p><span>明细ID、采购单ID</span></p><p><span>批次编号</span></p><p><span>供应商ID</span></p><p><span>租户ID</span></p><p><span>商品编号</span></p><p><span>商品名称</span></p><p><span>规格名称</span></p><p><span>规格编号</span></p><p><span>规格含税采购价</span></p><p><span>规格不含税采购价</span></p><p><span>最终采购价</span></p><p><span>采购库存数</span></p><p><span>—冗余信息</span></p><p><span>发货状态：待发货、已发货</span></p><p><span>签收状态：待签收，已签收</span></p><p><span style="color:#D9001B;">收件人地址列表(</span></p><p><span style="color:#D9001B;">销售订单的发货地址ID、联系人、联系电话、地址详情</span></p><p><span style="color:#D9001B;">)</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (连接) -->
+      <div id="u184" class="ax_default connector">
+        <img id="u184_seg0" class="img " src="images/v1_0_0_-_现货模式/u184_seg0.svg" alt="u184_seg0"/>
+        <img id="u184_seg1" class="img " src="images/v1_0_0_-_现货模式/u184_seg1.svg" alt="u184_seg1"/>
+        <div id="u184_text" class="text ">
+          <p><span>{1,N}</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u185" class="ax_default flow_shape">
+        <div id="u185_div" class=""></div>
+        <div id="u185_text" class="text ">
+          <p><span>核对无误</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u186" class="ax_default box_1">
+        <div id="u186_div" class=""></div>
+        <div id="u186_text" class="text ">
+          <p><span>结束</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (连接) -->
+      <div id="u187" class="ax_default connector">
+        <img id="u187_seg0" class="img " src="images/v1_0_0_-_现货模式/u187_seg0.svg" alt="u187_seg0"/>
+        <img id="u187_seg1" class="img " src="images/v1_0_0_-_现货模式/u187_seg1.svg" alt="u187_seg1"/>
+        <div id="u187_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (角色) -->
+      <div id="u188" class="ax_default flow_shape">
+        <img id="u188_img" class="img " src="images/v1_0_0__整体业务流程/u92.svg"/>
+        <div id="u188_text" class="text ">
+          <p><span>租户</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u189" class="ax_default box_1">
+        <div id="u189_div" class=""></div>
+        <div id="u189_text" class="text ">
+          <p><span>开始</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u190" class="ax_default flow_shape">
+        <div id="u190_div" class=""></div>
+        <div id="u190_text" class="text ">
+          <p><span>选择货品</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (连接) -->
+      <div id="u191" class="ax_default connector">
+        <img id="u191_seg0" class="img " src="images/v1_0_0_-_现货模式/u191_seg0.svg" alt="u191_seg0"/>
+        <img id="u191_seg1" class="img " src="images/v1_0_0_-_现货模式/u191_seg1.svg" alt="u191_seg1"/>
+        <div id="u191_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u192" class="ax_default flow_shape">
+        <div id="u192_div" class=""></div>
+        <div id="u192_text" class="text ">
+          <p><span>选择门店</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (连接) -->
+      <div id="u193" class="ax_default connector">
+        <img id="u193_seg0" class="img " src="images/v1_0_0_-_现货模式/u193_seg0.svg" alt="u193_seg0"/>
+        <img id="u193_seg1" class="img " src="images/v1_0_0_-_现货模式/u193_seg1.svg" alt="u193_seg1"/>
+        <div id="u193_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u194" class="ax_default flow_shape">
+        <div id="u194_div" class=""></div>
+        <div id="u194_text" class="text ">
+          <p><span>确认采购数量</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (连接) -->
+      <div id="u195" class="ax_default connector">
+        <img id="u195_seg0" class="img " src="images/v1_0_0_-_现货模式/u195_seg0.svg" alt="u195_seg0"/>
+        <img id="u195_seg1" class="img " src="images/v1_0_0_-_现货模式/u195_seg1.svg" alt="u195_seg1"/>
+        <div id="u195_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (连接) -->
+      <div id="u196" class="ax_default connector">
+        <img id="u196_seg0" class="img " src="images/v1_0_0_-_现货模式/u196_seg0.svg" alt="u196_seg0"/>
+        <img id="u196_seg1" class="img " src="images/v1_0_0_-_现货模式/u196_seg1.svg" alt="u196_seg1"/>
+        <div id="u196_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u197" class="ax_default flow_shape">
+        <div id="u197_div" class=""></div>
+        <div id="u197_text" class="text ">
+          <p><span>提交采购单</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u198" class="ax_default sticky_1">
+        <div id="u198_div" class=""></div>
+        <div id="u198_text" class="text ">
+          <p style="font-size:13px;"><span>1：进销存-采购管理中，发起采购动作</span></p><p style="font-size:13px;"><span>2：选择自己的供应商、自己想售卖的商品，填好报价、填好数量</span></p><p style="font-size:13px;"><span>3：提交采购单</span></p><p style="font-size:20px;"><span>B2B订单类型：现货采购</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u199" class="ax_default box_1">
+        <div id="u199_div" class=""></div>
+        <div id="u199_text" class="text ">
+          <p><span>供应商商品库</span></p><p><span><br></span></p><p><span>商品ID</span></p><p><span>供应商ID</span></p><p><span>租户ID</span></p><p><span>是否组合商品</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u200" class="ax_default box_1">
+        <div id="u200_div" class=""></div>
+        <div id="u200_text" class="text ">
+          <p><span>商品价格明细</span></p><p><span><br></span></p><p><span>SKUID</span></p><p><span>规格编号</span></p><p><span>规格名称</span></p><p><span>规格采购含税价</span></p><p><span>规格采购不含税价</span></p><p><span>商品ID</span></p><p><span>商品名称</span></p><p><span>商品编号</span></p><p><span>商品类目</span></p><p><span>供应商ID</span></p><p><span>租户ID</span></p><p><span>是否一件代发</span></p><p><span>一件代发价格</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (连接) -->
+      <div id="u201" class="ax_default connector">
+        <img id="u201_seg0" class="img " src="images/v1_0_0_-_现货模式/u201_seg0.svg" alt="u201_seg0"/>
+        <img id="u201_seg1" class="img " src="images/v1_0_0_-_现货模式/u201_seg1.svg" alt="u201_seg1"/>
+        <div id="u201_text" class="text ">
+          <p><span>{N,1}</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (连接) -->
+      <div id="u202" class="ax_default connector">
+        <img id="u202_seg0" class="img " src="images/v1_0_0_-_现货模式/u202_seg0.svg" alt="u202_seg0"/>
+        <img id="u202_seg1" class="img " src="images/v1_0_0_-_现货模式/u202_seg1.svg" alt="u202_seg1"/>
+        <div id="u202_text" class="text ">
+          <p><span>{N,1}</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u203" class="ax_default box_1">
+        <div id="u203_div" class=""></div>
+        <div id="u203_text" class="text ">
+          <p><span>地址管理</span></p><p><span><br></span></p><p><span>地址ID</span></p><p><span>门店ID</span></p><p><span>租户ID</span></p><p><span>店铺ID</span></p><p><span>地址类型（发货地址、库存地址、售后地址）</span></p><p><span>是否默认</span></p><p><span>联系人</span></p><p><span>电话</span></p><p><span>所属省</span></p><p><span>所属市</span></p><p><span>所属区域</span></p><p><span>所属街道</span></p><p><span>详细地址</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (连接) -->
+      <div id="u204" class="ax_default connector">
+        <img id="u204_seg0" class="img " src="images/v1_0_0_-_现货模式/u204_seg0.svg" alt="u204_seg0"/>
+        <img id="u204_seg1" class="img " src="images/v1_0_0_-_现货模式/u204_seg1.svg" alt="u204_seg1"/>
+        <div id="u204_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u205" class="ax_default flow_shape">
+        <div id="u205_div" class=""></div>
+        <div id="u205_text" class="text ">
+          <p><span>支付</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (菱形) -->
+      <div id="u206" class="ax_default flow_shape">
+        <img id="u206_img" class="img " src="images/v1_0_0__整体业务流程/u119.svg"/>
+        <div id="u206_text" class="text ">
+          <p><span>是否有账期？</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u207" class="ax_default flow_shape">
+        <div id="u207_div" class=""></div>
+        <div id="u207_text" class="text ">
+          <p><span>发货</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u208" class="ax_default flow_shape">
+        <div id="u208_div" class=""></div>
+        <div id="u208_text" class="text ">
+          <p><span>签收</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u209" class="ax_default flow_shape">
+        <div id="u209_div" class=""></div>
+        <div id="u209_text" class="text ">
+          <p><span>账单总逻辑</span></p><p><span>本次闭环暂不考虑</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (连接) -->
+      <div id="u210" class="ax_default connector">
+        <img id="u210_seg0" class="img " src="images/v1_0_0_-_现货模式/u210_seg0.svg" alt="u210_seg0"/>
+        <img id="u210_seg1" class="img " src="images/v1_0_0_-_现货模式/u210_seg1.svg" alt="u210_seg1"/>
+        <div id="u210_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (角色) -->
+      <div id="u211" class="ax_default flow_shape">
+        <img id="u211_img" class="img " src="images/v1_0_0__整体业务流程/u92.svg"/>
+        <div id="u211_text" class="text ">
+          <p><span>供应商</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (连接) -->
+      <div id="u212" class="ax_default connector">
+        <img id="u212_seg0" class="img " src="images/v1_0_0_-_现货模式/u212_seg0.svg" alt="u212_seg0"/>
+        <img id="u212_seg1" class="img " src="images/v1_0_0_-_现货模式/u212_seg1.svg" alt="u212_seg1"/>
+        <div id="u212_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (连接) -->
+      <div id="u213" class="ax_default connector">
+        <img id="u213_seg0" class="img " src="images/v1_0_0_-_现货模式/u213_seg0.svg" alt="u213_seg0"/>
+        <img id="u213_seg1" class="img " src="images/v1_0_0_-_现货模式/u213_seg1.svg" alt="u213_seg1"/>
+        <div id="u213_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (连接) -->
+      <div id="u214" class="ax_default connector">
+        <img id="u214_seg0" class="img " src="images/v1_0_0_-_现货模式/u214_seg0.svg" alt="u214_seg0"/>
+        <img id="u214_seg1" class="img " src="images/v1_0_0_-_现货模式/u214_seg1.svg" alt="u214_seg1"/>
+        <div id="u214_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (连接) -->
+      <div id="u215" class="ax_default connector">
+        <img id="u215_seg0" class="img " src="images/v1_0_0_-_现货模式/u215_seg0.svg" alt="u215_seg0"/>
+        <img id="u215_seg1" class="img " src="images/v1_0_0_-_现货模式/u215_seg1.svg" alt="u215_seg1"/>
+        <div id="u215_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (角色) -->
+      <div id="u216" class="ax_default flow_shape">
+        <img id="u216_img" class="img " src="images/v1_0_0__整体业务流程/u92.svg"/>
+        <div id="u216_text" class="text ">
+          <p><span>租户</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (连接) -->
+      <div id="u217" class="ax_default connector">
+        <img id="u217_seg0" class="img " src="images/v1_0_0_-_现货模式/u217_seg0.svg" alt="u217_seg0"/>
+        <img id="u217_seg1" class="img " src="images/v1_0_0_-_现货模式/u217_seg1.svg" alt="u217_seg1"/>
+        <div id="u217_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (连接) -->
+      <div id="u218" class="ax_default connector">
+        <img id="u218_seg0" class="img " src="images/v1_0_0_-_现货模式/u218_seg0.svg" alt="u218_seg0"/>
+        <img id="u218_seg1" class="img " src="images/v1_0_0_-_现货模式/u218_seg1.svg" alt="u218_seg1"/>
+        <div id="u218_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (连接) -->
+      <div id="u219" class="ax_default connector">
+        <img id="u219_seg0" class="img " src="images/v1_0_0_-_现货模式/u219_seg0.svg" alt="u219_seg0"/>
+        <img id="u219_seg1" class="img " src="images/v1_0_0_-_现货模式/u219_seg1.svg" alt="u219_seg1"/>
+        <div id="u219_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (连接) -->
+      <div id="u220" class="ax_default connector">
+        <img id="u220_seg0" class="img " src="images/v1_0_0_-_现货模式/u220_seg0.svg" alt="u220_seg0"/>
+        <img id="u220_seg1" class="img " src="images/v1_0_0_-_现货模式/u220_seg1.svg" alt="u220_seg1"/>
+        <div id="u220_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (连接) -->
+      <div id="u221" class="ax_default connector">
+        <img id="u221_seg0" class="img " src="images/v1_0_0_-_现货模式/u221_seg0.svg" alt="u221_seg0"/>
+        <img id="u221_seg1" class="img " src="images/v1_0_0_-_现货模式/u221_seg1.svg" alt="u221_seg1"/>
+        <div id="u221_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (连接) -->
+      <div id="u222" class="ax_default connector">
+        <img id="u222_seg0" class="img " src="images/v1_0_0_-_现货模式/u222_seg0.svg" alt="u222_seg0"/>
+        <img id="u222_seg1" class="img " src="images/v1_0_0_-_现货模式/u222_seg1.svg" alt="u222_seg1"/>
+        <div id="u222_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (连接) -->
+      <div id="u223" class="ax_default connector">
+        <img id="u223_seg0" class="img " src="images/v1_0_0_-_现货模式/u223_seg0.svg" alt="u223_seg0"/>
+        <img id="u223_seg1" class="img " src="images/v1_0_0_-_现货模式/u223_seg1.svg" alt="u223_seg1"/>
+        <div id="u223_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (连接) -->
+      <div id="u224" class="ax_default connector">
+        <img id="u224_seg0" class="img " src="images/v1_0_0_-_现货模式/u224_seg0.svg" alt="u224_seg0"/>
+        <img id="u224_seg1" class="img " src="images/v1_0_0_-_现货模式/u224_seg1.svg" alt="u224_seg1"/>
+        <div id="u224_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (连接) -->
+      <div id="u225" class="ax_default connector">
+        <img id="u225_seg0" class="img " src="images/v1_0_0_-_现货模式/u225_seg0.svg" alt="u225_seg0"/>
+        <img id="u225_seg1" class="img " src="images/v1_0_0_-_现货模式/u225_seg1.svg" alt="u225_seg1"/>
+        <div id="u225_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (连接) -->
+      <div id="u226" class="ax_default connector">
+        <img id="u226_seg0" class="img " src="images/v1_0_0_-_现货模式/u226_seg0.svg" alt="u226_seg0"/>
+        <img id="u226_seg1" class="img " src="images/v1_0_0_-_现货模式/u226_seg1.svg" alt="u226_seg1"/>
+        <div id="u226_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (连接) -->
+      <div id="u227" class="ax_default connector">
+        <img id="u227_seg0" class="img " src="images/v1_0_0_-_现货模式/u227_seg0.svg" alt="u227_seg0"/>
+        <img id="u227_seg1" class="img " src="images/v1_0_0_-_现货模式/u227_seg1.svg" alt="u227_seg1"/>
+        <div id="u227_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (连接) -->
+      <div id="u228" class="ax_default connector">
+        <img id="u228_seg0" class="img " src="images/v1_0_0_-_现货模式/u228_seg0.svg" alt="u228_seg0"/>
+        <img id="u228_seg1" class="img " src="images/v1_0_0_-_现货模式/u228_seg1.svg" alt="u228_seg1"/>
+        <div id="u228_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (连接) -->
+      <div id="u229" class="ax_default connector">
+        <img id="u229_seg0" class="img " src="images/v1_0_0_-_现货模式/u229_seg0.svg" alt="u229_seg0"/>
+        <img id="u229_seg1" class="img " src="images/v1_0_0_-_现货模式/u229_seg1.svg" alt="u229_seg1"/>
+        <div id="u229_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (连接) -->
+      <div id="u230" class="ax_default connector">
+        <img id="u230_seg0" class="img " src="images/v1_0_0_-_现货模式/u230_seg0.svg" alt="u230_seg0"/>
+        <img id="u230_seg1" class="img " src="images/v1_0_0_-_现货模式/u230_seg1.svg" alt="u230_seg1"/>
+        <div id="u230_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (连接) -->
+      <div id="u231" class="ax_default connector">
+        <img id="u231_seg0" class="img " src="images/v1_0_0_-_现货模式/u231_seg0.svg" alt="u231_seg0"/>
+        <img id="u231_seg1" class="img " src="images/v1_0_0_-_现货模式/u231_seg1.svg" alt="u231_seg1"/>
+        <div id="u231_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u232" class="ax_default box_1">
+        <div id="u232_div" class=""></div>
+        <div id="u232_text" class="text ">
+          <p><span>租户财务</span></p><p><span>结算对账</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (连接) -->
+      <div id="u233" class="ax_default connector">
+        <img id="u233_seg0" class="img " src="images/v1_0_0_-_现货模式/u233_seg0.svg" alt="u233_seg0"/>
+        <img id="u233_seg1" class="img " src="images/v1_0_0_-_现货模式/u233_seg1.svg" alt="u233_seg1"/>
+        <div id="u233_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (连接) -->
+      <div id="u234" class="ax_default connector">
+        <img id="u234_seg0" class="img " src="images/v1_0_0_-_现货模式/u234_seg0.svg" alt="u234_seg0"/>
+        <img id="u234_seg1" class="img " src="images/v1_0_0_-_现货模式/u234_seg1.svg" alt="u234_seg1"/>
+        <div id="u234_text" class="text ">
+          <p><span>{1,N}</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u235" class="ax_default sticky_1">
+        <div id="u235_div" class=""></div>
+        <div id="u235_text" class="text ">
+          <p><span>1：允许供货商，部分发货，但是完全发货后，订单 == 待签收</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u236" class="ax_default sticky_1">
+        <div id="u236_div" class=""></div>
+        <div id="u236_text" class="text ">
+          <p><span>1：允许租户，部分签收，但是完全签收，订单 == 已完成</span></p><p><span>2：签收后门店的商品管理：默认状态 == 在库中</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u237" class="ax_default box_1">
+        <div id="u237_div" class=""></div>
+        <div id="u237_text" class="text ">
+          <p><span>账单</span></p><p><span><br></span></p><p><span>账单ID</span></p><p><span>采购订单ID</span></p><p><span>采购批次编号</span></p><p><span>供应商ID</span></p><p><span>租户ID</span></p><p><span>账单类型(现货采购账单)</span></p><p><span>应付总金额</span></p><p><span>应收总金额</span></p><p><span>创建时间</span></p><p><span>支付状态</span></p><p><span>支付方式</span></p><p><span>实付金额</span></p><p><span>支付时间</span></p><p><span>流水凭证</span></p><p><span><br></span></p><p><span>申请状态(待申请、待审核、已通过、已驳回)</span></p><p><span>驳回理由：</span></p><p><span><br></span></p><p><span><br></span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (连接) -->
+      <div id="u238" class="ax_default connector">
+        <img id="u238_seg0" class="img " src="images/v1_0_0_-_现货模式/u238_seg0.svg" alt="u238_seg0"/>
+        <img id="u238_seg1" class="img " src="images/v1_0_0_-_现货模式/u238_seg1.svg" alt="u238_seg1"/>
+        <img id="u238_seg2" class="img " src="images/v1_0_0_-_现货模式/u238_seg2.svg" alt="u238_seg2"/>
+        <img id="u238_seg3" class="img " src="images/v1_0_0_-_现货模式/u238_seg3.svg" alt="u238_seg3"/>
+        <div id="u238_text" class="text ">
+          <p><span>{1,N}</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u239" class="ax_default box_1">
+        <div id="u239_div" class=""></div>
+        <div id="u239_text" class="text ">
+          <p><span>发货包裹单</span></p><p><span><br></span></p><p><span>发货包裹单ID</span></p><p><span>采购订单ID</span></p><p><span>采购批次编号</span></p><p><span>供应商ID</span></p><p><span>租户ID</span></p><p><span><br></span></p><p><span>发货商品明细集合</span></p><p><span><br></span></p><p><span>承运商</span></p><p><span>快递单号</span></p><p><span>发货地址</span></p><p><span><br></span></p><p><span>收件地址</span></p><p><span><br></span></p><p><span><br></span></p><p><span><br></span></p><p><span><br></span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (连接) -->
+      <div id="u240" class="ax_default connector">
+        <img id="u240_seg0" class="img " src="images/v1_0_0_-_现货模式/u240_seg0.svg" alt="u240_seg0"/>
+        <img id="u240_seg1" class="img " src="images/v1_0_0_-_现货模式/u240_seg1.svg" alt="u240_seg1"/>
+        <div id="u240_text" class="text ">
+          <p><span>{1,n}</span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u241" class="ax_default box_1">
+        <div id="u241_div" class=""></div>
+        <div id="u241_text" class="text ">
+          <p><span>签收单</span></p><p><span><br></span></p><p><span>签收ID</span></p><p><span>发货包裹单ID</span></p><p><span>采购订单ID</span></p><p><span>采购批次编号</span></p><p><span>供应商ID</span></p><p><span>租户ID</span></p><p><span>签收状态(未签收、已签收)</span></p><p><span><br></span></p><p><span>签收时间</span></p><p><span>签收人</span></p><p><span><br></span></p><p><span><br></span></p><p><span><br></span></p><p><span><br></span></p>
+        </div>
+      </div>
+
+      <!-- Unnamed (连接) -->
+      <div id="u242" class="ax_default connector">
+        <img id="u242_seg0" class="img " src="images/v1_0_0_-_现货模式/u242_seg0.svg" alt="u242_seg0"/>
+        <img id="u242_seg1" class="img " src="images/v1_0_0_-_现货模式/u242_seg1.svg" alt="u242_seg1"/>
+        <div id="u242_text" class="text ">
+          <p><span>{1,N}</span></p>
+        </div>
+      </div>
+    </div>
+    <script src="resources/scripts/axure/ios.js"></script>
+  </body>
+</html>

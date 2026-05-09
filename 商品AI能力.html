@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>商品AI能力 - 租赁后台运营系统</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;background:#F5F7FA;color:#333;font-size:14px;overflow:hidden;height:100vh;}
+:root{--primary:#4F6EF7;--danger:#FF6B6B;--success:#52C41A;--warning:#FAAD14;--bg:#F5F7FA;--card:#FFFFFF;--text:#333;--text-secondary:#666;--border:#E8ECF0;--sidebar-bg:#1E2A3A;--sidebar-active:#4F6EF7;}
+
+.layout{display:flex;height:100vh;}
+
+.sidebar{width:200px;background:var(--sidebar-bg);color:#fff;display:flex;flex-direction:column;flex-shrink:0;}
+.sidebar-logo{padding:20px 16px;font-size:16px;font-weight:600;border-bottom:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;gap:8px;}
+.sidebar-logo .dot{width:8px;height:8px;background:var(--primary);border-radius:50%;}
+.sidebar-nav{flex:1;padding:8px 0;overflow-y:auto;}
+.nav-item{padding:12px 20px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:all .2s;font-size:14px;color:rgba(255,255,255,0.7);position:relative;}
+.nav-item:hover{background:rgba(79,110,247,0.15);color:#fff;}
+.nav-item.active{background:rgba(79,110,247,0.25);color:#fff;}
+.nav-item.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:20px;background:var(--primary);border-radius:0 2px 2px 0;}
+.nav-icon{width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:14px;}
+.nav-group-title{padding:16px 20px 8px;font-size:12px;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:1px;}
+
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.topbar{height:48px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;justify-content:space-between;flex-shrink:0;}
+.breadcrumb{font-size:13px;color:var(--text-secondary);}
+.breadcrumb span{color:var(--text);font-weight:500;}
+.topbar-right{display:flex;align-items:center;gap:16px;font-size:13px;color:var(--text-secondary);}
+.avatar{width:28px;height:28px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;}
+
+.content{flex:1;padding:20px 24px;overflow-y:auto;}
+
+.page-section{display:none;}
+.page-section.active{display:block;}
+
+.card{background:var(--card);border-radius:8px;padding:20px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,0.05);}
+
+.filter-row{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;}
+.filter-item{display:flex;flex-direction:column;gap:4px;}
+.filter-item label{font-size:12px;color:var(--text-secondary);}
+.filter-item input,.filter-item select{height:32px;border:1px solid var(--border);border-radius:4px;padding:0 10px;font-size:13px;outline:none;min-width:140px;}
+.filter-item input:focus,.filter-item select:focus{border-color:var(--primary);}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:0 16px;height:32px;border-radius:4px;font-size:13px;cursor:pointer;border:1px solid transparent;transition:all .2s;white-space:nowrap;}
+.btn-primary{background:var(--primary);color:#fff;border-color:var(--primary);}
+.btn-primary:hover{background:#3D5BD9;}
+.btn-danger{background:var(--danger);color:#fff;border-color:var(--danger);}
+.btn-danger:hover{background:#E85555;}
+.btn-success{background:var(--success);color:#fff;border-color:var(--success);}
+.btn-success:hover{background:#3DAF14;}
+.btn-default{background:#fff;color:var(--text);border-color:var(--border);}
+.btn-default:hover{border-color:var(--primary);color:var(--primary);}
+.btn-text{background:none;border:none;color:var(--primary);padding:0 4px;height:auto;}
+.btn-text:hover{color:#3D5BD9;text-decoration:underline;}
+.btn-sm{height:26px;padding:0 10px;font-size:12px;border-radius:3px;}
+
+.action-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+
+table{width:100%;border-collapse:collapse;}
+thead th{background:#FAFBFC;padding:10px 12px;text-align:left;font-size:13px;font-weight:500;color:var(--text-secondary);border-bottom:1px solid var(--border);}
+tbody td{padding:10px 12px;border-bottom:1px solid #F0F0F0;font-size:13px;vertical-align:middle;}
+tbody tr:hover{background:#FAFBFC;}
+
+.thumb{width:48px;height:48px;border-radius:4px;object-fit:cover;background:#F0F2F5;display:flex;align-items:center;justify-content:center;color:#999;font-size:10px;overflow:hidden;}
+.thumb-img{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:10px;color:#999;}
+
+.ai-btn-group{display:flex;gap:4px;flex-wrap:wrap;}
+.ai-tag{display:inline-flex;align-items:center;padding:2px 8px;border-radius:3px;font-size:11px;cursor:pointer;transition:all .2s;border:none;white-space:nowrap;}
+.ai-tag-img{background:rgba(79,110,247,0.1);color:#4F6EF7;}
+.ai-tag-img:hover{background:rgba(79,110,247,0.2);}
+.ai-tag-video{background:rgba(250,141,20,0.1);color:#FA8D14;}
+.ai-tag-video:hover{background:rgba(250,141,20,0.2);}
+.ai-tag-intro{background:rgba(82,196,26,0.1);color:#52C41A;}
+.ai-tag-intro:hover{background:rgba(82,196,26,0.2);}
+.ai-tag-point{background:rgba(255,107,107,0.1);color:#FF6B6B;}
+.ai-tag-point:hover{background:rgba(255,107,107,0.2);}
+
+.op-link{color:var(--primary);cursor:pointer;font-size:13px;margin-right:12px;}
+.op-link:hover{text-decoration:underline;}
+
+.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.45);z-index:1000;display:none;align-items:center;justify-content:center;animation:fadeIn .2s;}
+.modal-overlay.show{display:flex;}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+
+.modal{background:#fff;border-radius:12px;box-shadow:0 8px 40px rgba(0,0,0,0.15);animation:slideUp .25s;max-height:90vh;display:flex;flex-direction:column;}
+.modal-header{padding:16px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;}
+.modal-title{font-size:16px;font-weight:600;color:var(--text);}
+.modal-close{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#999;transition:all .2s;border:none;background:none;font-size:18px;}
+.modal-close:hover{background:#F0F0F0;color:#333;}
+.modal-body{padding:24px;overflow-y:auto;flex:1;}
+.modal-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;flex-shrink:0;}
+
+.modal-lg{width:900px;}
+.modal-md{width:700px;}
+.modal-sm{width:520px;}
+
+.two-col{display:flex;gap:24px;}
+.col-left{flex:1;min-width:0;}
+.col-right{flex:1;min-width:0;}
+
+.form-group{margin-bottom:16px;}
+.form-group label{display:block;font-size:13px;color:var(--text-secondary);margin-bottom:6px;font-weight:500;}
+.form-group input,.form-group select,.form-group textarea{width:100%;border:1px solid var(--border);border-radius:4px;padding:8px 10px;font-size:13px;outline:none;font-family:inherit;}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--primary);box-shadow:0 0 0 2px rgba(79,110,247,0.1);}
+.form-group textarea{resize:vertical;min-height:80px;}
+.form-group input[readonly],.form-group select[disabled]{background:#F5F7FA;color:#999;cursor:not-allowed;}
+.form-row{display:flex;gap:12px;}
+.form-row .form-group{flex:1;}
+
+.tab-bar{display:flex;border-bottom:2px solid var(--border);margin-bottom:16px;}
+.tab-item{padding:8px 20px;cursor:pointer;font-size:14px;color:var(--text-secondary);position:relative;transition:all .2s;border:none;background:none;}
+.tab-item.active{color:var(--primary);font-weight:500;}
+.tab-item.active::after{content:'';position:absolute;bottom:-2px;left:0;right:0;height:2px;background:var(--primary);}
+.tab-item:hover{color:var(--primary);}
+
+.tab-content{display:none;}
+.tab-content.active{display:block;}
+
+.upload-area{border:2px dashed var(--border);border-radius:8px;padding:32px;text-align:center;cursor:pointer;transition:all .2s;background:#FAFBFC;}
+.upload-area:hover{border-color:var(--primary);background:rgba(79,110,247,0.02);}
+.upload-icon{font-size:32px;color:#CCC;margin-bottom:8px;}
+.upload-text{font-size:13px;color:var(--text-secondary);}
+
+.slider-group{display:flex;align-items:center;gap:12px;}
+.slider-group input[type=range]{flex:1;accent-color:var(--primary);}
+.slider-label{font-size:12px;color:var(--text-secondary);white-space:nowrap;}
+
+.count-select{display:flex;gap:8px;}
+.count-btn{width:36px;height:36px;border-radius:6px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;background:#fff;transition:all .2s;}
+.count-btn.active{border-color:var(--primary);background:rgba(79,110,247,0.08);color:var(--primary);font-weight:600;}
+.count-btn:hover{border-color:var(--primary);}
+
+.remain-tip{font-size:12px;color:var(--text-secondary);margin-top:8px;}
+.remain-tip em{color:var(--primary);font-style:normal;font-weight:600;}
+
+.result-area{min-height:300px;border:1px solid var(--border);border-radius:8px;padding:16px;background:#FAFBFC;}
+.result-loading{display:flex;flex-direction:column;align-items:center;justify-content:center;height:300px;}
+.spinner{width:40px;height:40px;border:3px solid #E8ECF0;border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{margin-top:12px;color:var(--text-secondary);font-size:13px;}
+
+.result-images{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.result-img-card{border-radius:8px;overflow:hidden;background:#fff;border:1px solid var(--border);}
+.result-img-placeholder{height:160px;display:flex;align-items:center;justify-content:center;font-size:13px;color:#999;font-weight:500;}
+.result-img-actions{padding:8px;display:flex;gap:6px;justify-content:center;}
+
+.result-text{font-size:14px;line-height:1.8;color:var(--text);}
+.result-text h4{font-size:15px;margin:12px 0 6px;color:var(--text);}
+.result-text p{margin-bottom:8px;}
+
+.selling-point-card{background:#fff;border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:10px;position:relative;}
+.selling-point-card .sp-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:6px;}
+.selling-point-card .sp-desc{font-size:13px;color:var(--text-secondary);line-height:1.6;margin-bottom:8px;}
+.selling-point-card .sp-tags{display:flex;gap:6px;align-items:center;}
+.sp-tag{font-size:11px;padding:2px 8px;border-radius:3px;background:rgba(79,110,247,0.08);color:var(--primary);}
+.sp-switch{position:absolute;top:14px;right:14px;}
+
+.switch{position:relative;display:inline-block;width:36px;height:20px;}
+.switch input{opacity:0;width:0;height:0;}
+.switch .slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#ccc;transition:.3s;border-radius:20px;}
+.switch .slider:before{content:'';position:absolute;height:16px;width:16px;left:2px;bottom:2px;background:#fff;transition:.3s;border-radius:50%;}
+.switch input:checked+.slider{background:var(--primary);}
+.switch input:checked+.slider:before{transform:translateX(16px);}
+
+.progress-bar{width:100%;height:8px;background:#E8ECF0;border-radius:4px;overflow:hidden;margin:16px 0;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--primary),#7B93FA);border-radius:4px;transition:width .3s;width:0%;}
+
+.video-preview{width:100%;height:280px;background:#2A2A2A;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#666;font-size:14px;position:relative;}
+.play-btn{width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;border:none;color:#fff;font-size:24px;}
+.play-btn:hover{background:rgba(255,255,255,0.3);transform:scale(1.05);}
+
+.purchase-card{text-align:center;padding:20px;}
+.purchase-icon{width:64px;height:64px;border-radius:16px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:28px;}
+.purchase-title{font-size:18px;font-weight:600;margin-bottom:8px;}
+.purchase-desc{font-size:13px;color:var(--text-secondary);margin-bottom:20px;line-height:1.6;}
+.version-table{width:100%;border-collapse:collapse;margin-bottom:20px;font-size:13px;}
+.version-table th{background:#FAFBFC;padding:10px;text-align:center;border:1px solid var(--border);font-weight:500;}
+.version-table td{padding:10px;text-align:center;border:1px solid var(--border);}
+.version-table td.check{color:var(--success);font-size:16px;}
+.version-table td.cross{color:#CCC;font-size:16px;}
+.purchase-price{font-size:28px;font-weight:700;color:var(--danger);margin-bottom:20px;}
+.purchase-price span{font-size:14px;font-weight:400;color:var(--text-secondary);}
+.purchase-actions{display:flex;gap:12px;justify-content:center;}
+
+.toast{position:fixed;top:24px;left:50%;transform:translateX(-50%) translateY(-80px);background:#fff;padding:12px 24px;border-radius:8px;box-shadow:0 4px 20px rgba(0,0,0,0.15);z-index:2000;display:flex;align-items:center;gap:8px;font-size:14px;transition:transform .3s ease;pointer-events:none;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.toast-icon{font-size:18px;}
+.toast-success .toast-icon{color:var(--success);}
+.toast-info .toast-icon{color:var(--primary);}
+
+.confirm-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.35);z-index:1500;display:none;align-items:center;justify-content:center;}
+.confirm-overlay.show{display:flex;}
+.confirm-box{background:#fff;border-radius:8px;padding:24px;width:380px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.15);}
+.confirm-box p{margin-bottom:20px;font-size:14px;line-height:1.6;}
+.confirm-actions{display:flex;gap:12px;justify-content:center;}
+
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;height:300px;color:#CCC;}
+.empty-state .icon{font-size:48px;margin-bottom:12px;}
+.empty-state p{font-size:14px;}
+
+.page-nav{display:flex;justify-content:flex-end;align-items:center;gap:8px;margin-top:16px;font-size:13px;color:var(--text-secondary);}
+.page-nav .pn-btn{width:28px;height:28px;border:1px solid var(--border);border-radius:4px;display:flex;align-items:center;justify-content:center;cursor:pointer;background:#fff;font-size:12px;}
+.page-nav .pn-btn.active{border-color:var(--primary);color:var(--primary);background:rgba(79,110,247,0.05);}
+.page-nav .pn-btn:hover{border-color:var(--primary);}
+
+.badge{display:inline-flex;align-items:center;justify-content:center;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:500;}
+.badge-success{background:rgba(82,196,26,0.1);color:var(--success);}
+.badge-warning{background:rgba(250,141,20,0.1);color:#FA8D14;}
+.badge-default{background:#F0F2F5;color:#999;}
+
+.inline-btn{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:4px;font-size:12px;cursor:pointer;border:1px solid var(--border);background:#fff;transition:all .2s;color:var(--text);}
+.inline-btn:hover{border-color:var(--primary);color:var(--primary);}
+.inline-btn.ai-gen{border-color:rgba(79,110,247,0.3);color:var(--primary);background:rgba(79,110,247,0.04);}
+.inline-btn.ai-gen:hover{background:rgba(79,110,247,0.1);}
+
+.result-actions{display:flex;gap:8px;margin-top:16px;justify-content:center;flex-wrap:wrap;}
+
+.checkbox-wrapper{display:flex;align-items:center;justify-content:center;}
+.checkbox-wrapper input[type=checkbox]{width:16px;height:16px;accent-color:var(--primary);cursor:pointer;}
+
+.img-preview{width:80px;height:80px;border-radius:6px;border:1px solid var(--border);overflow:hidden;display:flex;align-items:center;justify-content:center;background:#F5F7FA;color:#999;font-size:11px;}
+</style>
+</head>
+<body>
+
+<div class="layout">
+  <div class="sidebar">
+    <div class="sidebar-logo"><div class="dot"></div>租赁运营后台</div>
+    <div class="sidebar-nav">
+      <div class="nav-group-title">商品中心</div>
+      <div class="nav-item active" data-page="product-list" onclick="switchNav(this)">
+        <div class="nav-icon">📦</div>商品管理
+      </div>
+      <div class="nav-group-title">AI 能力</div>
+      <div class="nav-item" data-page="ai-image" onclick="switchNav(this)">
+        <div class="nav-icon">🎨</div>AI生图
+      </div>
+      <div class="nav-item" data-page="ai-video" onclick="switchNav(this)">
+        <div class="nav-icon">🎬</div>AI视频
+      </div>
+      <div class="nav-item" data-page="ai-intro" onclick="switchNav(this)">
+        <div class="nav-icon">📝</div>AI商品介绍
+      </div>
+      <div class="nav-item" data-page="ai-point" onclick="switchNav(this)">
+        <div class="nav-icon">💡</div>AI商品卖点
+      </div>
+      <div class="nav-group-title">系统</div>
+      <div class="nav-item" data-page="app-control" onclick="switchNav(this)">
+        <div class="nav-icon">⚙️</div>应用控制管理
+      </div>
+      <div class="nav-item" data-page="service-buy" onclick="switchNav(this)">
+        <div class="nav-icon">🛒</div>服务购买
+      </div>
+      <div class="nav-item" onclick="showToast('已返回主页','info')">
+        <div class="nav-icon">🏠</div>返回主页
+      </div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="breadcrumb">商品 / <span>商品管理</span></div>
+      <div class="topbar-right">
+        <span>管理员</span>
+        <div class="avatar">A</div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- ========== 页面1：商品管理列表 ========== -->
+      <div class="page-section active" id="page-product-list">
+        <div class="card">
+          <div class="filter-row">
+            <div class="filter-item">
+              <label>商品名称</label>
+              <input type="text" placeholder="请输入商品名称" id="filterName">
+            </div>
+            <div class="filter-item">
+              <label>商品编号</label>
+              <input type="text" placeholder="请输入商品编号" id="filterCode">
+            </div>
+            <div class="filter-item">
+              <label>商品类型</label>
+              <select id="filterType">
+                <option value="">全部</option>
+                <option>白酒</option>
+                <option>红酒</option>
+                <option>啤酒</option>
+                <option>茶叶</option>
+              </select>
+            </div>
+            <div class="filter-item">
+              <label>商品图片</label>
+              <select id="filterImage">
+                <option value="">全部</option>
+                <option value="0">未上传</option>
+                <option value="1">已上传</option>
+              </select>
+            </div>
+            <div class="filter-item" style="flex-direction:row;gap:8px;align-self:flex-end;">
+              <button class="btn btn-primary" onclick="doFilter()">筛选</button>
+              <button class="btn btn-default" onclick="doReset()">重置</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="action-bar">
+          <div style="display:flex;gap:10px;">
+            <button class="btn btn-primary" onclick="showToast('进入发布商品页面','info')">+ 发布商品</button>
+            <button class="btn btn-default" onclick="showToast('请先选择商品','info')">批量修改价格</button>
+          </div>
+          <div style="font-size:13px;color:var(--text-secondary);">共 4 条记录</div>
+        </div>
+
+        <div class="card" style="padding:0;overflow:hidden;">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:40px"><div class="checkbox-wrapper"><input type="checkbox" id="checkAll" onchange="toggleCheckAll(this)"></div></th>
+                <th>商品编号</th>
+                <th>商品主图</th>
+                <th>商品名称</th>
+                <th>建议售价</th>
+                <th>总库存</th>
+                <th>商品图文介绍</th>
+                <th>商品视频</th>
+                <th>AI操作</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="productTableBody">
+            </tbody>
+          </table>
+        </div>
+
+        <div class="page-nav">
+          <span>共 4 条</span>
+          <div class="pn-btn">‹</div>
+          <div class="pn-btn active">1</div>
+          <div class="pn-btn">›</div>
+        </div>
+      </div>
+
+      <!-- ========== AI生图独立页 ========== -->
+      <div class="page-section" id="page-ai-image">
+        <div class="card">
+          <h3 style="margin-bottom:16px;">AI生图工作台</h3>
+          <p style="color:var(--text-secondary);font-size:13px;">请从商品管理列表中点击"AI生图"按钮进入，或在此页面选择商品后进行生图操作。</p>
+          <div style="margin-top:16px;">
+            <button class="btn btn-primary" onclick="openAIImageModal(products[0])">选择商品开始生图</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== AI视频独立页 ========== -->
+      <div class="page-section" id="page-ai-video">
+        <div class="card">
+          <h3 style="margin-bottom:16px;">AI视频工作台</h3>
+          <p style="color:var(--text-secondary);font-size:13px;">请从商品管理列表中点击"AI视频"按钮进入，或在此页面选择商品后进行视频生成。</p>
+          <div style="margin-top:16px;">
+            <button class="btn btn-primary" onclick="openAIVideoModal(products[0])">选择商品开始生成</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== AI商品介绍独立页 ========== -->
+      <div class="page-section" id="page-ai-intro">
+        <div class="card">
+          <h3 style="margin-bottom:16px;">AI商品介绍工作台</h3>
+          <p style="color:var(--text-secondary);font-size:13px;">请从商品管理列表中点击"AI介绍"按钮进入，或在此页面选择商品后生成商品介绍。</p>
+          <div style="margin-top:16px;">
+            <button class="btn btn-primary" onclick="openAIIntroModal(products[0])">选择商品开始生成</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== AI商品卖点独立页 ========== -->
+      <div class="page-section" id="page-ai-point">
+        <div class="card">
+          <h3 style="margin-bottom:16px;">AI商品卖点工作台</h3>
+          <p style="color:var(--text-secondary);font-size:13px;">请从商品管理列表中点击"AI卖点"按钮进入，或在此页面选择商品后生成商品卖点。</p>
+          <div style="margin-top:16px;">
+            <button class="btn btn-primary" onclick="openAIPointModal(products[0])">选择商品开始生成</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== 应用控制管理 ========== -->
+      <div class="page-section" id="page-app-control">
+        <div class="card">
+          <h3 style="margin-bottom:16px;">应用控制管理</h3>
+          <table>
+            <thead>
+              <tr><th>应用名称</th><th>状态</th><th>到期时间</th><th>操作</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>AI生图</td><td><span class="badge badge-success">已开通</span></td><td>2026-12-31</td><td><span class="op-link" onclick="showToast('进入AI生图配置','info')">配置</span></td></tr>
+              <tr><td>AI视频</td><td><span class="badge badge-success">已开通</span></td><td>2026-12-31</td><td><span class="op-link" onclick="showToast('进入AI视频配置','info')">配置</span></td></tr>
+              <tr><td>AI商品介绍</td><td><span class="badge badge-warning">未开通</span></td><td>-</td><td><span class="op-link" onclick="openPurchaseModal('intro')">开通</span></td></tr>
+              <tr><td>AI商品卖点</td><td><span class="badge badge-warning">未开通</span></td><td>-</td><td><span class="op-link" onclick="openPurchaseModal('point')">开通</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ========== 服务购买 ========== -->
+      <div class="page-section" id="page-service-buy">
+        <div class="card">
+          <h3 style="margin-bottom:20px;">AI服务购买</h3>
+          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px;">
+            <div class="card" style="border:1px solid var(--border);cursor:pointer;" onclick="openPurchaseModal('image')">
+              <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+                <div style="width:44px;height:44px;border-radius:10px;background:rgba(79,110,247,0.1);display:flex;align-items:center;justify-content:center;font-size:22px;">🎨</div>
+                <div><div style="font-weight:600;">AI生图</div><div style="font-size:12px;color:var(--text-secondary);">智能生成商品图片</div></div>
+              </div>
+              <div style="font-size:13px;color:var(--success);margin-bottom:8px;">已开通</div>
+              <div style="font-size:12px;color:var(--text-secondary);">剩余次数：<em style="color:var(--primary);font-style:normal;">86</em> 次</div>
+            </div>
+            <div class="card" style="border:1px solid var(--border);cursor:pointer;" onclick="openPurchaseModal('video')">
+              <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+                <div style="width:44px;height:44px;border-radius:10px;background:rgba(250,141,20,0.1);display:flex;align-items:center;justify-content:center;font-size:22px;">🎬</div>
+                <div><div style="font-weight:600;">AI视频</div><div style="font-size:12px;color:var(--text-secondary);">智能生成商品视频</div></div>
+              </div>
+              <div style="font-size:13px;color:var(--success);margin-bottom:8px;">已开通</div>
+              <div style="font-size:12px;color:var(--text-secondary);">剩余次数：<em style="color:var(--primary);font-style:normal;">42</em> 次</div>
+            </div>
+            <div class="card" style="border:1px solid var(--border);cursor:pointer;" onclick="openPurchaseModal('intro')">
+              <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+                <div style="width:44px;height:44px;border-radius:10px;background:rgba(82,196,26,0.1);display:flex;align-items:center;justify-content:center;font-size:22px;">📝</div>
+                <div><div style="font-weight:600;">AI商品介绍</div><div style="font-size:12px;color:var(--text-secondary);">智能生成商品介绍文案</div></div>
+              </div>
+              <div style="font-size:13px;color:#FA8D14;margin-bottom:8px;">未开通</div>
+              <div style="font-size:12px;color:var(--text-secondary);">¥99/月起</div>
+            </div>
+            <div class="card" style="border:1px solid var(--border);cursor:pointer;" onclick="openPurchaseModal('point')">
+              <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+                <div style="width:44px;height:44px;border-radius:10px;background:rgba(255,107,107,0.1);display:flex;align-items:center;justify-content:center;font-size:22px;">💡</div>
+                <div><div style="font-weight:600;">AI商品卖点</div><div style="font-size:12px;color:var(--text-secondary);">智能生成商品卖点</div></div>
+              </div>
+              <div style="font-size:13px;color:#FA8D14;margin-bottom:8px;">未开通</div>
+              <div style="font-size:12px;color:var(--text-secondary);">¥79/月起</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ========== AI生图弹窗 ========== -->
+<div class="modal-overlay" id="modalAIImage">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <div class="modal-title" id="aiImageTitle">AI生图 - 商品名称</div>
+      <button class="modal-close" onclick="closeModal('modalAIImage')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="two-col">
+        <div class="col-left">
+          <div class="form-group">
+            <label>商品名称</label>
+            <input type="text" id="imgProductName" readonly>
+          </div>
+          <div class="form-group">
+            <label>商品主图</label>
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div class="img-preview" id="imgProductThumb">商品图</div>
+              <button class="btn btn-default btn-sm" onclick="showToast('已打开上传窗口','info')">重新上传</button>
+            </div>
+          </div>
+          <div class="tab-bar">
+            <div class="tab-item active" onclick="switchAITab(this,'imgTextTab')">文生图</div>
+            <div class="tab-item" onclick="switchAITab(this,'imgRefTab')">图生图</div>
+          </div>
+
+          <div class="tab-content active" id="imgTextTab">
+            <div class="form-group">
+              <label>图片描述</label>
+              <textarea rows="3" placeholder="描述您想生成的商品图片，如：高端白酒产品图，深色背景，灯光打在瓶身上..." id="imgDesc"></textarea>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>图片风格</label>
+                <select id="imgStyle">
+                  <option>高级感</option><option>简约</option><option>直播风</option><option>电商风</option><option>场景化</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>图片比例</label>
+                <select id="imgRatio">
+                  <option>1:1</option><option>3:4</option><option>9:16</option><option>16:9</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>生成数量</label>
+              <div class="count-select">
+                <div class="count-btn active" onclick="selectCount(this,1)">1</div>
+                <div class="count-btn" onclick="selectCount(this,2)">2</div>
+                <div class="count-btn" onclick="selectCount(this,3)">3</div>
+                <div class="count-btn" onclick="selectCount(this,4)">4</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tab-content" id="imgRefTab">
+            <div class="form-group">
+              <label>上传参考图</label>
+              <div class="upload-area" onclick="showToast('已打开文件选择','info')">
+                <div class="upload-icon">📁</div>
+                <div class="upload-text">点击或拖拽上传参考图片<br><span style="font-size:11px;color:#bbb;">支持 JPG/PNG，最大 5MB</span></div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>修改描述</label>
+              <textarea rows="2" placeholder="描述您想在参考图基础上修改的内容..." id="imgRefDesc"></textarea>
+            </div>
+            <div class="form-group">
+              <label>修改强度</label>
+              <div class="slider-group">
+                <span class="slider-label">轻微修改</span>
+                <input type="range" min="1" max="10" value="5" id="imgStrength">
+                <span class="slider-label">大幅修改</span>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>图片风格</label>
+                <select>
+                  <option>高级感</option><option>简约</option><option>直播风</option><option>电商风</option><option>场景化</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>图片比例</label>
+                <select>
+                  <option>1:1</option><option>3:4</option><option>9:16</option><option>16:9</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>生成数量</label>
+              <div class="count-select" id="refCountSelect">
+                <div class="count-btn active" onclick="selectCount(this,1)">1</div>
+                <div class="count-btn" onclick="selectCount(this,2)">2</div>
+                <div class="count-btn" onclick="selectCount(this,3)">3</div>
+                <div class="count-btn" onclick="selectCount(this,4)">4</div>
+              </div>
+            </div>
+          </div>
+
+          <button class="btn btn-primary" style="width:100%;margin-top:8px;" onclick="startGenerateImage()">🎨 开始生成</button>
+          <div class="remain-tip">今日剩余生成次数：<em id="imgRemain">86</em> 次</div>
+        </div>
+
+        <div class="col-right">
+          <div class="result-area" id="imgResultArea">
+            <div class="empty-state">
+              <div class="icon">🖼️</div>
+              <p>生成结果将在此处展示</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== AI视频弹窗 ========== -->
+<div class="modal-overlay" id="modalAIVideo">
+  <div class="modal modal-md">
+    <div class="modal-header">
+      <div class="modal-title" id="aiVideoTitle">AI生成视频 - 商品名称</div>
+      <button class="modal-close" onclick="closeModal('modalAIVideo')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label>商品名称</label>
+          <input type="text" id="videoProductName" readonly>
+        </div>
+        <div class="form-group">
+          <label>商品图片</label>
+          <div class="img-preview" id="videoProductThumb" style="width:60px;height:60px;">商品图</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>视频主题</label>
+        <input type="text" placeholder="请输入视频主题，如：新品上市推荐" id="videoTopic">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>视频风格</label>
+          <select id="videoStyle">
+            <option>直播带货</option><option>产品展示</option><option>场景种草</option><option>开箱测评</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>视频时长</label>
+          <select id="videoDuration">
+            <option>5秒</option><option>10秒</option><option>15秒</option><option>30秒</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>画面比例</label>
+        <select id="videoRatio">
+          <option>9:16</option><option>1:1</option><option>16:9</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>口播文案</label>
+        <div style="position:relative;">
+          <textarea rows="4" placeholder="请输入口播文案，或点击AI生成..." id="videoScript"></textarea>
+          <button class="inline-btn ai-gen" style="position:absolute;top:6px;right:6px;" onclick="aiGenScript()">✨ AI生成文案</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>背景音乐</label>
+        <select id="videoBGM">
+          <option>无</option><option>轻快</option><option>商务</option><option>温馨</option>
+        </select>
+      </div>
+
+      <div id="videoProgressArea" style="display:none;">
+        <div style="font-size:13px;color:var(--text-secondary);margin-bottom:4px;">视频生成中... <span id="videoPercent">0</span>%</div>
+        <div class="progress-bar"><div class="progress-fill" id="videoProgressFill"></div></div>
+      </div>
+
+      <div id="videoResultArea" style="display:none;margin-top:16px;">
+        <div class="video-preview">
+          <button class="play-btn" onclick="showToast('视频播放中','info')">▶</button>
+        </div>
+        <div class="result-actions">
+          <button class="btn btn-primary" onclick="applyToProduct('视频')">应用到商品</button>
+          <button class="btn btn-default" onclick="startGenerateVideo()">重新生成</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-default" onclick="closeModal('modalAIVideo')">取消</button>
+      <button class="btn btn-primary" id="videoGenBtn" onclick="startGenerateVideo()">🎬 开始生成</button>
+      <span style="font-size:12px;color:var(--text-secondary);align-self:center;">剩余次数：<em style="color:var(--primary);font-style:normal;">42</em> 次</span>
+    </div>
+  </div>
+</div>
+
+<!-- ========== AI商品介绍弹窗 ========== -->
+<div class="modal-overlay" id="modalAIIntro">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <div class="modal-title" id="aiIntroTitle">AI生成商品介绍 - 商品名称</div>
+      <button class="modal-close" onclick="closeModal('modalAIIntro')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="two-col">
+        <div class="col-left">
+          <div class="form-group">
+            <label>商品名称</label>
+            <input type="text" id="introProductName" readonly>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>商品类目</label>
+              <input type="text" id="introCategory" readonly>
+            </div>
+            <div class="form-group">
+              <label>商品价格</label>
+              <input type="text" id="introPrice" readonly>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>目标人群</label>
+              <select id="introAudience">
+                <option>通用</option><option>新客</option><option>老客</option><option>代理</option><option>门店客户</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>介绍风格</label>
+              <select id="introStyle">
+                <option>专业型</option><option>促销型</option><option>口语型</option><option>故事型</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>补充要求</label>
+            <textarea rows="3" placeholder="可补充特殊要求，如：突出产地优势、强调性价比..." id="introExtra"></textarea>
+          </div>
+          <button class="btn btn-primary" style="width:100%;" onclick="startGenerateIntro()">✨ 生成介绍</button>
+        </div>
+        <div class="col-right">
+          <div class="result-area" id="introResultArea">
+            <div class="empty-state">
+              <div class="icon">📝</div>
+              <p>生成结果将在此处展示</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== AI商品卖点弹窗 ========== -->
+<div class="modal-overlay" id="modalAIPoint">
+  <div class="modal modal-md">
+    <div class="modal-header">
+      <div class="modal-title" id="aiPointTitle">AI生成商品卖点 - 商品名称</div>
+      <button class="modal-close" onclick="closeModal('modalAIPoint')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label>商品名称</label>
+          <input type="text" id="pointProductName" readonly>
+        </div>
+        <div class="form-group">
+          <label>商品类目</label>
+          <input type="text" id="pointCategory" readonly>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>商品价格</label>
+          <input type="text" id="pointPrice" readonly>
+        </div>
+        <div class="form-group">
+          <label>目标人群</label>
+          <select id="pointAudience">
+            <option>通用</option><option>新客</option><option>老客</option><option>代理</option><option>门店客户</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>卖点数量</label>
+          <select id="pointCount">
+            <option value="3">3条</option><option value="5" selected>5条</option><option value="8">8条</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>卖点风格</label>
+          <select id="pointStyle">
+            <option>专业型</option><option>促销型</option><option>口语型</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn btn-primary" style="width:100%;margin-bottom:16px;" onclick="startGeneratePoint()">💡 生成卖点</button>
+
+      <div id="pointResultArea">
+        <div class="empty-state" style="height:120px;">
+          <div class="icon" style="font-size:32px;">💡</div>
+          <p>卖点结果将在此处展示</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== 服务购买引导弹窗 ========== -->
+<div class="modal-overlay" id="modalPurchase">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <div class="modal-title">开通AI服务</div>
+      <button class="modal-close" onclick="closeModal('modalPurchase')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="purchase-card">
+        <div class="purchase-icon" id="purchaseIcon" style="background:rgba(79,110,247,0.1);">🎨</div>
+        <div class="purchase-title" id="purchaseName">AI生图</div>
+        <div class="purchase-desc" id="purchaseDesc">基于AI大模型，智能生成高质量商品图片，支持文生图和图生图两种模式，大幅提升商品上架效率。</div>
+        <table class="version-table">
+          <thead>
+            <tr><th>功能</th><th>标准版</th><th>专业版</th></tr>
+          </thead>
+          <tbody id="purchaseVersionBody">
+          </tbody>
+        </table>
+        <div class="purchase-price" id="purchasePrice">¥99<span>/月</span></div>
+        <div class="purchase-actions">
+          <button class="btn btn-primary" onclick="doPurchase()">立即购买</button>
+          <button class="btn btn-default" onclick="showToast('试用申请已提交','success');closeModal('modalPurchase');">申请试用</button>
+        </div>
+        <div style="margin-top:12px;">
+          <button class="btn btn-text" onclick="closeModal('modalPurchase')" style="color:var(--text-secondary);">暂不购买</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== 确认弹窗 ========== -->
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-box">
+    <p id="confirmText">确认应用此内容到商品？</p>
+    <div class="confirm-actions">
+      <button class="btn btn-default" onclick="closeConfirm()">取消</button>
+      <button class="btn btn-primary" id="confirmOk" onclick="doConfirm()">确认</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== Toast ========== -->
+<div class="toast" id="toastEl">
+  <span class="toast-icon" id="toastIcon">✅</span>
+  <span id="toastText">操作成功</span>
+</div>
+
+<script>
+var products = [
+  {id:'SP20260501001',name:'茅台镇酱香型白酒 53度 500ml',price:'¥599.00',stock:1280,category:'白酒',image:true,color:'#8B5E3C'},
+  {id:'SP20260501002',name:'法国波尔多红酒 AOC级 750ml',price:'¥368.00',stock:856,category:'红酒',image:true,color:'#722F37'},
+  {id:'SP20260501003',name:'青岛啤酒 经典款 500ml×12罐',price:'¥68.00',stock:3200,category:'啤酒',image:true,color:'#D4A843'},
+  {id:'SP20260501004',name:'武夷山大红袍 特级 250g',price:'¥258.00',stock:640,category:'茶叶',image:false,color:'#4A7C59'}
+];
+
+var serviceStatus = {
+  image: {purchased:true,name:'AI生图',icon:'🎨',color:'rgba(79,110,247,0.1)',desc:'基于AI大模型，智能生成高质量商品图片，支持文生图和图生图两种模式，大幅提升商品上架效率。',price:'¥99',priceUnit:'/月',
+    versions:[['每日生成次数','50次','200次'],['图片分辨率','1024×1024','2048×2048'],['图片风格','5种','15种'],['批量生成','—','✓'],['API接口','—','✓']]},
+  video: {purchased:true,name:'AI视频',icon:'🎬',color:'rgba(250,141,20,0.1)',desc:'一键生成商品推广视频，支持多种视频风格和时长选择，自动匹配口播文案和背景音乐。',price:'¥129',priceUnit:'/月',
+    versions:[['每月生成次数','30次','100次'],['视频时长','最长15秒','最长60秒'],['视频风格','4种','10种'],['自定义口播','—','✓'],['高清导出','—','✓']]},
+  intro: {purchased:false,name:'AI商品介绍',icon:'📝',color:'rgba(82,196,26,0.1)',desc:'智能分析商品信息，自动生成专业、吸引人的商品介绍文案，支持多种风格和目标人群定制。',price:'¥99',priceUnit:'/月',
+    versions:[['每月生成次数','50次','200次'],['介绍风格','4种','8种'],['目标人群','5种','10种'],['批量生成','—','✓'],['历史版本','—','✓']]},
+  point: {purchased:false,name:'AI商品卖点',icon:'💡',color:'rgba(255,107,107,0.1)',desc:'深度挖掘商品核心卖点，结构化输出卖点卡片，支持一键回填到商品详情，提升转化率。',price:'¥79',priceUnit:'/月',
+    versions:[['每月生成次数','80次','300次'],['卖点数量','3-5条','3-10条'],['卖点风格','3种','6种'],['场景标签','3种','8种'],['批量生成','—','✓']]}
+};
+
+var imgGenCount = 4;
+var confirmCallback = null;
+
+function renderTable(){
+  var tbody = document.getElementById('productTableBody');
+  var html = '';
+  products.forEach(function(p,i){
+    html += '<tr>';
+    html += '<td><div class="checkbox-wrapper"><input type="checkbox" class="row-check"></div></td>';
+    html += '<td>'+p.id+'</td>';
+    html += '<td><div class="thumb"><div class="thumb-img" style="background:'+p.color+';color:#fff;font-size:9px;">'+(p.image?'主图':'未传')+'</div></div></td>';
+    html += '<td style="max-width:200px;">'+p.name+'</td>';
+    html += '<td style="color:var(--danger);font-weight:600;">'+p.price+'</td>';
+    html += '<td>'+p.stock+'</td>';
+    html += '<td><span class="badge badge-success">已编辑</span></td>';
+    html += '<td><span class="badge badge-default">未上传</span></td>';
+    html += '<td><div class="ai-btn-group">';
+    html += '<button class="ai-tag ai-tag-img" onclick="handleAIClick(\'image\','+i+')">AI生图</button>';
+    html += '<button class="ai-tag ai-tag-video" onclick="handleAIClick(\'video\','+i+')">AI视频</button>';
+    html += '<button class="ai-tag ai-tag-intro" onclick="handleAIClick(\'intro\','+i+')">AI介绍</button>';
+    html += '<button class="ai-tag ai-tag-point" onclick="handleAIClick(\'point\','+i+')">AI卖点</button>';
+    html += '</div></td>';
+    html += '<td><span class="op-link" onclick="showToast(\'进入编辑页面\',\'info\')">编辑</span><span class="op-link" onclick="showToast(\'商品已复制\',\'success\')">复制</span><span class="op-link" onclick="showToast(\'进入门店设置\',\'info\')">设置门店</span></td>';
+    html += '</tr>';
+  });
+  tbody.innerHTML = html;
+}
+
+function switchNav(el){
+  document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active');});
+  el.classList.add('active');
+  var page = el.getAttribute('data-page');
+  if(page){
+    document.querySelectorAll('.page-section').forEach(function(p){p.classList.remove('active');});
+    var target = document.getElementById('page-'+page);
+    if(target) target.classList.add('active');
+    var names = {'product-list':'商品管理','ai-image':'AI生图','ai-video':'AI视频','ai-intro':'AI商品介绍','ai-point':'AI商品卖点','app-control':'应用控制管理','service-buy':'服务购买'};
+    document.querySelector('.breadcrumb').innerHTML = '商品 / <span>'+(names[page]||'')+'</span>';
+  }
+}
+
+function handleAIClick(type,idx){
+  var p = products[idx];
+  if(serviceStatus[type].purchased){
+    switch(type){
+      case 'image': openAIImageModal(p); break;
+      case 'video': openAIVideoModal(p); break;
+      case 'intro': openAIIntroModal(p); break;
+      case 'point': openAIPointModal(p); break;
+    }
+  } else {
+    openPurchaseModal(type);
+  }
+}
+
+function openAIImageModal(p){
+  document.getElementById('aiImageTitle').textContent = 'AI生图 - '+p.name;
+  document.getElementById('imgProductName').value = p.name;
+  document.getElementById('imgProductThumb').style.background = p.color;
+  document.getElementById('imgProductThumb').textContent = '';
+  document.getElementById('imgProductThumb').style.color = '#fff';
+  document.getElementById('imgProductThumb').style.fontSize = '20px';
+  document.getElementById('imgProductThumb').textContent = '🖼️';
+  document.getElementById('imgResultArea').innerHTML = '<div class="empty-state"><div class="icon">🖼️</div><p>生成结果将在此处展示</p></div>';
+  openModal('modalAIImage');
+}
+
+function openAIVideoModal(p){
+  document.getElementById('aiVideoTitle').textContent = 'AI生成视频 - '+p.name;
+  document.getElementById('videoProductName').value = p.name;
+  document.getElementById('videoProductThumb').style.background = p.color;
+  document.getElementById('videoProductThumb').textContent = '🖼️';
+  document.getElementById('videoProductThumb').style.color = '#fff';
+  document.getElementById('videoProductThumb').style.fontSize = '16px';
+  document.getElementById('videoProgressArea').style.display = 'none';
+  document.getElementById('videoResultArea').style.display = 'none';
+  document.getElementById('videoGenBtn').style.display = '';
+  document.getElementById('videoScript').value = '';
+  openModal('modalAIVideo');
+}
+
+function openAIIntroModal(p){
+  document.getElementById('aiIntroTitle').textContent = 'AI生成商品介绍 - '+p.name;
+  document.getElementById('introProductName').value = p.name;
+  document.getElementById('introCategory').value = p.category;
+  document.getElementById('introPrice').value = p.price;
+  document.getElementById('introResultArea').innerHTML = '<div class="empty-state"><div class="icon">📝</div><p>生成结果将在此处展示</p></div>';
+  openModal('modalAIIntro');
+}
+
+function openAIPointModal(p){
+  document.getElementById('aiPointTitle').textContent = 'AI生成商品卖点 - '+p.name;
+  document.getElementById('pointProductName').value = p.name;
+  document.getElementById('pointCategory').value = p.category;
+  document.getElementById('pointPrice').value = p.price;
+  document.getElementById('pointResultArea').innerHTML = '<div class="empty-state" style="height:120px;"><div class="icon" style="font-size:32px;">💡</div><p>卖点结果将在此处展示</p></div>';
+  openModal('modalAIPoint');
+}
+
+function openPurchaseModal(type){
+  var s = serviceStatus[type];
+  document.getElementById('purchaseIcon').textContent = s.icon;
+  document.getElementById('purchaseIcon').style.background = s.color;
+  document.getElementById('purchaseName').textContent = s.name;
+  document.getElementById('purchaseDesc').textContent = s.desc;
+  document.getElementById('purchasePrice').innerHTML = s.price+'<span>'+s.priceUnit+'</span>';
+  var vhtml = '<tr><th>功能</th><th>标准版</th><th>专业版</th></tr>';
+  s.versions.forEach(function(v){
+    vhtml += '<tr><td>'+v[0]+'</td><td class="'+(v[1]==='—'?'cross':'check')+'">'+v[1]+'</td><td class="'+(v[2]==='—'?'cross':'check')+'">'+v[2]+'</td></tr>';
+  });
+  document.getElementById('purchaseVersionBody').innerHTML = vhtml;
+  openModal('modalPurchase');
+}
+
+function switchAITab(el,tabId){
+  el.parentElement.querySelectorAll('.tab-item').forEach(function(t){t.classList.remove('active');});
+  el.classList.add('active');
+  el.parentElement.parentElement.querySelectorAll('.tab-content').forEach(function(c){c.classList.remove('active');});
+  document.getElementById(tabId).classList.add('active');
+}
+
+function selectCount(el,n){
+  el.parentElement.querySelectorAll('.count-btn').forEach(function(b){b.classList.remove('active');});
+  el.classList.add('active');
+  imgGenCount = n;
+}
+
+function startGenerateImage(){
+  var area = document.getElementById('imgResultArea');
+  area.innerHTML = '<div class="result-loading"><div class="spinner"></div><div class="loading-text">AI正在生成图片，请稍候...</div></div>';
+  var remain = document.getElementById('imgRemain');
+  remain.textContent = parseInt(remain.textContent) - 1;
+  setTimeout(function(){
+    var gradients = [
+      'linear-gradient(135deg,#667eea,#764ba2)',
+      'linear-gradient(135deg,#f093fb,#f5576c)',
+      'linear-gradient(135deg,#4facfe,#00f2fe)',
+      'linear-gradient(135deg,#43e97b,#38f9d7)'
+    ];
+    var html = '<div class="result-images">';
+    for(var i=0;i<imgGenCount;i++){
+      html += '<div class="result-img-card">';
+      html += '<div class="result-img-placeholder" style="background:'+gradients[i%4]+';color:#fff;font-size:14px;">AI生成图'+(i+1)+'</div>';
+      html += '<div class="result-img-actions">';
+      html += '<button class="btn btn-primary btn-sm" onclick="applyToProduct(\'图片\')">应用到商品</button>';
+      html += '<button class="btn btn-default btn-sm" onclick="showToast(\'已保存到素材库\',\'success\')">保存到素材库</button>';
+      html += '</div></div>';
+    }
+    html += '</div>';
+    area.innerHTML = html;
+  },2000);
+}
+
+function startGenerateVideo(){
+  var progressArea = document.getElementById('videoProgressArea');
+  var resultArea = document.getElementById('videoResultArea');
+  var fill = document.getElementById('videoProgressFill');
+  var percent = document.getElementById('videoPercent');
+  var genBtn = document.getElementById('videoGenBtn');
+  progressArea.style.display = 'block';
+  resultArea.style.display = 'none';
+  genBtn.disabled = true;
+  genBtn.style.opacity = '0.5';
+  var p = 0;
+  var timer = setInterval(function(){
+    p += 2;
+    if(p > 100) p = 100;
+    fill.style.width = p+'%';
+    percent.textContent = p;
+    if(p >= 100){
+      clearInterval(timer);
+      progressArea.style.display = 'none';
+      resultArea.style.display = 'block';
+      genBtn.disabled = false;
+      genBtn.style.opacity = '1';
+    }
+  },100);
+}
+
+function aiGenScript(){
+  var textarea = document.getElementById('videoScript');
+  textarea.value = '正在生成...';
+  setTimeout(function(){
+    textarea.value = '大家好！今天给大家推荐一款超值好物！这款产品品质上乘，性价比超高，无论是自己使用还是送礼都非常合适。精选优质原料，匠心工艺打造，每一个细节都经得起推敲。现在下单还有专属优惠，赶紧点击下方链接抢购吧！数量有限，先到先得！';
+  },800);
+}
+
+function startGenerateIntro(){
+  var area = document.getElementById('introResultArea');
+  area.innerHTML = '<div class="result-loading"><div class="spinner"></div><div class="loading-text">AI正在生成商品介绍，请稍候...</div></div>';
+  var pName = document.getElementById('introProductName').value;
+  setTimeout(function(){
+    var html = '<div class="result-text">';
+    html += '<h4>商品概述</h4>';
+    html += '<p>'+pName+'，是一款集品质与性价比于一身的优质产品。经过严格的质量把控和层层筛选，确保每一件产品都能达到行业领先水准。</p>';
+    html += '<h4>核心优势</h4>';
+    html += '<p>1. 精选优质原材料，从源头保证产品品质<br>2. 采用行业先进工艺，确保产品稳定性和可靠性<br>3. 严格的质量检测体系，每批次产品均通过多重检验<br>4. 完善的售后服务保障，让您购买无忧</p>';
+    html += '<h4>使用场景</h4>';
+    html += '<p>无论是商务宴请、节日送礼、朋友聚会还是日常自用，这款产品都能完美胜任。高端大气的包装设计，彰显品位与格调。</p>';
+    html += '<h4>适合人群</h4>';
+    html += '<p>追求品质生活的消费者、注重性价比的理性买家、有送礼需求的商务人士、喜欢尝试优质好物的潮流达人。</p>';
+    html += '</div>';
+    html += '<div class="result-actions">';
+    html += '<button class="btn btn-primary btn-sm" onclick="applyToProduct(\'介绍\',\'replace\')">替换原文</button>';
+    html += '<button class="btn btn-default btn-sm" onclick="applyToProduct(\'介绍\',\'append\')">追加到原文</button>';
+    html += '<button class="btn btn-default btn-sm" onclick="copyContent()">复制内容</button>';
+    html += '<button class="btn btn-default btn-sm" onclick="startGenerateIntro()">重新生成</button>';
+    html += '</div>';
+    area.innerHTML = html;
+  },1500);
+}
+
+function startGeneratePoint(){
+  var area = document.getElementById('pointResultArea');
+  area.innerHTML = '<div class="result-loading" style="height:120px;"><div class="spinner"></div><div class="loading-text">AI正在生成卖点...</div></div>';
+  var pName = document.getElementById('pointProductName').value;
+  var count = parseInt(document.getElementById('pointCount').value);
+  setTimeout(function(){
+    var points = [
+      {title:'品质保障',desc:'精选优质原材料，从源头把控品质，通过ISO质量管理体系认证，确保每件产品都达到行业领先水准。',tags:['直播','详情页']},
+      {title:'超高性价比',desc:'同等品质下价格更优，让消费者以更实惠的价格享受高端品质体验，物超所值。',tags:['直播','商品卡片']},
+      {title:'匠心工艺',desc:'传承经典工艺，结合现代科技，每一道工序都精益求精，打造卓越品质。',tags:['详情页']},
+      {title:'精美包装',desc:'高端大气的包装设计，送礼自用皆宜，彰显品位与格调，提升品牌形象。',tags:['直播','商品卡片','详情页']},
+      {title:'售后无忧',desc:'完善的售后服务体系，7天无理由退换，专业客服团队全程跟踪，让购买更安心。',tags:['详情页']},
+      {title:'品牌背书',desc:'知名品牌实力保障，多年行业深耕，累计服务百万用户，口碑值得信赖。',tags:['直播','详情页']},
+      {title:'灵活规格',desc:'多种规格可选，满足不同场景需求，个人自用、商务宴请、节日送礼均有合适选择。',tags:['商品卡片','详情页']},
+      {title:'限时优惠',desc:'现在下单享受专属优惠价格，库存有限先到先得，错过再等一年！',tags:['直播','商品卡片']}
+    ];
+    var html = '';
+    for(var i=0;i<Math.min(count,points.length);i++){
+      var pt = points[i];
+      html += '<div class="selling-point-card">';
+      html += '<div class="sp-title">'+pt.title+'</div>';
+      html += '<div class="sp-desc">'+pt.desc+'</div>';
+      html += '<div class="sp-tags">';
+      pt.tags.forEach(function(t){html += '<span class="sp-tag">'+t+'</span>';});
+      html += '</div>';
+      html += '<div class="sp-switch"><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>';
+      html += '</div>';
+    }
+    html += '<div class="result-actions">';
+    html += '<button class="btn btn-primary btn-sm" onclick="showToast(\'卖点已一键回填到商品\',\'success\')">一键回填</button>';
+    html += '<button class="btn btn-default btn-sm" onclick="copyContent()">复制全部</button>';
+    html += '<button class="btn btn-default btn-sm" onclick="startGeneratePoint()">重新生成</button>';
+    html += '</div>';
+    area.innerHTML = html;
+  },1500);
+}
+
+function applyToProduct(type,mode){
+  if(type==='图片'){
+    showConfirm('确认将此AI生成图应用到商品主图？',function(){
+      showToast('已应用到商品主图','success');
+    });
+  } else if(type==='视频'){
+    showConfirm('确认将此AI生成视频应用到商品？',function(){
+      showToast('已应用到商品视频','success');
+    });
+  } else if(type==='介绍'){
+    if(mode==='replace'){
+      showConfirm('确认替换原有商品介绍内容？',function(){
+        showToast('已替换商品介绍','success');
+      });
+    } else {
+      showConfirm('确认将AI介绍追加到原文末尾？',function(){
+        showToast('已追加到商品介绍','success');
+      });
+    }
+  }
+}
+
+function copyContent(){
+  showToast('内容已复制到剪贴板','success');
+}
+
+function doPurchase(){
+  showToast('购买成功，服务已开通！','success');
+  closeModal('modalPurchase');
+}
+
+function openModal(id){
+  document.getElementById(id).classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(id){
+  document.getElementById(id).classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+function showConfirm(text,cb){
+  document.getElementById('confirmText').textContent = text;
+  confirmCallback = cb;
+  document.getElementById('confirmOverlay').classList.add('show');
+}
+
+function doConfirm(){
+  document.getElementById('confirmOverlay').classList.remove('show');
+  if(confirmCallback) confirmCallback();
+  confirmCallback = null;
+}
+
+function closeConfirm(){
+  document.getElementById('confirmOverlay').classList.remove('show');
+  confirmCallback = null;
+}
+
+function showToast(text,type){
+  var el = document.getElementById('toastEl');
+  var icon = document.getElementById('toastIcon');
+  var txt = document.getElementById('toastText');
+  el.className = 'toast toast-'+(type||'success');
+  icon.textContent = type==='success'?'✅':type==='info'?'ℹ️':'⚠️';
+  txt.textContent = text;
+  el.classList.add('show');
+  setTimeout(function(){el.classList.remove('show');},2500);
+}
+
+function doFilter(){
+  showToast('筛选完成，共找到 '+products.length+' 条记录','info');
+}
+
+function doReset(){
+  document.getElementById('filterName').value = '';
+  document.getElementById('filterCode').value = '';
+  document.getElementById('filterType').value = '';
+  document.getElementById('filterImage').value = '';
+  showToast('筛选条件已重置','info');
+}
+
+function toggleCheckAll(el){
+  document.querySelectorAll('.row-check').forEach(function(c){c.checked = el.checked;});
+}
+
+renderTable();
+</script>
+</body>
+</html>
