@@ -615,6 +615,7 @@ body {
 .group-card-status.normal { background: var(--primary-light); color: var(--wechat-green); }
 .group-card-status.sync { background: #FFF3E0; color: var(--warning); }
 .group-card-status.error { background: var(--danger-light); color: var(--danger); }
+.group-card-status.disabled { background: #F0F0F0; color: var(--text-tertiary); }
 .group-empty-state {
   text-align: center; padding: 32px 20px; background: var(--bg-card);
   border-bottom: 0.5px solid var(--border);
@@ -636,6 +637,7 @@ body {
 .gd-value.status-normal { color: var(--wechat-green); }
 .gd-value.status-sync { color: var(--warning); }
 .gd-value.status-error { color: var(--danger); }
+.gd-value.status-disabled { color: var(--text-tertiary); }
 .gd-overview {
   display: flex; padding: 14px 16px; gap: 0;
   background: var(--bg-card); border-bottom: 0.5px solid var(--border);
@@ -715,6 +717,10 @@ body {
     </div>
 
     <div class="page" id="page-contacts">
+      <div id="identityBanner" style="background:var(--wechat-green);color:white;padding:8px 16px;display:flex;align-items:center;gap:8px;font-size:13px;">
+        <span style="opacity:0.8" id="identityTenant"></span>
+        <span style="font-weight:600" id="identityRole"></span>
+      </div>
       <div class="search-bar">
         <input class="search-input" placeholder="请输入您要搜索的关键字" id="contactSearch" oninput="handleContactSearch(this.value)">
       </div>
@@ -889,7 +895,8 @@ var GROUPS = [
   { id:1, name:'南山门店群聊', type:'门店群', source:'南山门店', owner:'王店长', ownerRole:'店长', managers:['李店员','张店员'], customers:128, status:'正常', updatedTime:'今天 10:20', tenant:'天津租赁', createdTime:'2025-01-15', anomalyCount:0 },
   { id:2, name:'福田门店群聊', type:'门店群', source:'福田门店', owner:'陈代理', ownerRole:'代理', managers:['赵店长','孙店员'], customers:195, status:'正常', updatedTime:'昨天 16:30', tenant:'天津租赁', createdTime:'2025-02-20', anomalyCount:1 },
   { id:3, name:'宝安门店群聊', type:'门店群', source:'宝安门店', owner:'陈代理', ownerRole:'代理', managers:['刘店长','周店员'], customers:82, status:'待同步', updatedTime:'3天前', tenant:'天津租赁', createdTime:'2025-03-10', anomalyCount:2 },
-  { id:4, name:'深圳区域代理群', type:'代理群', source:'全部门店', owner:'陈代理', ownerRole:'代理', managers:['王店长','赵店长','刘店长'], customers:405, status:'正常', updatedTime:'今天 09:15', tenant:'天津租赁', createdTime:'2025-01-01', anomalyCount:0 }
+  { id:4, name:'深圳区域代理群', type:'代理群', source:'全部门店', owner:'陈代理', ownerRole:'代理', managers:['王店长','赵店长','刘店长'], customers:405, status:'正常', updatedTime:'今天 09:15', tenant:'天津租赁', createdTime:'2025-01-01', anomalyCount:0 },
+  { id:5, name:'龙岗门店群聊', type:'门店群', source:'龙岗门店', owner:'陈代理', ownerRole:'代理', managers:['黄店长'], customers:0, status:'停用', updatedTime:'30天前', tenant:'天津租赁', createdTime:'2025-04-01', anomalyCount:0 }
 ];
 
 var GROUP_CUSTOMERS = [
@@ -995,6 +1002,16 @@ function maskPhone(phone) {
   return phone.substring(0,3) + '****' + phone.substring(phone.length-4);
 }
 
+function toggleFullPhone(el, fullPhone) {
+  if(el.dataset.showFull === 'true') {
+    el.innerHTML = maskPhone(fullPhone) + ' <span style="font-size:11px;color:var(--blue)">点击查看</span>';
+    el.dataset.showFull = 'false';
+  } else {
+    el.innerHTML = fullPhone + ' <span style="font-size:11px;color:var(--text-tertiary)">点击隐藏</span>';
+    el.dataset.showFull = 'true';
+  }
+}
+
 function getVisibleGroups() {
   var search = currentContactSearch.toLowerCase();
   var role = currentRole;
@@ -1039,7 +1056,7 @@ function renderGroupSection() {
   }
   html += '<div class="group-section-title">' + sectionTitle + '</div>';
   groups.forEach(function(g){
-    var statusCls = g.status === '正常' ? 'normal' : g.status === '待同步' ? 'sync' : 'error';
+    var statusCls = g.status === '正常' ? 'normal' : g.status === '待同步' ? 'sync' : g.status === '停用' ? 'disabled' : 'error';
     var ownerDisplay = g.owner;
     if(currentRole === 'agent' && g.ownerRole === '代理') ownerDisplay = g.owner + '（当前代理）';
     html += '<div class="group-card" onclick="showGroupDetail('+g.id+')">';
@@ -1049,6 +1066,7 @@ function renderGroupSection() {
     html += '<div class="group-card-meta">'+g.type+'｜来源：'+g.source+'</div>';
     html += '<div class="group-card-meta">群主：'+ownerDisplay+'　群管：'+g.managers.join('、')+'</div>';
     html += '<div class="group-card-meta">客户 '+g.customers+' 人</div>';
+    html += '<div class="group-card-meta" style="font-size:11px;color:var(--text-tertiary)">更新：'+g.updatedTime+'</div>';
     html += '<span class="group-card-status '+statusCls+'">'+g.status+'</span>';
     html += '</div></div>';
   });
@@ -1369,7 +1387,7 @@ function showGroupDetail(groupId) {
   document.getElementById('subNavAction').innerHTML = '';
   var r = ROLES[currentRole];
   var currentIdentity = r.identity;
-  var statusCls = g.status === '正常' ? 'status-normal' : g.status === '待同步' ? 'status-sync' : 'status-error';
+  var statusCls = g.status === '正常' ? 'status-normal' : g.status === '待同步' ? 'status-sync' : g.status === '停用' ? 'status-disabled' : 'status-error';
   var html = '';
   html += '<div class="gd-section">';
   html += '<div class="gd-row"><span class="gd-label">群名称</span><span class="gd-value">'+g.name+'</span></div>';
@@ -1413,9 +1431,11 @@ function showGroupDetail(groupId) {
     html += '<div class="group-empty-state"><div class="empty-icon">📋</div><div class="empty-text">当前群暂无白名单客户</div></div>';
   } else {
     whitelistCustomers.forEach(function(cust){
+      var phoneDisplay = maskPhone(cust.phone);
+      var canViewFull = currentRole === 'manager' || currentRole === 'agent';
       html += '<div class="gd-customer-item">';
       html += '<div class="gd-customer-avatar" style="background:'+getAvatarColor(cust.name)+'">'+cust.name.charAt(0)+'</div>';
-      html += '<div class="gd-customer-info"><div class="gd-customer-name">'+cust.name+'</div><div class="gd-customer-phone">'+maskPhone(cust.phone)+'</div></div>';
+      html += '<div class="gd-customer-info"><div class="gd-customer-name">'+cust.name+'</div><div class="gd-customer-phone" style="cursor:'+(canViewFull?'pointer':'default')+'" '+(canViewFull?'onclick="toggleFullPhone(this,\''+cust.phone+'\')"':'')+'>'+phoneDisplay+(canViewFull?' <span style="font-size:11px;color:var(--blue)">点击查看</span>':'')+'</div></div>';
       html += '</div>';
     });
   }
@@ -1440,8 +1460,10 @@ function showGroupDetail(groupId) {
       html += '<div class="gd-anomaly-alert"><span class="gd-anomaly-icon">👤</span><span class="gd-anomaly-text">群管 周店员 已离职</span></div>';
     }
   }
-  if(currentRole !== 'buyer') {
+  if(currentRole !== 'buyer' && g.status !== '停用') {
     html += '<div class="gd-enter-chat"><button class="btn btn-wechat btn-block" onclick="showToast(\'进入群聊\')">进入群聊</button></div>';
+  } else if(g.status === '停用') {
+    html += '<div class="gd-enter-chat"><button class="btn btn-block" style="background:#F0F0F0;color:var(--text-tertiary);cursor:not-allowed" disabled>群已停用</button></div>';
   }
   document.getElementById('subPageContent').innerHTML = html;
   document.getElementById('subPage').classList.add('show');
@@ -1479,6 +1501,25 @@ function showToast(msg) {
   setTimeout(function(){toast.classList.remove('show')}, 2000);
 }
 
+function showAnomalyDemo() {
+  document.getElementById('subNavTitle').textContent = '异常场景演示';
+  document.getElementById('subNavAction').innerHTML = '';
+  var html = '<div style="padding:0">';
+  html += '<div class="gd-section-title">16.1 当前身份不存在</div>';
+  html += '<div class="gd-anomaly-alert" style="cursor:pointer" onclick="showToast(\'当前身份不可用，请前往个人中心切换身份\')"><span class="gd-anomaly-icon">⚠️</span><span class="gd-anomaly-text">用户登录后未选择身份，或当前身份失效。<br><strong>提示：当前身份不可用，请前往个人中心切换身份</strong></span></div>';
+  html += '<div class="gd-section-title">16.2 当前身份无群</div>';
+  html += '<div class="gd-anomaly-alert" style="cursor:pointer" onclick="showToast(\'当前门店暂无群聊，请联系管理员确认\')"><span class="gd-anomaly-icon">📋</span><span class="gd-anomaly-text">店员/店长身份下，当前门店尚未创建群。<br><strong>提示：当前门店暂无群聊，请联系管理员确认</strong></span></div>';
+  html += '<div class="gd-section-title">16.3 代理无门店</div>';
+  html += '<div class="gd-anomaly-alert" style="cursor:pointer" onclick="showToast(\'暂无可管理的门店群\')"><span class="gd-anomaly-icon">🏢</span><span class="gd-anomaly-text">代理身份下无绑定门店。<br><strong>提示：暂无可管理的门店群，当前代理身份下尚未绑定门店</strong></span></div>';
+  html += '<div class="gd-section-title">16.4 跨租户数据异常</div>';
+  html += '<div class="gd-anomaly-alert" style="cursor:pointer" onclick="showToast(\'数据异常，请稍后重试\')"><span class="gd-anomaly-icon">🔒</span><span class="gd-anomaly-text">接口返回非当前租户数据。前端不展示，后端记录异常日志。<br><strong>提示：数据异常，请稍后重试</strong></span></div>';
+  html += '<div class="gd-section-title">16.5 客户数据为空</div>';
+  html += '<div class="gd-anomaly-alert" style="cursor:pointer" onclick="showToast(\'当前群暂无白名单客户\')"><span class="gd-anomaly-icon">📭</span><span class="gd-anomaly-text">群内无白名单客户。<br><strong>提示：当前群暂无白名单客户</strong></span></div>';
+  html += '</div>';
+  document.getElementById('subPageContent').innerHTML = html;
+  document.getElementById('subPage').classList.add('show');
+}
+
 function openRoleSelector() {
   var selector = document.getElementById('roleSelector');
   selector.innerHTML = Object.values(ROLES).map(function(r){
@@ -1511,11 +1552,20 @@ function renderMinePage() {
   document.getElementById('mineTenant').textContent = r.tenant;
   var items = [
     {icon:'🔄',bg:'var(--primary-light)',label:'切换身份',action:'openRoleSelector()'},
-    {icon:'👥',bg:'var(--primary-light)',label:'我的群聊',action:'showMyGroups()'}
+    {icon:'👥',bg:'var(--primary-light)',label:'我的群聊',action:'showMyGroups()'},
+    {icon:'⚠️',bg:'#FFF3E0',label:'异常场景演示',action:'showAnomalyDemo()'}
   ];
   document.getElementById('mineItems').innerHTML = items.map(function(it){
     return '<div class="my-item" onclick="'+it.action+'"><div class="item-icon" style="background:'+it.bg+'">'+it.icon+'</div><span class="item-label">'+it.label+'</span><span class="item-arrow">›</span></div>';
   }).join('');
+}
+
+function updateIdentityBanner() {
+  var r = ROLES[currentRole];
+  var tenantEl = document.getElementById('identityTenant');
+  var roleEl = document.getElementById('identityRole');
+  if(tenantEl) tenantEl.textContent = r.tenant !== '个人' ? '当前租户：' + r.tenant : '';
+  if(roleEl) roleEl.textContent = '当前身份：' + r.identity;
 }
 
 function renderAll() {
@@ -1523,6 +1573,7 @@ function renderAll() {
   renderContactList();
   renderMinePage();
   updateNewFriendBadge();
+  updateIdentityBanner();
 }
 
 renderAll();
@@ -1616,11 +1667,11 @@ var ANNOTATIONS = [
   },
   {
     id: 4,
-    title: '新的朋友',
+    title: '新的朋友（设计稿扩展）',
     target: '#subPage',
     page: 'sub',
     subFilter: function() { var t = document.getElementById('subNavTitle'); return t && t.textContent === '新的朋友'; },
-    content: '### 新的朋友页面\n\n好友申请列表，每条包含：\n- 头像+姓名\n- 打招呼内容\n- 状态标签：待通过（绿色）/ 已添加（灰色）/ 已拒绝（红色）\n\n点击待通过项：进入通过/拒绝页面\n\n#### 通过好友申请\n显示用户信息+打招呼内容+「通过好友申请」绿色按钮+「拒绝好友申请」红色按钮\n\n#### 等待对方验证\n已发送申请后显示"等待对方验证"灰色文字\n\n#### 对方已拒绝\n显示"• 对方已拒绝"红色文字\n\n#### 空状态\n暂无新的朋友'
+    content: '### 新的朋友页面\n\n> ⚠️ 注意：此功能来自设计稿扩展，不在PRD V1.0范围内。PRD本期不做完整IM聊天和好友系统。\n\n好友申请列表，每条包含：\n- 头像+姓名\n- 打招呼内容\n- 状态标签：待通过（绿色）/ 已添加（灰色）/ 已拒绝（红色）\n\n点击待通过项：进入通过/拒绝页面\n\n#### 通过好友申请\n显示用户信息+打招呼内容+「通过好友申请」绿色按钮+「拒绝好友申请」红色按钮\n\n#### 等待对方验证\n已发送申请后显示"等待对方验证"灰色文字\n\n#### 对方已拒绝\n显示"• 对方已拒绝"红色文字\n\n#### 空状态\n暂无新的朋友'
   },
   {
     id: 5,
@@ -1666,6 +1717,13 @@ var ANNOTATIONS = [
     target: '#topTabs',
     page: 'global',
     content: '### 17.1 页面需求\n\n| 编号 | 需求 | 优先级 |\n|------|------|--------|\n| P-001 | 消息页右上角增加通讯录入口 | P0 |\n| P-002 | 通讯录列表页 | P0 |\n| P-003 | 当前身份展示 | P0 |\n| P-004 | 群聊搜索 | P1 |\n| P-005 | 群聊卡片列表 | P0 |\n| P-006 | 群详情页 | P0 |\n| P-007 | 群主/群管展示 | P0 |\n| P-008 | 白名单客户列表展示 | P0 |\n| P-009 | 空状态页面 | P0 |\n| P-010 | 异常提示 | P1 |\n\n### 17.2 功能需求\n\n| 编号 | 需求 | 优先级 |\n|------|------|--------|\n| F-001 | 根据当前身份展示通讯录数据 | P0 |\n| F-002 | 支持普通买家身份空状态 | P0 |\n| F-003 | 支持店员查看当前门店群 | P0 |\n| F-004 | 支持店长查看当前门店群 | P0 |\n| F-005 | 支持代理查看名下门店群 | P0 |\n| F-006 | 支持跨租户数据隔离 | P0 |\n| F-007 | 支持白名单客户展示 | P0 |\n| F-008 | 支持黑名单客户排除 | P0 |\n| F-009 | 支持客户手机号脱敏 | P0 |\n| F-010 | 支持群详情查看 | P0 |\n| F-011 | 支持群状态展示 | P1 |\n| F-012 | 支持进入群聊，依赖已有聊天能力 | P1 |\n| F-013 | 主播身份预留 | P2 |\n| F-014 | 直播群预留 | P2 |'
+  },
+  {
+    id: 11,
+    title: '核心业务规则',
+    target: '#identityBanner',
+    page: 'contacts',
+    content: '### 5.1 普通买家身份规则\n\n普通买家身份下不参与门店管理，也不具备群管理权限。\n\n当前身份=普通买家 → 进入通讯录 → 默认不展示管理型群聊\n\n页面表现：暂无可查看的通讯录，请切换为店员、店长或代理身份后查看相关群聊\n\n### 5.2 店员身份规则\n\n当前身份=某门店店员 → 识别当前门店 → 查询该门店自动创建的群聊 → 展示该门店群\n\n| 成员类型 | 是否展示 |\n|----------|----------|\n| 店长 | 展示 |\n| 店员 | 展示 |\n| 白名单客户 | 展示 |\n| 黑名单客户 | 不展示 |\n| 非本门店客户 | 不展示 |\n| 跨租户客户 | 不展示 |\n\n### 5.3 店长身份规则\n\n当前身份=某门店店长 → 识别当前门店 → 展示该门店群 → 店长作为群主/群管\n\n| 能力 | 店长 |\n|------|------|\n| 查看门店群 | 是 |\n| 查看群成员 | 是 |\n| 查看白名单客户 | 是 |\n| 查看黑名单客户 | 否，或仅显示统计 |\n| 查看客户手机号 | 默认脱敏 |\n| 管理群成员 | 如后台已有则按权限控制 |\n| 发起聊天 | 如已有聊天能力则支持跳转 |\n\n### 5.4 代理身份规则\n\n当前身份=代理 → 查询该代理拓展/邀请/管理的门店 → 展示A店群、B店群、C店群\n\n| 对象 | 规则 |\n|------|------|\n| 群来源 | 代理名下门店 |\n| 群数量 | 一个门店一个群 |\n| 群主 | 代理 |\n| 群管 | 店长、店员 |\n| 客户成员 | 该门店白名单客户 |\n| 黑名单客户 | 不进入群 |\n| 非代理名下门店 | 不展示 |\n\n### 5.5 主播身份规则\n\n主播身份本期暂缓，不做完整主播通讯录和直播场次群。V1.0仅预留身份。'
   }
 ];
 
