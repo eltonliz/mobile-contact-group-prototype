@@ -505,6 +505,33 @@ body {
 .btn-wechat { background: var(--wechat-green); color: white; border: none; }
 .btn-wechat:hover { background: #06ad56; }
 
+/* ========== Identity Display (Contacts) ========== */
+.identity-display { background: var(--primary-light); padding: 10px 16px; border-bottom: 0.5px solid var(--border); }
+.identity-display .id-line { font-size: 13px; color: var(--primary-dark); font-weight: 500; line-height: 1.6; }
+.identity-display .id-line .id-label { color: var(--text-secondary); font-weight: 400; }
+
+/* ========== Group Section in Contacts ========== */
+.group-section { background: var(--bg-card); margin-bottom: 8px; }
+.group-section-title { padding: 10px 16px 6px; font-size: 13px; font-weight: 600; color: var(--primary); background: var(--bg-page); }
+.group-card-mini { display: flex; align-items: center; padding: 12px 16px; border-bottom: 0.5px solid var(--border); cursor: pointer; transition: background 0.15s; }
+.group-card-mini:active { background: #F5F5F5; }
+.group-card-mini:last-child { border-bottom: none; }
+.group-card-mini .gc-avatar { width: 40px; height: 40px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 600; color: white; flex-shrink: 0; margin-right: 12px; }
+.group-card-mini .gc-info { flex: 1; min-width: 0; }
+.group-card-mini .gc-name { font-size: 15px; font-weight: 500; color: var(--text-primary); line-height: 1.3; }
+.group-card-mini .gc-meta { font-size: 12px; color: var(--text-secondary); margin-top: 2px; line-height: 1.4; }
+.group-card-mini .gc-status { font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 500; white-space: nowrap; flex-shrink: 0; }
+.shortcut-icon.add-friend { background: var(--primary); color: white; }
+
+/* ========== Exception Alert ========== */
+.exception-alert { background: var(--danger-light); border-radius: 8px; padding: 12px; margin: 8px 16px; display: flex; align-items: flex-start; gap: 8px; }
+.exception-alert .ea-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+.exception-alert .ea-text { font-size: 13px; color: var(--danger); line-height: 1.5; }
+
+/* ========== Group Status ========== */
+.status-abnormal { background: var(--danger-light); color: var(--danger); }
+.status-stopped { background: #F0F0F0; color: #999; }
+
 </style>
 </head>
 <body>
@@ -531,9 +558,9 @@ body {
     </div>
 
     <div class="page" id="page-contacts">
-      <div class="search-bar" style="display:flex;align-items:center;gap:8px;padding:8px 12px;">
-        <input class="search-input" placeholder="请输入您要搜索的关键字" id="contactSearch" oninput="handleContactSearch(this.value)" style="flex:1">
-        <div style="width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;color:var(--text-primary);flex-shrink:0" onclick="toggleAddMenu()">＋</div>
+      <div id="contactIdentityDisplay"></div>
+      <div class="search-bar" style="padding:8px 16px;">
+        <input class="search-input" placeholder="搜索群聊/门店/联系人" id="contactSearch" oninput="handleContactSearch(this.value)">
       </div>
       <div class="contact-shortcuts">
         <div class="shortcut-item" onclick="showNewFriends()">
@@ -547,7 +574,13 @@ body {
           <span class="shortcut-label">我的群聊</span>
           <span style="color:var(--text-tertiary);font-size:14px">›</span>
         </div>
+        <div class="shortcut-item" onclick="showAddFriend()">
+          <div class="shortcut-icon add-friend">➕</div>
+          <span class="shortcut-label">添加好友</span>
+          <span style="color:var(--text-tertiary);font-size:14px">›</span>
+        </div>
       </div>
+      <div id="groupSectionArea"></div>
       <div id="contactList" style="position:relative;"></div>
       <div class="alpha-index" id="alphaIndex"></div>
       <div style="height:20px"></div>
@@ -556,9 +589,9 @@ body {
     <div class="page" id="page-mine">
       <div class="identity-bar">
         <div class="identity-info">
-          <div class="tenant" id="mineTenant">华南区代理</div>
+          <div class="tenant" id="mineTenant">天津租赁</div>
           <div class="role" id="mineRole">代理</div>
-          <div class="tenant" id="mineScope" style="margin-top:2px;font-size:11px;opacity:0.7">当前范围：华南区代理</div>
+          <div class="tenant" id="mineScope" style="margin-top:2px;font-size:11px;opacity:0.7">当前范围：全部门店</div>
         </div>
       </div>
       <div style="height:12px;background:var(--bg-page)"></div>
@@ -655,10 +688,10 @@ body {
 /* ========== Constants & Mock Data ========== */
 
 var ROLES = {
-  buyer: { key:'buyer', name:'普通买家', icon:'👤', desc:'查看消息和通讯录', tenant:'个人', identity:'普通买家', scope:'个人' },
-  clerk: { key:'clerk', name:'店员', icon:'🏪', desc:'查看门店客户、门店群', tenant:'南山门店', identity:'南山门店店员', scope:'南山门店' },
-  manager: { key:'manager', name:'店长', icon:'👔', desc:'管理门店群，处理门店群同步', tenant:'南山门店', identity:'南山门店店长', scope:'南山门店' },
-  agent: { key:'agent', name:'代理', icon:'🏢', desc:'查看自己的群和下级门店群', tenant:'华南区代理', identity:'华南区代理', scope:'华南区代理' }
+  buyer: { key:'buyer', name:'普通买家', icon:'👤', identity:'普通买家', desc:'默认身份', tenant:'个人', scope:'个人' },
+  clerk: { key:'clerk', name:'店员', icon:'🏪', identity:'南山门店店员', desc:'南山门店', tenant:'天津租赁', scope:'南山门店' },
+  manager: { key:'manager', name:'店长', icon:'👔', identity:'南山门店店长', desc:'南山门店', tenant:'天津租赁', scope:'南山门店' },
+  agent: { key:'agent', name:'代理', icon:'🏢', identity:'代理', desc:'全部门店', tenant:'天津租赁', scope:'全部门店' }
 };
 
 var DATA_OVERVIEW = {
@@ -676,65 +709,67 @@ var QUICK_ACTIONS = {
 };
 
 var PENDING_TASKS = [
-  {id:1,type:'sync',tag:'新成员加入群',tagCls:'sync',title:'南山门店客户群',desc:'新增客户 5 人待加入门店群',time:'今天 10:20',cardCls:'sync',groupId:'g1',syncLevel:'auto',syncReason:'新增客户自动加入门店群'},
-  {id:2,type:'danger',tag:'群主更换',tagCls:'danger',title:'福田门店客户群',desc:'群主「赵店长」已离职，需指定新群主',time:'昨天 18:30',cardCls:'danger',groupId:'g2',syncLevel:'required',syncReason:'群主变更必须人工确认'},
-  {id:3,type:'danger',tag:'黑名单变更',tagCls:'danger',title:'宝安门店客户群',desc:'3 名客户已入黑名单，建议移出群',time:'前天 16:45',cardCls:'danger',groupId:'g3',syncLevel:'auto',syncReason:'黑名单客户自动移出'},
-  {id:4,type:'pending',tag:'成员离职需移出群',tagCls:'pending',title:'福田门店客户群',desc:'店员钱六已离职，需从群中移除',time:'昨天 09:00',cardCls:'',groupId:'g2',syncLevel:'manual',syncReason:'店员离职需确认是否指定新群主'},
+  {id:1,type:'sync',tag:'新成员加入群',tagCls:'sync',title:'南山门店群聊',desc:'新增客户 5 人待加入门店群',time:'今天 10:20',cardCls:'sync',groupId:'g1',syncLevel:'auto',syncReason:'新增客户自动加入门店群'},
+  {id:2,type:'danger',tag:'群主更换',tagCls:'danger',title:'福田门店群聊',desc:'群主「赵店长」已离职，需指定新群主',time:'昨天 18:30',cardCls:'danger',groupId:'g2',syncLevel:'required',syncReason:'群主变更必须人工确认'},
+  {id:3,type:'danger',tag:'黑名单变更',tagCls:'danger',title:'宝安门店群聊',desc:'3 名客户已入黑名单，建议移出群',time:'前天 16:45',cardCls:'danger',groupId:'g3',syncLevel:'auto',syncReason:'黑名单客户自动移出'},
+  {id:4,type:'pending',tag:'成员离职需移出群',tagCls:'pending',title:'福田门店群聊',desc:'店员钱六已离职，需从群中移除',time:'昨天 09:00',cardCls:'',groupId:'g2',syncLevel:'manual',syncReason:'店员离职需确认是否指定新群主'},
   {id:5,type:'info',tag:'门店范围变更',tagCls:'info',title:'深圳区域代理群',desc:'代理下新增1家门店，需同步客户',time:'今天 08:00',cardCls:'info',groupId:'g4',syncLevel:'manual',syncReason:'门店范围变更影响面大，需人工确认'}
 ];
 
 var CUSTOMERS = [
-  {id:'c1',name:'张三',phone:'138****5521',agent:'华南区代理',store:'南山门店',server:'李四',tags:['高意向'],groupStatus:'已进门店群',lastActive:'今天 14:30',status:'正常',groups:[{name:'南山门店客户群',type:'门店群',owner:'李店长',joinTime:'2026-04-15',gStatus:'正常'}]},
-  {id:'c2',name:'李芳',phone:'139****8832',agent:'华南区代理',store:'南山门店',server:'李四',tags:['已成交'],groupStatus:'已进门店群',lastActive:'今天 11:20',status:'正常',groups:[{name:'南山门店客户群',type:'门店群',owner:'李店长',joinTime:'2026-03-20',gStatus:'正常'}]},
-  {id:'c3',name:'王建国',phone:'136****2210',agent:'华南区代理',store:'南山门店',server:'王五',tags:['沉默'],groupStatus:'未进群',lastActive:'3天前',status:'正常',groups:[]},
-  {id:'c4',name:'赵敏',phone:'137****4456',agent:'华南区代理',store:'福田门店',server:'钱六',tags:['高意向','已成交'],groupStatus:'已进门店群',lastActive:'今天 09:50',status:'正常',groups:[{name:'福田门店客户群',type:'门店群',owner:'王店长',joinTime:'2026-02-10',gStatus:'正常'}]},
-  {id:'c5',name:'陈晓',phone:'135****7789',agent:'华南区代理',store:'南山门店',server:'李四',tags:['高意向'],groupStatus:'已进门店群',lastActive:'昨天 16:30',status:'正常',groups:[{name:'南山门店客户群',type:'门店群',owner:'李店长',joinTime:'2026-04-01',gStatus:'正常'}]},
-  {id:'c6',name:'刘洋',phone:'158****3321',agent:'华北区代理',store:'宝安门店',server:'孙店员',tags:['沉默'],groupStatus:'已退群',lastActive:'5天前',status:'正常',groups:[{name:'宝安门店客户群',type:'门店群',owner:'张店长',joinTime:'2026-01-15',gStatus:'已退群'}]},
-  {id:'c7',name:'孙婷婷',phone:'133****9900',agent:'华南区代理',store:'南山门店',server:'王五',tags:['已成交'],groupStatus:'已进门店群',lastActive:'今天 13:10',status:'正常',groups:[{name:'南山门店客户群',type:'门店群',owner:'李店长',joinTime:'2026-03-05',gStatus:'正常'}]},
-  {id:'c8',name:'周磊',phone:'150****6677',agent:'华北区代理',store:'宝安门店',server:'孙店员',tags:[],groupStatus:'未进群',lastActive:'7天前',status:'黑名单',groups:[]},
-  {id:'c9',name:'吴佳',phone:'186****1122',agent:'华南区代理',store:'南山门店',server:'李四',tags:['高意向'],groupStatus:'已进门店群',lastActive:'今天 15:00',status:'正常',groups:[{name:'南山门店客户群',type:'门店群',owner:'李店长',joinTime:'2026-05-01',gStatus:'正常'}]},
-  {id:'c10',name:'郑伟',phone:'131****5544',agent:'华北区代理',store:'宝安门店',server:'孙店员',tags:['沉默'],groupStatus:'已进门店群',lastActive:'2天前',status:'正常',groups:[{name:'宝安门店客户群',type:'门店群',owner:'张店长',joinTime:'2026-04-10',gStatus:'正常'}]},
-  {id:'c11',name:'马超',phone:'188****5566',agent:'华南区代理',store:'福田门店',server:'钱六',tags:['已成交'],groupStatus:'已进门店群',lastActive:'昨天 14:00',status:'正常',groups:[{name:'福田门店客户群',type:'门店群',owner:'王店长',joinTime:'2026-03-12',gStatus:'正常'}]}
+  {id:'c1',name:'张三',phone:'138****5521',fullPhone:'13812345521',agent:'天津租赁',store:'南山门店',server:'李四',tags:['高意向'],groupStatus:'已进门店群',lastActive:'今天 14:30',status:'正常',groups:[{name:'南山门店群聊',type:'门店群',owner:'王店长',joinTime:'2026-04-15',gStatus:'正常'}]},
+  {id:'c2',name:'李芳',phone:'139****8832',fullPhone:'13912348832',agent:'天津租赁',store:'南山门店',server:'李四',tags:['已成交'],groupStatus:'已进门店群',lastActive:'今天 11:20',status:'正常',groups:[{name:'南山门店群聊',type:'门店群',owner:'王店长',joinTime:'2026-03-20',gStatus:'正常'}]},
+  {id:'c3',name:'王建国',phone:'136****2210',fullPhone:'13612342210',agent:'天津租赁',store:'南山门店',server:'王五',tags:['沉默'],groupStatus:'未进群',lastActive:'3天前',status:'正常',groups:[]},
+  {id:'c4',name:'赵敏',phone:'137****4456',fullPhone:'13712344456',agent:'天津租赁',store:'福田门店',server:'钱六',tags:['高意向','已成交'],groupStatus:'已进门店群',lastActive:'今天 09:50',status:'正常',groups:[{name:'福田门店群聊',type:'门店群',owner:'陈代理',joinTime:'2026-02-10',gStatus:'正常'}]},
+  {id:'c5',name:'陈晓',phone:'135****7789',fullPhone:'13512347789',agent:'天津租赁',store:'南山门店',server:'李四',tags:['高意向'],groupStatus:'已进门店群',lastActive:'昨天 16:30',status:'正常',groups:[{name:'南山门店群聊',type:'门店群',owner:'王店长',joinTime:'2026-04-01',gStatus:'正常'}]},
+  {id:'c6',name:'刘洋',phone:'158****3321',fullPhone:'15812343321',agent:'天津租赁',store:'宝安门店',server:'孙店员',tags:['沉默'],groupStatus:'已退群',lastActive:'5天前',status:'正常',groups:[{name:'宝安门店群聊',type:'门店群',owner:'陈代理',joinTime:'2026-01-15',gStatus:'已退群'}]},
+  {id:'c7',name:'孙婷婷',phone:'133****9900',fullPhone:'13312349900',agent:'天津租赁',store:'南山门店',server:'王五',tags:['已成交'],groupStatus:'已进门店群',lastActive:'今天 13:10',status:'正常',groups:[{name:'南山门店群聊',type:'门店群',owner:'王店长',joinTime:'2026-03-05',gStatus:'正常'}]},
+  {id:'c8',name:'周磊',phone:'150****6677',fullPhone:'15012346677',agent:'天津租赁',store:'宝安门店',server:'孙店员',tags:[],groupStatus:'未进群',lastActive:'7天前',status:'黑名单',groups:[]},
+  {id:'c9',name:'吴佳',phone:'186****1122',fullPhone:'18612341122',agent:'天津租赁',store:'南山门店',server:'李四',tags:['高意向'],groupStatus:'已进门店群',lastActive:'今天 15:00',status:'正常',groups:[{name:'南山门店群聊',type:'门店群',owner:'王店长',joinTime:'2026-05-01',gStatus:'正常'}]},
+  {id:'c10',name:'郑伟',phone:'131****5544',fullPhone:'13112345544',agent:'天津租赁',store:'宝安门店',server:'孙店员',tags:['沉默'],groupStatus:'已进门店群',lastActive:'2天前',status:'正常',groups:[{name:'宝安门店群聊',type:'门店群',owner:'陈代理',joinTime:'2026-04-10',gStatus:'正常'}]},
+  {id:'c11',name:'马超',phone:'188****5566',fullPhone:'18812345566',agent:'天津租赁',store:'福田门店',server:'钱六',tags:['已成交'],groupStatus:'已进门店群',lastActive:'昨天 14:00',status:'正常',groups:[{name:'福田门店群聊',type:'门店群',owner:'陈代理',joinTime:'2026-03-12',gStatus:'正常'}]}
 ];
 
 var GROUPS = [
-  {id:'g1',name:'南山门店客户群',type:'门店群',source:'南山门店',owner:'李店长',agent:'华南区代理',members:156,customers:148,status:'正常',lastSync:'今天 10:20',clerks:['李四','王五'],abnormal:0,pendingSync:0,memberList:[
-    {name:'李店长',role:'群主',type:'店长',store:'南山门店',status:'正常',avatar:'blue'},
-    {name:'李四',role:'店员',type:'店员',store:'南山门店',status:'正常',avatar:'green'},
-    {name:'王五',role:'店员',type:'店员',store:'南山门店',status:'正常',avatar:'green'},
-    {name:'张三',role:'客户',type:'客户',store:'南山门店',status:'正常',avatar:'blue',tag:'高意向'},
-    {name:'李芳',role:'客户',type:'客户',store:'南山门店',status:'正常',avatar:'blue',tag:'已成交'},
-    {name:'陈晓',role:'客户',type:'客户',store:'南山门店',status:'正常',avatar:'blue',tag:'高意向'},
-    {name:'孙婷婷',role:'客户',type:'客户',store:'南山门店',status:'正常',avatar:'blue',tag:'已成交'},
-    {name:'吴佳',role:'客户',type:'客户',store:'南山门店',status:'正常',avatar:'blue',tag:'高意向'}
+  {id:'g1',name:'南山门店群聊',type:'门店群',source:'南山门店',owner:'王店长',managers:['李店员','张店员'],customers:128,status:'正常',updatedTime:'今天 10:20',members:135,abnormal:0,pendingSync:0,lastSync:'今天 10:20',agent:'陈代理',clerks:['李店员','张店员'],memberList:[
+    {name:'王店长',role:'群主',type:'店长',identity:'店长',store:'南山门店',status:'正常',avatar:'blue'},
+    {name:'李店员',role:'群管',type:'店员',identity:'店员',store:'南山门店',status:'正常',avatar:'green'},
+    {name:'张店员',role:'群管',type:'店员',identity:'店员',store:'南山门店',status:'正常',avatar:'green'},
+    {name:'张三',role:'客户',type:'客户',identity:'客户',store:'南山门店',status:'正常',avatar:'blue',tag:'高意向',phone:'138****5521'},
+    {name:'李芳',role:'客户',type:'客户',identity:'客户',store:'南山门店',status:'正常',avatar:'blue',tag:'已成交',phone:'139****8832'},
+    {name:'陈晓',role:'客户',type:'客户',identity:'客户',store:'南山门店',status:'正常',avatar:'blue',tag:'高意向',phone:'135****7789'},
+    {name:'孙婷婷',role:'客户',type:'客户',identity:'客户',store:'南山门店',status:'正常',avatar:'blue',tag:'已成交',phone:'133****9900'},
+    {name:'吴佳',role:'客户',type:'客户',identity:'客户',store:'南山门店',status:'正常',avatar:'blue',tag:'高意向',phone:'186****1122'}
   ]},
-  {id:'g2',name:'福田门店客户群',type:'门店群',source:'福田门店',owner:'王店长',agent:'华南区代理',members:203,customers:195,status:'正常',lastSync:'昨天 16:00',clerks:['钱六'],abnormal:0,pendingSync:0,memberList:[
-    {name:'王店长',role:'群主',type:'店长',store:'福田门店',status:'正常',avatar:'blue'},
-    {name:'钱六',role:'店员',type:'店员',store:'福田门店',status:'正常',avatar:'green'},
-    {name:'赵敏',role:'客户',type:'客户',store:'福田门店',status:'正常',avatar:'blue',tag:'已成交'},
-    {name:'马超',role:'客户',type:'客户',store:'福田门店',status:'正常',avatar:'blue',tag:'已成交'}
+  {id:'g2',name:'福田门店群聊',type:'门店群',source:'福田门店',owner:'陈代理',managers:['赵店长','孙店员'],customers:195,status:'正常',updatedTime:'昨天 16:30',members:203,abnormal:2,pendingSync:0,lastSync:'昨天 16:30',agent:'陈代理',clerks:['孙店员'],memberList:[
+    {name:'陈代理',role:'群主',type:'代理',identity:'代理',store:'福田门店',status:'正常',avatar:'blue'},
+    {name:'赵店长',role:'群管',type:'店长',identity:'店长',store:'福田门店',status:'正常',avatar:'green'},
+    {name:'孙店员',role:'群管',type:'店员',identity:'店员',store:'福田门店',status:'正常',avatar:'green'},
+    {name:'赵敏',role:'客户',type:'客户',identity:'客户',store:'福田门店',status:'正常',avatar:'blue',tag:'已成交',phone:'137****4456'},
+    {name:'马超',role:'客户',type:'客户',identity:'客户',store:'福田门店',status:'正常',avatar:'blue',tag:'已成交',phone:'188****5566'}
   ]},
-  {id:'g3',name:'宝安门店客户群',type:'门店群',source:'宝安门店',owner:'张店长',agent:'华南区代理',members:89,customers:82,status:'待同步',lastSync:'3天前',clerks:['孙店员'],abnormal:0,pendingSync:7,memberList:[
-    {name:'张店长',role:'群主',type:'店长',store:'宝安门店',status:'正常',avatar:'blue'},
-    {name:'孙店员',role:'店员',type:'店员',store:'宝安门店',status:'正常',avatar:'green'},
-    {name:'郑伟',role:'客户',type:'客户',store:'宝安门店',status:'正常',avatar:'blue',tag:'沉默'},
-    {name:'周磊',role:'客户',type:'客户',store:'宝安门店',status:'黑名单',avatar:'red'}
+  {id:'g3',name:'宝安门店群聊',type:'门店群',source:'宝安门店',owner:'陈代理',managers:['刘店长','周店员'],customers:82,status:'待同步',updatedTime:'3天前',members:89,abnormal:1,pendingSync:5,lastSync:'3天前',agent:'陈代理',clerks:['周店员'],memberList:[
+    {name:'陈代理',role:'群主',type:'代理',identity:'代理',store:'宝安门店',status:'正常',avatar:'blue'},
+    {name:'刘店长',role:'群管',type:'店长',identity:'店长',store:'宝安门店',status:'正常',avatar:'green'},
+    {name:'周店员',role:'群管',type:'店员',identity:'店员',store:'宝安门店',status:'正常',avatar:'green'},
+    {name:'郑伟',role:'客户',type:'客户',identity:'客户',store:'宝安门店',status:'正常',avatar:'blue',tag:'沉默',phone:'131****5544'},
+    {name:'周磊',role:'客户',type:'客户',identity:'客户',store:'宝安门店',status:'黑名单',avatar:'red',phone:'150****6677'}
   ]},
-  {id:'g4',name:'深圳区域代理群',type:'代理群',source:'华南区代理',owner:'陈代理',members:448,customers:425,status:'正常',lastSync:'5天前',stores:['南山门店','福田门店','宝安门店'],memberList:[
-    {name:'陈代理',role:'群主',type:'代理',store:'-',status:'正常',avatar:'blue'},
-    {name:'李店长',role:'群管',type:'店长',store:'南山门店',status:'正常',avatar:'green'},
-    {name:'王店长',role:'群管',type:'店长',store:'福田门店',status:'正常',avatar:'green'},
-    {name:'张店长',role:'群管',type:'店长',store:'宝安门店',status:'正常',avatar:'green'},
-    {name:'李四',role:'群管',type:'店员',store:'南山门店',status:'正常',avatar:'green'},
-    {name:'钱六',role:'群管',type:'店员',store:'福田门店',status:'正常',avatar:'green'}
+  {id:'g4',name:'深圳区域代理群',type:'代理群',source:'全部门店',owner:'陈代理',managers:['王店长','赵店长','刘店长'],customers:405,status:'正常',updatedTime:'今天 09:15',members:448,abnormal:3,pendingSync:5,lastSync:'今天 09:15',stores:['南山门店','福田门店','宝安门店'],agent:'陈代理',clerks:['李店员','张店员','孙店员','周店员'],memberList:[
+    {name:'陈代理',role:'群主',type:'代理',identity:'代理',store:'-',status:'正常',avatar:'blue'},
+    {name:'王店长',role:'群管',type:'店长',identity:'店长',store:'南山门店',status:'正常',avatar:'green'},
+    {name:'赵店长',role:'群管',type:'店长',identity:'店长',store:'福田门店',status:'正常',avatar:'green'},
+    {name:'刘店长',role:'群管',type:'店长',identity:'店长',store:'宝安门店',status:'正常',avatar:'green'},
+    {name:'李店员',role:'群管',type:'店员',identity:'店员',store:'南山门店',status:'正常',avatar:'green'},
+    {name:'钱六',role:'群管',type:'店员',identity:'店员',store:'福田门店',status:'正常',avatar:'green'}
   ]}
 ];
 
 var ACTIVITIES = [
-  {color:'blue',text:'<strong>南山门店客户群</strong> 同步完成，新增 5 人',time:'1小时前'},
-  {color:'red',text:'<strong>福田门店客户群</strong> 群主更换待处理',time:'昨天 18:30'},
+  {color:'blue',text:'<strong>南山门店群聊</strong> 同步完成，新增 5 人',time:'1小时前'},
+  {color:'red',text:'<strong>福田门店群聊</strong> 群主更换待处理',time:'昨天 18:30'},
   {color:'green',text:'新增客户 <strong>吴佳</strong> 归属南山门店',time:'今天 09:00'},
-  {color:'orange',text:'<strong>宝安门店客户群</strong> 黑名单客户需移出',time:'前天 16:45'}
+  {color:'orange',text:'<strong>宝安门店群聊</strong> 黑名单客户需移出',time:'前天 16:45'}
 ];
 
 var GROUP_TABS_BY_ROLE = {
@@ -759,17 +794,18 @@ var PERMISSIONS = {
 };
 
 var MSG_PRESETS = {
-  g1:[{type:'time',text:'今天 08:30'},{type:'system',text:'李店长 邀请了 李四、王五 加入群聊'},{type:'other',name:'李店长',avatar:'blue',text:'各位早上好！今天有新品到店，注意跟进客户反馈。'},{type:'other',name:'李四',avatar:'green',text:'收到，李店长！我这边有3位高意向客户今天会到店。'},{type:'other',name:'张三',avatar:'blue',text:'好的，请问新品的价格区间是多少？'},{type:'other',name:'李店长',avatar:'blue',text:'价格在2000-5000之间，具体看型号。'},{type:'card',name:'李店长',avatar:'blue',cardIcon:'🛍️',cardTitle:'2026新品租赁手册',cardBody:'包含12款新品详细参数、价格及优惠方案',cardAction:'点击查看详情'},{type:'time',text:'今天 10:15'},{type:'other',name:'陈晓',avatar:'blue',text:'这个新品有推广计划吗？'},{type:'other',name:'李店长',avatar:'blue',text:'有的，后续会在群里同步活动信息。'},{type:'self',name:'我',avatar:'blue',text:'好的，我这边也准备一下客户邀约名单。'},{type:'service',tag:'售前咨询',tagBg:'var(--warning-light)',tagColor:'var(--warning)',title:'客户张三咨询新品详情',desc:'客户对新品租赁方案感兴趣，需跟进确认需求',time:'今天 10:30'},{type:'other',name:'孙婷婷',avatar:'blue',text:'我上次成交的客户也对新品感兴趣，我发个消息问问。'},{type:'time',text:'今天 14:30'},{type:'service',tag:'售后跟进',tagBg:'var(--success-light)',tagColor:'var(--success)',title:'客户李芳反馈设备使用问题',desc:'租赁设备运行有异响，需安排售后上门检查',time:'今天 14:25'},{type:'other',name:'李四',avatar:'green',text:'张三客户已经到店了，正在介绍新品。'},{type:'other',name:'李店长',avatar:'blue',text:'👍 加油！有需要支持随时说。'}],
-  g2:[{type:'time',text:'昨天 10:00'},{type:'system',text:'王店长 邀请了 钱六 加入群聊'},{type:'other',name:'王店长',avatar:'blue',text:'各位好，福田门店客户群已创建，后续通知都在这里发布。'},{type:'other',name:'钱六',avatar:'green',text:'收到！'},{type:'other',name:'赵敏',avatar:'blue',text:'好的，谢谢！'}],
-  g3:[{type:'time',text:'昨天 09:00'},{type:'system',text:'张店长 创建了宝安门店客户群'},{type:'other',name:'张店长',avatar:'blue',text:'宝安门店客户群已建立，各位有问题随时沟通。'}],
-  g4:[{type:'time',text:'今天 09:00'},{type:'system',text:'陈代理 邀请了 李店长、王店长、张店长 加入群聊'},{type:'other',name:'陈代理',avatar:'blue',text:'各位好，这是深圳区域代理群，后续管理通知和协同都在这里沟通。'},{type:'other',name:'李店长',avatar:'green',text:'收到！南山门店相关事宜我会及时同步。'},{type:'other',name:'王店长',avatar:'green',text:'收到！福田门店这边没问题。'}]
+  g1:[{type:'time',text:'今天 08:30'},{type:'system',text:'王店长 邀请了 李店员、张店员 加入群聊'},{type:'other',name:'王店长',avatar:'blue',text:'各位早上好！今天有新品到店，注意跟进客户反馈。'},{type:'other',name:'李店员',avatar:'green',text:'收到，王店长！我这边有3位高意向客户今天会到店。'},{type:'other',name:'张三',avatar:'blue',text:'好的，请问新品的价格区间是多少？'},{type:'other',name:'王店长',avatar:'blue',text:'价格在2000-5000之间，具体看型号。'},{type:'card',name:'王店长',avatar:'blue',cardIcon:'🛍️',cardTitle:'2026新品租赁手册',cardBody:'包含12款新品详细参数、价格及优惠方案',cardAction:'点击查看详情'},{type:'time',text:'今天 10:15'},{type:'other',name:'陈晓',avatar:'blue',text:'这个新品有推广计划吗？'},{type:'other',name:'王店长',avatar:'blue',text:'有的，后续会在群里同步活动信息。'},{type:'self',name:'我',avatar:'blue',text:'好的，我这边也准备一下客户邀约名单。'},{type:'service',tag:'售前咨询',tagBg:'var(--warning-light)',tagColor:'var(--warning)',title:'客户张三咨询新品详情',desc:'客户对新品租赁方案感兴趣，需跟进确认需求',time:'今天 10:30'},{type:'other',name:'孙婷婷',avatar:'blue',text:'我上次成交的客户也对新品感兴趣，我发个消息问问。'},{type:'time',text:'今天 14:30'},{type:'service',tag:'售后跟进',tagBg:'var(--success-light)',tagColor:'var(--success)',title:'客户李芳反馈设备使用问题',desc:'租赁设备运行有异响，需安排售后上门检查',time:'今天 14:25'},{type:'other',name:'李店员',avatar:'green',text:'张三客户已经到店了，正在介绍新品。'},{type:'other',name:'王店长',avatar:'blue',text:'👍 加油！有需要支持随时说。'}],
+  g2:[{type:'time',text:'昨天 10:00'},{type:'system',text:'陈代理 邀请了 赵店长、孙店员 加入群聊'},{type:'other',name:'陈代理',avatar:'blue',text:'各位好，福田门店群聊已创建，后续通知都在这里发布。'},{type:'other',name:'孙店员',avatar:'green',text:'收到！'},{type:'other',name:'赵敏',avatar:'blue',text:'好的，谢谢！'}],
+  g3:[{type:'time',text:'昨天 09:00'},{type:'system',text:'陈代理 创建了宝安门店群聊'},{type:'other',name:'陈代理',avatar:'blue',text:'宝安门店群聊已建立，各位有问题随时沟通。'}],
+  g4:[{type:'time',text:'今天 09:00'},{type:'system',text:'陈代理 邀请了 王店长、赵店长、刘店长 加入群聊'},{type:'other',name:'陈代理',avatar:'blue',text:'各位好，这是深圳区域代理群，后续管理通知和协同都在这里沟通。'},{type:'other',name:'王店长',avatar:'green',text:'收到！南山门店相关事宜我会及时同步。'},{type:'other',name:'赵店长',avatar:'green',text:'收到！福田门店这边没问题。'}]
 };
 
 var MSG_REPLIES = {
-  '李店长':['收到！','好的，我看看。','没问题，马上处理。','👍'],
-  '王店长':['收到！','好的。','没问题。','👍'],
-  '张店长':['收到！','好的。','👍'],
-  '李四':['好的！','我马上跟进。','客户说考虑一下。','今天下午联系客户。'],
+  '王店长':['收到！','好的，我看看。','没问题，马上处理。','👍'],
+  '赵店长':['收到！','好的。','没问题。','👍'],
+  '刘店长':['收到！','好的。','👍'],
+  '李店员':['好的！','我马上跟进。','客户说考虑一下。','今天下午联系客户。'],
+  '张店员':['好的！','收到。','马上处理。'],
   '张三':['好的，谢谢！','明白了。','还有其他优惠吗？'],
   '陈晓':['了解！','我也想问这个问题。','好的，我等消息。'],
   '孙婷婷':['好的！','我这边也跟进一下。','客户回复了，有兴趣。'],
@@ -786,6 +822,75 @@ var currentGroupTab = 'all';
 var currentMsgGroupId = null;
 var msgHistories = {};
 var currentContactSearch = '';
+
+function getStatusClass(status) {
+  var map = {'正常':'status-normal','待同步':'status-sync','异常':'status-abnormal','停用':'status-stopped','已删除':'status-disabled'};
+  return map[status] || 'status-normal';
+}
+
+function getMemberStatusInfo(status) {
+  var map = {
+    '正常':{avatarOverride:null,statusCls:'normal',statusText:'正常'},
+    '黑名单':{avatarOverride:'red',statusCls:'blacklist',statusText:'黑名单'},
+    '已离职':{avatarOverride:'gray',statusCls:'resigned',statusText:'已离职'},
+    '已退群':{avatarOverride:'gray',statusCls:'quit',statusText:'已退群'},
+    '停用':{avatarOverride:'gray',statusCls:'disabled',statusText:'停用'}
+  };
+  return map[status] || {avatarOverride:null,statusCls:'normal',statusText:status};
+}
+
+function renderMemberStatus(status) {
+  if (status === '正常') return '';
+  var si = getMemberStatusInfo(status);
+  return '<span class="member-status '+si.statusCls+'">'+si.statusText+'</span>';
+}
+
+function isMyGroup(g) {
+  var r = ROLES[currentRole];
+  if (currentRole === 'buyer') return false;
+  if (currentRole === 'agent') return true;
+  if (currentRole === 'manager' || currentRole === 'clerk') {
+    return g.source === r.scope || g.type === '门店群';
+  }
+  return false;
+}
+
+function closeSubPage() {
+  document.getElementById('subPage').classList.remove('show');
+}
+
+function switchMemberTab(el, tab, groupId) {
+  var tabs = el.parentElement.querySelectorAll('.tab');
+  tabs.forEach(function(t){t.classList.remove('active')});
+  el.classList.add('active');
+  var g = GROUPS.find(function(x){return x.id===groupId});
+  if (!g) return;
+  var members = g.memberList;
+  if (tab==='群主') members = members.filter(function(m){return m.role==='群主'});
+  else if (tab==='群管') members = members.filter(function(m){return m.role==='群管'});
+  else if (tab==='客户') members = members.filter(function(m){return m.type==='客户'});
+  else if (tab==='异常') members = members.filter(function(m){return m.status!=='正常'});
+  var area = document.getElementById('memberListArea');
+  if (!area) return;
+  if (members.length===0) {
+    area.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div><div class="empty-text">暂无成员</div></div>';
+    return;
+  }
+  area.innerHTML = members.map(function(m){
+    var si=getMemberStatusInfo(m.status);
+    var ac=si.avatarOverride||(m.type==='客户'?'blue':m.type==='店长'?'blue':m.type==='店员'?'green':'orange');
+    var tagHtml=m.tag?'<span class="tag '+(m.tag==='高意向'?'tag-hot':m.tag==='已成交'?'tag-deal':'tag-silent')+'" style="margin-left:4px">'+m.tag+'</span>':'';
+    var actionHtml='';
+    if (m.status==='已离职') actionHtml='<span class="member-action" onclick="event.stopPropagation();showToast(\'已移出群\')">移出群</span>';
+    else if (m.status==='黑名单') actionHtml='<span class="member-action" onclick="event.stopPropagation();showToast(\'已移出群\')">移出群</span>';
+    else if (m.status==='已退群') actionHtml='<span style="font-size:11px;color:var(--text-tertiary)">已退群</span>';
+    return '<div class="member-card"><div class="member-avatar '+ac+'">'+m.name.charAt(0)+'</div><div class="member-info"><div class="member-name">'+m.name+tagHtml+renderMemberStatus(m.status)+'</div><div class="member-meta">'+m.role+'｜'+m.identity+'｜'+m.store+'</div></div>'+actionHtml+'</div>';
+  }).join('');
+}
+
+function switchCustomerTab(tab) {
+  currentCustomerTab = tab;
+}
 
 function switchTab(tab) {
   document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});
@@ -835,7 +940,7 @@ function showCustomerDetail(id) {
     var typeTag = g.type==='代理群'?'tag-group':'tag-group';
     return '<div class="member-card"><div class="member-avatar blue">群</div><div class="member-info"><div class="member-name">'+g.name+'</div><div class="member-meta"><span class="tag '+typeTag+'">'+g.type+'</span>｜群主：'+g.owner+'｜加入：'+g.joinTime+'｜<span class="group-status '+gs+'" style="font-size:11px;padding:1px 6px;">'+g.gStatus+'</span></div></div></div>';
   }).join('') : '<div class="empty-state"><div class="empty-icon">📭</div><div class="empty-text">暂无群关系</div></div>';
-  var touchRecords = [{type:'系统通知',content:'客户标签变更为高意向',time:'2026-05-04 09:00',operator:'系统',status:'已完成'},{type:'群消息',content:'南山门店客户群推送新品手册',time:'2026-05-03 14:00',operator:'李店长',status:'已查看'},{type:'系统通知',content:'客户已加入门店群',time:'2026-04-15 10:00',operator:'系统',status:'已完成'}];
+  var touchRecords = [{type:'系统通知',content:'客户标签变更为高意向',time:'2026-05-04 09:00',operator:'系统',status:'已完成'},{type:'群消息',content:'南山门店群聊推送新品手册',time:'2026-05-03 14:00',operator:'王店长',status:'已查看'},{type:'系统通知',content:'客户已加入门店群',time:'2026-04-15 10:00',operator:'系统',status:'已完成'}];
   var touchHtml = touchRecords.map(function(r){return '<div class="member-card"><div class="member-avatar gray">'+r.type.charAt(0)+'</div><div class="member-info"><div class="member-name">'+r.content+'</div><div class="member-meta">'+r.type+'｜'+r.operator+'｜'+r.time+'</div></div><span class="tag tag-deal" style="font-size:10px;">'+r.status+'</span></div>';}).join('');
   document.getElementById('subPageContent').innerHTML = '<div class="card" style="margin:16px"><div style="display:flex;align-items:center;gap:12px;margin-bottom:12px"><div class="member-avatar blue" style="width:48px;height:48px;font-size:20px">'+c.name.charAt(0)+'</div><div><div style="font-size:18px;font-weight:700">'+c.name+'</div><div style="font-size:13px;color:var(--text-secondary);margin-top:2px">'+c.store+'｜'+c.server+'</div></div><span style="margin-left:auto;font-size:12px;padding:3px 10px;border-radius:4px;background:'+(c.status==='正常'?'var(--success-light)':'var(--danger-light)')+';color:'+statusColor+';font-weight:500">'+c.status+'</span></div><div class="detail-row"><span class="detail-label">手机号</span><span class="detail-value">'+c.phone+'</span></div><div class="detail-row"><span class="detail-label">所属代理</span><span class="detail-value">'+c.agent+'</span></div><div class="detail-row"><span class="detail-label">所属门店</span><span class="detail-value">'+c.store+'</span></div><div class="detail-row"><span class="detail-label">服务人</span><span class="detail-value">'+c.server+'</span></div><div class="detail-row"><span class="detail-label">客户标签</span><span class="detail-value">'+(c.tags.length?c.tags.map(function(t){return '<span class="tag '+(t==='高意向'?'tag-hot':t==='已成交'?'tag-deal':'tag-silent')+'">'+t+'</span>'}).join(' '):'无')+'</span></div><div class="detail-row"><span class="detail-label">群状态</span><span class="detail-value">'+c.groupStatus+'</span></div></div><div class="section-title">群关系</div>'+groupsHtml+'<div class="section-title">触达记录</div>'+touchHtml+'<div style="height:20px"></div>';
   document.getElementById('subPage').classList.add('show');
@@ -851,17 +956,88 @@ function showGroupDetail(id) {
 
 function showAgentGroupDetail(g) {
   var statusCls = getStatusClass(g.status);
-  document.getElementById('subPageContent').innerHTML = '<div class="card" style="margin:16px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div style="font-size:18px;font-weight:700">'+g.name+'</div><span class="group-status '+statusCls+'">'+g.status+'</span></div><div class="detail-row"><span class="detail-label">群类型</span><span class="detail-value">代理群</span></div><div class="detail-row"><span class="detail-label">来源对象</span><span class="detail-value">'+g.source+'</span></div><div class="detail-row"><span class="detail-label">群主</span><span class="detail-value">'+g.owner+'</span></div><div class="detail-row"><span class="detail-label">成员数</span><span class="detail-value">'+g.members+'</span></div><div class="detail-row"><span class="detail-label">最近同步</span><span class="detail-value">'+g.lastSync+'</span></div></div><div class="section-title">快捷操作</div><div style="display:flex;flex-wrap:wrap;gap:8px;padding:0 16px 12px"><button class="btn btn-primary btn-sm" onclick="openMsg(\''+g.id+'\')">💬 群消息</button><button class="btn btn-outline btn-sm" onclick="showToast(\'查看来源：'+g.source+'\')">🔍 查看来源</button></div><div class="section-title">成员列表</div>'+g.memberList.map(function(m){var si=getMemberStatusInfo(m.status);var ac=si.avatarOverride||m.avatar||'blue';return '<div class="member-card"><div class="member-avatar '+ac+'">'+m.name.charAt(0)+'</div><div class="member-info"><div class="member-name">'+m.name+renderMemberStatus(m.status)+'</div><div class="member-meta">'+m.role+'｜'+m.type+'｜'+m.store+'</div></div></div>';}).join('')+'<div class="section-title">同步记录</div><div style="padding:0 16px 20px"><div class="activity-item"><div class="activity-dot blue"></div><div class="activity-content"><div class="activity-text">成员同步完成，无变更</div><div class="activity-time">5天前 · 系统</div></div></div><div class="activity-item"><div class="activity-dot green"></div><div class="activity-content"><div class="activity-text">群创建成功</div><div class="activity-time">2026-01-10 09:00 · 系统</div></div></div></div><div style="height:20px"></div>';
+  var r = ROLES[currentRole];
+  var identityDisplay = r.identity;
+  var tenantDisplay = r.tenant;
+  var ownerInfo = g.memberList.find(function(m){return m.role==='群主'});
+  var ownerHtml = '';
+  if (ownerInfo) {
+    var ownerAvatarBg = ownerInfo.type==='代理'?'var(--primary)':'var(--success)';
+    ownerHtml = '<div class="section-title">群主信息</div><div class="member-card"><div class="member-avatar" style="background:'+ownerAvatarBg+'">'+ownerInfo.name.charAt(0)+'</div><div class="member-info"><div class="member-name">'+ownerInfo.name+'</div><div class="member-meta">角色：群主｜身份：'+ownerInfo.identity+'｜状态：正常</div></div></div>';
+  }
+  var managers = g.memberList.filter(function(m){return m.role==='群管'});
+  var managersHtml = managers.length ? managers.map(function(m){
+    var avBg = m.type==='店长'?'var(--primary)':'var(--success)';
+    return '<div class="member-card"><div class="member-avatar" style="background:'+avBg+'">'+m.name.charAt(0)+'</div><div class="member-info"><div class="member-name">'+m.name+'</div><div class="member-meta">'+m.role+'｜'+m.identity+'｜正常</div></div></div>';
+  }).join('') : '<div class="empty-state" style="padding:16px"><div class="empty-text">暂无群管</div></div>';
+  var customers = g.memberList.filter(function(m){return m.type==='客户'});
+  var customersHtml = customers.length ? customers.map(function(m){
+    var ac = m.status==='黑名单'?'red':'blue';
+    var phoneDisplay = m.phone || '客户'+m.name.charAt(0);
+    return '<div class="member-card"><div class="member-avatar '+ac+'">'+m.name.charAt(0)+'</div><div class="member-info"><div class="member-name">'+m.name+renderMemberStatus(m.status)+'</div><div class="member-meta">'+phoneDisplay+'</div></div></div>';
+  }).join('') : '<div class="empty-state" style="padding:16px"><div class="empty-text">暂无客户</div></div>';
+  var exceptionHtml = '';
+  if (g.abnormal > 0) {
+    exceptionHtml = '<div class="exception-alert"><span class="ea-icon">⚠️</span><span class="ea-text">当前群存在'+g.abnormal+'名异常成员，请联系管理员处理</span></div>';
+  }
+  if (g.pendingSync > 0) {
+    exceptionHtml += '<div class="exception-alert" style="background:var(--warning-light)"><span class="ea-icon">🔄</span><span class="ea-text" style="color:var(--warning)">当前群有'+g.pendingSync+'名成员待同步，请及时处理</span></div>';
+  }
+  var enterGroupBtn = '<div style="padding:16px"><button class="btn btn-primary btn-block" onclick="openMsg(\''+g.id+'\')">💬 进入群聊</button></div>';
+  document.getElementById('subPageContent').innerHTML =
+    '<div class="card" style="margin:16px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div style="font-size:18px;font-weight:700">'+g.name+'</div><span class="group-status '+statusCls+'">'+g.status+'</span></div>'+
+    '<div class="detail-row"><span class="detail-label">群名称</span><span class="detail-value">'+g.name+'</span></div>'+
+    '<div class="detail-row"><span class="detail-label">群类型</span><span class="detail-value">代理群</span></div>'+
+    '<div class="detail-row"><span class="detail-label">来源对象</span><span class="detail-value">'+g.source+'</span></div>'+
+    '<div class="detail-row"><span class="detail-label">当前身份</span><span class="detail-value">'+identityDisplay+'</span></div>'+
+    '<div class="detail-row"><span class="detail-label">所属租户</span><span class="detail-value">'+tenantDisplay+'</span></div>'+
+    '<div class="detail-row"><span class="detail-label">创建方式</span><span class="detail-value">系统自动创建</span></div>'+
+    '<div class="detail-row"><span class="detail-label">群状态</span><span class="detail-value">'+g.status+'</span></div>'+
+    '</div>'+
+    '<div class="section-title">成员概览</div><div class="member-overview"><div class="member-stat"><div class="num blue">1</div><div class="txt">群主</div></div><div class="member-stat"><div class="num green">'+managers.length+'</div><div class="txt">群管</div></div><div class="member-stat"><div class="num blue">'+g.customers+'</div><div class="txt">客户</div></div><div class="member-stat"><div class="num '+(g.abnormal>0?'red':'green')+'">'+g.abnormal+'</div><div class="txt">异常</div></div><div class="member-stat"><div class="num '+(g.pendingSync>0?'orange':'green')+'">'+g.pendingSync+'</div><div class="txt">待同步</div></div></div>'+
+    ownerHtml+
+    '<div class="section-title">群管列表</div>'+managersHtml+
+    '<div class="section-title">客户列表</div>'+customersHtml+
+    exceptionHtml+
+    enterGroupBtn+
+    '<div style="height:20px"></div>';
   document.getElementById('subPage').classList.add('show');
 }
 
 function showStoreGroupDetail(g) {
   var statusCls = getStatusClass(g.status);
-  var memberTabs = ['全部','群主','店员','客户','异常'];
+  var r = ROLES[currentRole];
+  var identityDisplay = r.identity;
+  var tenantDisplay = r.tenant;
+  var ownerInfo = g.memberList.find(function(m){return m.role==='群主'});
+  var ownerHtml = '';
+  if (ownerInfo) {
+    var ownerAvatarBg = ownerInfo.type==='店长'?'var(--primary)':ownerInfo.type==='代理'?'var(--primary)':'var(--success)';
+    ownerHtml = '<div class="section-title">群主信息卡</div><div class="member-card"><div class="member-avatar" style="background:'+ownerAvatarBg+'">'+ownerInfo.name.charAt(0)+'</div><div class="member-info"><div class="member-name">'+ownerInfo.name+'</div><div class="member-meta">角色：群主｜身份：'+ownerInfo.identity+'｜状态：正常</div></div></div>';
+  }
+  var managers = g.memberList.filter(function(m){return m.role==='群管'});
+  var managersHtml = managers.length ? managers.map(function(m){
+    var avBg = m.type==='店长'?'var(--primary)':'var(--success)';
+    return '<div class="member-card"><div class="member-avatar" style="background:'+avBg+'">'+m.name.charAt(0)+'</div><div class="member-info"><div class="member-name">'+m.name+'</div><div class="member-meta">'+m.role+'｜'+m.identity+'｜正常</div></div></div>';
+  }).join('') : '<div class="empty-state" style="padding:16px"><div class="empty-text">暂无群管</div></div>';
+  var customers = g.memberList.filter(function(m){return m.type==='客户'});
+  var customersHtml = customers.length ? customers.map(function(m){
+    var ac = m.status==='黑名单'?'red':'blue';
+    var phoneDisplay = m.phone || '客户'+m.name.charAt(0);
+    return '<div class="member-card"><div class="member-avatar '+ac+'">'+m.name.charAt(0)+'</div><div class="member-info"><div class="member-name">'+m.name+renderMemberStatus(m.status)+'</div><div class="member-meta">'+phoneDisplay+'</div></div></div>';
+  }).join('') : '<div class="empty-state" style="padding:16px"><div class="empty-text">暂无客户</div></div>';
+  var exceptionHtml = '';
+  if (g.abnormal > 0) {
+    exceptionHtml = '<div class="exception-alert"><span class="ea-icon">⚠️</span><span class="ea-text">当前群存在'+g.abnormal+'名异常成员，请联系管理员处理</span></div>';
+  }
+  if (g.pendingSync > 0) {
+    exceptionHtml += '<div class="exception-alert" style="background:var(--warning-light)"><span class="ea-icon">🔄</span><span class="ea-text" style="color:var(--warning)">当前群有'+g.pendingSync+'名成员待同步，请及时处理</span></div>';
+  }
+  var memberTabs = ['全部','群主','群管','客户','异常'];
   function renderMembers(tab) {
     var members = g.memberList;
     if (tab==='群主') members = members.filter(function(m){return m.role==='群主'});
-    else if (tab==='店员') members = members.filter(function(m){return m.type==='店员'});
+    else if (tab==='群管') members = members.filter(function(m){return m.role==='群管'});
     else if (tab==='客户') members = members.filter(function(m){return m.type==='客户'});
     else if (tab==='异常') members = members.filter(function(m){return m.status!=='正常'});
     if (members.length===0) return '<div class="empty-state"><div class="empty-icon">📭</div><div class="empty-text">暂无成员</div></div>';
@@ -872,11 +1048,29 @@ function showStoreGroupDetail(g) {
       if (m.status==='已离职') actionHtml='<span class="member-action" onclick="event.stopPropagation();showToast(\'已移出群\')">移出群</span>';
       else if (m.status==='黑名单') actionHtml='<span class="member-action" onclick="event.stopPropagation();showToast(\'已移出群\')">移出群</span>';
       else if (m.status==='已退群') actionHtml='<span style="font-size:11px;color:var(--text-tertiary)">已退群</span>';
-      return '<div class="member-card"><div class="member-avatar '+ac+'">'+m.name.charAt(0)+'</div><div class="member-info"><div class="member-name">'+m.name+tagHtml+renderMemberStatus(m.status)+'</div><div class="member-meta">'+m.role+'｜'+m.type+'｜'+m.store+'</div></div>'+actionHtml+'</div>';
+      return '<div class="member-card"><div class="member-avatar '+ac+'">'+m.name.charAt(0)+'</div><div class="member-info"><div class="member-name">'+m.name+tagHtml+renderMemberStatus(m.status)+'</div><div class="member-meta">'+m.role+'｜'+m.identity+'｜'+m.store+'</div></div>'+actionHtml+'</div>';
     }).join('');
   }
   window._renderMembers = renderMembers;
-  document.getElementById('subPageContent').innerHTML = '<div class="card" style="margin:16px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div style="font-size:18px;font-weight:700">'+g.name+'</div><span class="group-status '+statusCls+'">'+g.status+'</span></div><div class="detail-row"><span class="detail-label">门店名称</span><span class="detail-value">'+g.source+'</span></div><div class="detail-row"><span class="detail-label">所属代理</span><span class="detail-value">'+(g.agent||'-')+'</span></div><div class="detail-row"><span class="detail-label">群主</span><span class="detail-value">'+g.owner+'</span></div><div class="detail-row"><span class="detail-label">店员数</span><span class="detail-value">'+(g.clerks?g.clerks.length:0)+'</span></div><div class="detail-row"><span class="detail-label">客户数</span><span class="detail-value">'+g.customers+'</span></div><div class="detail-row"><span class="detail-label">群状态</span><span class="detail-value">'+g.status+'</span></div><div class="detail-row"><span class="detail-label">最近同步时间</span><span class="detail-value">'+g.lastSync+'</span></div></div><div class="section-title">成员概览</div><div class="member-overview"><div class="member-stat"><div class="num blue">'+g.members+'</div><div class="txt">总成员</div></div><div class="member-stat"><div class="num green">'+(g.members-g.customers)+'</div><div class="txt">内部成员</div></div><div class="member-stat"><div class="num blue">'+g.customers+'</div><div class="txt">客户</div></div><div class="member-stat"><div class="num '+(g.abnormal>0?'red':'green')+'">'+g.abnormal+'</div><div class="txt">异常</div></div><div class="member-stat"><div class="num '+(g.pendingSync>0?'orange':'green')+'">'+g.pendingSync+'</div><div class="txt">待同步</div></div></div><div class="section-title">快捷操作</div><div style="display:flex;flex-wrap:wrap;gap:8px;padding:0 16px 12px"><button class="btn btn-primary btn-sm" onclick="openMsg(\''+g.id+'\')">💬 群消息</button><button class="btn btn-outline btn-sm" onclick="showToast(\'查看门店客户\')">👤 查看门店客户</button><button class="btn btn-outline btn-sm" onclick="showToast(\'查看群内客户\')">📋 查看群内客户</button><button class="btn btn-outline btn-sm" onclick="showToast(\'查看来源：'+g.source+'\')">🔍 查看来源</button>'+(g.status==='待同步'?'<button class="btn btn-primary btn-sm" onclick="confirmSyncByGroup(\''+g.id+'\')">🔄 同步客户</button>':'')+'<button class="btn btn-outline btn-sm" onclick="showToast(\'查看店员\')">👥 查看店员</button><button class="btn btn-outline btn-sm" onclick="showChangeOwnerModal(\''+g.id+'\',\'store\')">🔑 更换群主</button><button class="btn btn-outline btn-sm" onclick="showToast(\'移除异常成员\')">⚠️ 移除异常成员</button><button class="btn btn-outline btn-sm" style="color:#BBB;border-color:#DDD" onclick="showToast(\'V1.1 接入\')">🛍️ 推送商品</button><button class="btn btn-outline btn-sm" style="color:#BBB;border-color:#DDD" onclick="showToast(\'V1.1 接入\')">🎫 推送优惠券</button><button class="btn btn-sm" style="color:var(--danger);border:1px solid var(--danger);background:transparent" onclick="confirmDisableGroup(\''+g.id+'\')">⏸ 停用群</button></div><div class="section-title">成员列表</div><div class="tabs" id="memberTabs">'+memberTabs.map(function(t){return '<div class="tab '+(t==='全部'?'active':'')+'" onclick="switchMemberTab(this,\''+t+'\',\''+g.id+'\')">'+t+'</div>';}).join('')+'</div><div id="memberListArea" style="padding-top:8px">'+renderMembers('all')+'</div><div class="section-title">群内客户</div><div style="padding:0 16px">'+(g.memberList.filter(function(m){return m.type==='客户'}).map(function(m){return '<div class="member-card"><div class="member-avatar blue">'+m.name.charAt(0)+'</div><div class="member-info"><div class="member-name">'+m.name+(m.tag?'<span class="tag '+(m.tag==='高意向'?'tag-hot':m.tag==='已成交'?'tag-deal':'tag-silent')+'" style="margin-left:4px">'+m.tag+'</span>':'')+'</div><div class="member-meta">'+m.store+'｜'+renderMemberStatus(m.status)+'</div></div></div>';}).join('')||'<div class="empty-state"><div class="empty-icon">📭</div><div class="empty-text">暂无客户</div></div>')+'</div><div class="section-title">同步记录</div><div style="padding:0 16px 20px"><div class="activity-item"><div class="activity-dot blue"></div><div class="activity-content"><div class="activity-text">成员同步完成，新增 5 人</div><div class="activity-time">今天 10:20 · 王店长</div></div></div><div class="activity-item"><div class="activity-dot green"></div><div class="activity-content"><div class="activity-text">群创建成功</div><div class="activity-time">2026-03-15 09:00 · 系统</div></div></div></div>';
+  var enterGroupBtn = '<div style="padding:16px"><button class="btn btn-primary btn-block" onclick="openMsg(\''+g.id+'\')">💬 进入群聊</button></div>';
+  document.getElementById('subPageContent').innerHTML =
+    '<div class="card" style="margin:16px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div style="font-size:18px;font-weight:700">'+g.name+'</div><span class="group-status '+statusCls+'">'+g.status+'</span></div>'+
+    '<div class="detail-row"><span class="detail-label">群名称</span><span class="detail-value">'+g.name+'</span></div>'+
+    '<div class="detail-row"><span class="detail-label">群类型</span><span class="detail-value">门店群</span></div>'+
+    '<div class="detail-row"><span class="detail-label">来源门店</span><span class="detail-value">'+g.source+'</span></div>'+
+    '<div class="detail-row"><span class="detail-label">当前身份</span><span class="detail-value">'+identityDisplay+'</span></div>'+
+    '<div class="detail-row"><span class="detail-label">所属租户</span><span class="detail-value">'+tenantDisplay+'</span></div>'+
+    '<div class="detail-row"><span class="detail-label">创建方式</span><span class="detail-value">系统自动创建</span></div>'+
+    '<div class="detail-row"><span class="detail-label">群状态</span><span class="detail-value">'+g.status+'</span></div>'+
+    '</div>'+
+    '<div class="section-title">成员概览</div><div class="member-overview"><div class="member-stat"><div class="num blue">1</div><div class="txt">群主</div></div><div class="member-stat"><div class="num green">'+managers.length+'</div><div class="txt">群管</div></div><div class="member-stat"><div class="num blue">'+g.customers+'</div><div class="txt">客户</div></div><div class="member-stat"><div class="num '+(g.abnormal>0?'red':'green')+'">'+g.abnormal+'</div><div class="txt">异常</div></div><div class="member-stat"><div class="num '+(g.pendingSync>0?'orange':'green')+'">'+g.pendingSync+'</div><div class="txt">待同步</div></div></div>'+
+    ownerHtml+
+    '<div class="section-title">群管列表</div>'+managersHtml+
+    '<div class="section-title">客户列表（白名单客户）</div>'+customersHtml+
+    exceptionHtml+
+    '<div class="section-title">成员列表</div><div class="tabs" id="memberTabs">'+memberTabs.map(function(t){return '<div class="tab '+(t==='全部'?'active':'')+'" onclick="switchMemberTab(this,\''+t+'\',\''+g.id+'\')">'+t+'</div>';}).join('')+'</div><div id="memberListArea" style="padding-top:8px">'+renderMembers('全部')+'</div>'+
+    enterGroupBtn+
+    '<div style="height:20px"></div>';
   document.getElementById('subPage').classList.add('show');
 }
 
@@ -970,7 +1164,7 @@ function closeModal(e) {
 
 function showOrgTree() {
   document.getElementById('subNavTitle').textContent = '我的代理';
-  document.getElementById('subPageContent').innerHTML = '<div style="padding:16px 16px 8px;font-size:13px;color:var(--text-secondary);line-height:1.6"><div style="background:var(--primary-light);border-radius:8px;padding:12px;margin-bottom:12px"><div style="font-weight:600;color:var(--primary);margin-bottom:4px">📋 代理组织架构</div><div>1. 代理可查看自己的群和下级门店群</div><div>2. 店员/店长切换身份时自动创建门店群</div><div>3. 代理登录自动创建代理下所有门店群</div><div>4. 黑名单客户不在群内</div></div></div><div class="section-title">组织架构</div><div style="padding:0 16px 16px"><div style="border-left:3px solid var(--primary);padding:10px 12px;margin-bottom:8px;background:var(--bg-card);border-radius:0 8px 8px 0;box-shadow:var(--shadow)"><div style="font-weight:700;font-size:15px">华南区代理</div><div style="font-size:12px;color:var(--text-tertiary);margin-top:2px">代理负责人：陈代理</div></div><div style="padding-left:20px;border-left:1px dashed var(--border);margin-left:18px"><div style="border-left:3px solid var(--success);padding:10px 12px;margin-bottom:8px;background:var(--success-light);border-radius:0 8px 8px 0"><div style="font-weight:600;font-size:14px">南山门店</div><div style="font-size:12px;color:var(--text-tertiary);margin-top:2px">直营店｜店长：李店长｜店员：李四、王五</div></div><div style="border-left:3px solid var(--success);padding:10px 12px;margin-bottom:8px;background:var(--success-light);border-radius:0 8px 8px 0"><div style="font-weight:600;font-size:14px">福田门店</div><div style="font-size:12px;color:var(--text-tertiary);margin-top:2px">非直营店｜店长：王店长｜店员：钱六</div></div><div style="border-left:3px solid var(--success);padding:10px 12px;margin-bottom:8px;background:var(--success-light);border-radius:0 8px 8px 0"><div style="font-weight:600;font-size:14px">宝安门店</div><div style="font-size:12px;color:var(--text-tertiary);margin-top:2px">非直营店｜店长：张店长｜店员：孙店员</div></div></div></div><div style="height:20px"></div>';
+  document.getElementById('subPageContent').innerHTML = '<div style="padding:16px 16px 8px;font-size:13px;color:var(--text-secondary);line-height:1.6"><div style="background:var(--primary-light);border-radius:8px;padding:12px;margin-bottom:12px"><div style="font-weight:600;color:var(--primary);margin-bottom:4px">📋 代理组织架构</div><div>1. 代理可查看自己的群和下级门店群</div><div>2. 店员/店长切换身份时自动创建门店群</div><div>3. 代理登录自动创建代理下所有门店群</div><div>4. 黑名单客户不在群内</div></div></div><div class="section-title">组织架构</div><div style="padding:0 16px 16px"><div style="border-left:3px solid var(--primary);padding:10px 12px;margin-bottom:8px;background:var(--bg-card);border-radius:0 8px 8px 0;box-shadow:var(--shadow)"><div style="font-weight:700;font-size:15px">天津租赁</div><div style="font-size:12px;color:var(--text-tertiary);margin-top:2px">代理负责人：陈代理</div></div><div style="padding-left:20px;border-left:1px dashed var(--border);margin-left:18px"><div style="border-left:3px solid var(--success);padding:10px 12px;margin-bottom:8px;background:var(--success-light);border-radius:0 8px 8px 0"><div style="font-weight:600;font-size:14px">南山门店</div><div style="font-size:12px;color:var(--text-tertiary);margin-top:2px">直营店｜店长：王店长｜店员：李店员、张店员</div></div><div style="border-left:3px solid var(--success);padding:10px 12px;margin-bottom:8px;background:var(--success-light);border-radius:0 8px 8px 0"><div style="font-weight:600;font-size:14px">福田门店</div><div style="font-size:12px;color:var(--text-tertiary);margin-top:2px">非直营店｜店长：赵店长｜店员：孙店员</div></div><div style="border-left:3px solid var(--success);padding:10px 12px;margin-bottom:8px;background:var(--success-light);border-radius:0 8px 8px 0"><div style="font-weight:600;font-size:14px">宝安门店</div><div style="font-size:12px;color:var(--text-tertiary);margin-top:2px">非直营店｜店长：刘店长｜店员：周店员</div></div></div></div><div style="height:20px"></div>';
   document.getElementById('subPage').classList.add('show');
 }
 
@@ -1005,9 +1199,6 @@ function closeRoleModal(e) {
 function switchRole(role) {
   currentRole = role;
   var r = ROLES[role];
-  document.getElementById('mineRole').textContent = r.identity;
-  document.getElementById('mineTenant').textContent = r.tenant;
-  document.getElementById('mineScope').textContent = '当前范围：'+r.scope;
   currentGroupTab = (GROUP_TABS_BY_ROLE[role]||[{key:'all'}])[0].key;
   currentCustomerTab = (CUSTOMER_TABS_BY_ROLE[role]||[{key:'all'}])[0].key;
   closeRoleModal();
@@ -1022,7 +1213,7 @@ function switchRole(role) {
 
 function showMyStores() {
   document.getElementById('subNavTitle').textContent = '我的门店';
-  var stores = [{name:'南山门店',type:'直营店',manager:'李店长',clerks:3,customers:148,groups:1},{name:'福田门店',type:'非直营店',manager:'王店长',clerks:1,customers:195,groups:1},{name:'宝安门店',type:'非直营店',manager:'张店长',clerks:1,customers:82,groups:1}];
+  var stores = [{name:'南山门店',type:'直营店',manager:'王店长',clerks:2,customers:128,groups:1},{name:'福田门店',type:'非直营店',manager:'赵店长',clerks:1,customers:195,groups:1},{name:'宝安门店',type:'非直营店',manager:'刘店长',clerks:1,customers:82,groups:1}];
   document.getElementById('subPageContent').innerHTML = '<div style="padding:16px">'+stores.map(function(s){return '<div class="card" style="margin:0 0 12px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div style="font-size:16px;font-weight:700">'+s.name+'</div><span class="tag '+(s.type==='直营店'?'tag-deal':'tag-silent')+'">'+s.type+'</span></div><div class="detail-row"><span class="detail-label">店长</span><span class="detail-value">'+s.manager+'</span></div><div class="detail-row"><span class="detail-label">店员数</span><span class="detail-value">'+s.clerks+'</span></div><div class="detail-row"><span class="detail-label">客户数</span><span class="detail-value">'+s.customers+'</span></div><div class="detail-row"><span class="detail-label">门店群</span><span class="detail-value">'+s.groups+' 个</span></div></div>';}).join('')+'</div>';
   document.getElementById('subPage').classList.add('show');
 }
@@ -1190,11 +1381,11 @@ var FRIEND_REQUESTS = [
 ];
 
 var MESSAGE_LIST = [
-  {id:'sys_join',name:'系统通知',preview:'您已加入南山门店客户群',time:'刚刚',badge:1,avatar:'blue',avatarText:'系',type:'system'},
-  {id:'sys_newmember',name:'群消息提醒',preview:'南山门店客户群有5位新成员加入',time:'10:20',badge:0,avatar:'green',avatarText:'群',type:'system'},
+  {id:'sys_join',name:'系统通知',preview:'您已加入南山门店群聊',time:'刚刚',badge:1,avatar:'blue',avatarText:'系',type:'system'},
+  {id:'sys_newmember',name:'群消息提醒',preview:'南山门店群聊有5位新成员加入',time:'10:20',badge:0,avatar:'green',avatarText:'群',type:'system'},
   {id:'fr',name:'好友申请',preview:'林小红等3人请求添加您为好友',time:'10:30',badge:3,avatar:'orange',avatarText:'友',type:'friend'},
-  {id:'g1',name:'南山门店客户群',preview:'李四：张三客户已经到店了，正在介绍新品。',time:'13:22',badge:2,avatar:'blue',avatarText:'南',type:'group'},
-  {id:'g2',name:'福田门店客户群',preview:'钱六：好的，我来处理。',time:'昨天',badge:0,avatar:'green',avatarText:'福',type:'group'},
+  {id:'g1',name:'南山门店群聊',preview:'李店员：张三客户已经到店了，正在介绍新品。',time:'13:22',badge:2,avatar:'blue',avatarText:'南',type:'group'},
+  {id:'g2',name:'福田门店群聊',preview:'孙店员：好的，我来处理。',time:'昨天',badge:0,avatar:'green',avatarText:'福',type:'group'},
   {id:'g4',name:'深圳区域代理群',preview:'陈代理：各门店注意查收通知。',time:'前天',badge:0,avatar:'blue',avatarText:'深',type:'group'},
   {id:'ct6',name:'李四',preview:'好的，我马上跟进。',time:'昨天',badge:1,avatar:'green',avatarText:'李',type:'contact'},
   {id:'ct11',name:'王店长',preview:'加油！有需要支持随时说。',time:'前天',badge:0,avatar:'blue',avatarText:'王',type:'contact'}
@@ -1256,7 +1447,11 @@ function scrollToSection(letter) {
   if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
 }
 
-function handleContactSearch(v) { currentContactSearch = v; renderContactList(); }
+function handleContactSearch(v) {
+  currentContactSearch = v;
+  renderContactList();
+  renderGroupSection();
+}
 function toggleAddMenu() { document.getElementById('addMenu').classList.toggle('show'); }
 function closeAddMenu() { document.getElementById('addMenu').classList.remove('show'); }
 
@@ -1435,6 +1630,125 @@ function showGroupMembers(groupId) {
 
 /* ========== Init ========== */
 
+function renderAll() {
+  renderMessageList();
+  renderContactList();
+  renderContactIdentity();
+  renderGroupSection();
+  renderMinePage();
+  updateNewFriendBadge();
+  updateBadges();
+}
+
+function renderContactIdentity() {
+  var r = ROLES[currentRole];
+  var html = '<div class="identity-display">';
+  if (currentRole === 'agent') {
+    html += '<div class="id-line"><span class="id-label">当前租户：</span>' + r.tenant + '</div>';
+    html += '<div class="id-line"><span class="id-label">当前身份：</span>' + r.identity + '</div>';
+  } else {
+    html += '<div class="id-line"><span class="id-label">当前身份：</span>' + r.identity + '</div>';
+  }
+  html += '</div>';
+  document.getElementById('contactIdentityDisplay').innerHTML = html;
+}
+
+function renderGroupSection() {
+  var area = document.getElementById('groupSectionArea');
+  if (!area) return;
+  var search = currentContactSearch.toLowerCase();
+  if (currentRole === 'buyer') {
+    area.innerHTML = '<div class="group-section"><div class="group-section-title">群聊</div><div class="empty-state" style="padding:24px 20px"><div class="empty-icon" style="font-size:36px">📭</div><div class="empty-text">暂无可查看的通讯录<br>请切换为店员、店长或代理身份后查看相关群聊</div></div></div>';
+    return;
+  }
+  var myGroups = GROUPS.filter(function(g){
+    if (!isMyGroup(g)) return false;
+    if (search) {
+      var match = g.name.toLowerCase().indexOf(search)>=0 ||
+        g.source.toLowerCase().indexOf(search)>=0 ||
+        g.owner.toLowerCase().indexOf(search)>=0 ||
+        (g.managers && g.managers.some(function(m){return m.toLowerCase().indexOf(search)>=0}));
+      if (!match) return false;
+    }
+    return true;
+  });
+  if (currentRole === 'agent') {
+    var storeGroups = myGroups.filter(function(g){return g.type==='门店群'});
+    var agentGroups = myGroups.filter(function(g){return g.type==='代理群'});
+    var html = '';
+    if (storeGroups.length > 0) {
+      html += '<div class="group-section"><div class="group-section-title">我管理的门店群</div>';
+      storeGroups.forEach(function(g){ html += renderGroupCardMini(g); });
+      html += '</div>';
+    } else if (!search) {
+      html += '<div class="group-section"><div class="group-section-title">我管理的门店群</div><div class="empty-state" style="padding:24px 20px"><div class="empty-icon" style="font-size:36px">📭</div><div class="empty-text">暂无可管理的门店群<br>当前代理身份下尚未绑定门店</div></div></div>';
+    }
+    if (agentGroups.length > 0) {
+      html += '<div class="group-section"><div class="group-section-title">代理群</div>';
+      agentGroups.forEach(function(g){ html += renderGroupCardMini(g); });
+      html += '</div>';
+    }
+    if (search && storeGroups.length === 0 && agentGroups.length === 0) {
+      html = '<div class="group-section"><div class="empty-state" style="padding:24px 20px"><div class="empty-icon" style="font-size:36px">🔍</div><div class="empty-text">未找到匹配的群聊</div></div></div>';
+    }
+    area.innerHTML = html;
+  } else {
+    var storeGroups2 = myGroups.filter(function(g){return g.type==='门店群'});
+    if (storeGroups2.length > 0) {
+      var html2 = '<div class="group-section"><div class="group-section-title">我的门店群</div>';
+      storeGroups2.forEach(function(g){ html2 += renderGroupCardMini(g); });
+      html2 += '</div>';
+      area.innerHTML = html2;
+    } else if (!search) {
+      area.innerHTML = '<div class="group-section"><div class="group-section-title">我的门店群</div><div class="empty-state" style="padding:24px 20px"><div class="empty-icon" style="font-size:36px">📭</div><div class="empty-text">当前门店暂无群聊<br>请联系管理员确认门店群是否已创建</div></div></div>';
+    } else {
+      area.innerHTML = '<div class="group-section"><div class="empty-state" style="padding:24px 20px"><div class="empty-icon" style="font-size:36px">🔍</div><div class="empty-text">未找到匹配的群聊</div></div></div>';
+    }
+  }
+}
+
+function renderGroupCardMini(g) {
+  var statusCls = getStatusClass(g.status);
+  var avBg = g.type==='代理群'?'var(--primary)':'var(--success)';
+  var ownerDisplay = g.owner;
+  if (currentRole === 'agent' && g.type === '门店群') {
+    ownerDisplay = '当前代理';
+  }
+  var metaLine1 = g.type + '｜来源：' + g.source;
+  var metaLine2 = '群主：' + ownerDisplay;
+  if (g.managers && g.managers.length > 0 && currentRole === 'agent' && g.type === '门店群') {
+    metaLine2 = '群主：当前代理';
+    metaLine2 += '｜群管：' + g.managers.join('、');
+  } else if (g.managers && g.managers.length > 0 && g.type === '代理群') {
+    metaLine2 += '｜群管：' + g.managers.slice(0,2).join('、') + (g.managers.length > 2 ? '等' : '');
+  }
+  var metaLine3 = '客户 ' + g.customers + ' 人';
+  return '<div class="group-card-mini" onclick="showGroupDetail(\''+g.id+'\')"><div class="gc-avatar" style="background:'+avBg+'">'+g.name.charAt(0)+'</div><div class="gc-info"><div class="gc-name">'+g.name+'</div><div class="gc-meta">'+metaLine1+'<br>'+metaLine2+'<br>'+metaLine3+'</div></div><span class="gc-status '+statusCls+'">'+g.status+'</span></div>';
+}
+
+function renderMinePage() {
+  var r = ROLES[currentRole];
+  document.getElementById('mineRole').textContent = r.identity;
+  document.getElementById('mineTenant').textContent = r.tenant;
+  document.getElementById('mineScope').textContent = '当前范围：'+r.scope;
+  var items = [
+    {icon:'🔄',bg:'var(--primary-light)',label:'切换身份',action:'openRoleSelector()'},
+    {icon:'👥',bg:'var(--success-light)',label:'我的群聊',action:'showMyGroups()'},
+    {icon:'🏪',bg:'var(--warning-light)',label:'我的门店',action:'showMyStores()'},
+    {icon:'🏢',bg:'var(--primary-light)',label:'组织架构',action:'showOrgTree()'}
+  ];
+  document.getElementById('mineItems').innerHTML = items.map(function(it){
+    return '<div class="my-item" onclick="'+it.action+'"><div class="item-icon" style="background:'+it.bg+'">'+it.icon+'</div><span class="item-label">'+it.label+'</span><span class="item-arrow">›</span></div>';
+  }).join('');
+  var settings = [
+    {icon:'📋',bg:'var(--primary-light)',label:'同步策略',action:'showSyncStrategy()'},
+    {icon:'🔐',bg:'var(--purple-light)',label:'权限说明',action:'showMyPermissions()'}
+  ];
+  document.getElementById('mineSettings').innerHTML = settings.map(function(it){
+    return '<div class="my-item" onclick="'+it.action+'"><div class="item-icon" style="background:'+it.bg+'">'+it.icon+'</div><span class="item-label">'+it.label+'</span><span class="item-arrow">›</span></div>';
+  }).join('');
+}
+
 renderAll();
 
 </script>
@@ -1563,7 +1877,7 @@ var ANNOTATIONS = [
     title: '通讯录页面',
     target: '#page-contacts',
     page: 'contacts',
-    content: '### 通讯录页面\n\n微信风格通讯录，包含：\n\n- 搜索框\n- 新的朋友入口\n- 我的群聊入口（群管理功能整合在此）\n- 联系人列表+字母索引\n\n#### 我的群聊\n\n点击进入群列表，支持门店群和代理群两种类型。\n\n点击群进入群详情。'
+    content: '### 通讯录页面\n\n按PRD重构的通讯录，包含：\n\n- 当前身份展示区（店员/店长显示身份，代理显示租户+身份）\n- 搜索框（搜索群聊/门店/联系人）\n- 快捷入口：新的朋友、我的群聊、添加好友\n- 群聊分组区（按身份分组：代理→我管理的门店群+代理群，店员/店长→我的门店群）\n- 联系人列表+字母索引\n\n#### 身份展示\n\n- 店员/店长：当前身份：南山门店店长\n- 代理：当前租户：天津租赁 + 当前身份：代理\n- 普通买家：当前身份：普通买家\n\n#### 群卡片字段（PRD 7.8/7.9）\n\n- 群名称\n- 群类型｜来源：门店\n- 群主：xxx（代理视角显示"当前代理"）\n- 群管：xxx、xxx（代理视角门店群显示）\n- 客户 N 人\n- 状态标签\n\n#### 空状态（PRD 7.10）\n\n- 普通买家：暂无可查看的通讯录\n- 店员/店长无群：当前门店暂无群聊\n- 代理无门店群：暂无可管理的门店群'
   },
   {
     id: 4,
@@ -1571,7 +1885,7 @@ var ANNOTATIONS = [
     target: '#subPage',
     page: 'sub',
     subFilter: function() { var t = document.getElementById('subNavTitle'); return t && t.textContent === '群详情'; },
-    content: '### 群类型\n\n| 类型 | 说明 |\n|------|------|\n| 门店群 | 每个门店一个群，店员/店长切换身份时自动创建 |\n| 代理群 | 代理下所有门店的群，代理是群主 |\n\n### 群自动创建逻辑\n\n- 店员/店长在个人中心切换到某店铺身份 → 系统自动创建该店铺群\n- 代理登录 → 系统自动创建代理下所有门店的群\n- 群成员：白名单客户（黑名单客户不在群内）\n- 代理群：代理是群主，各店店长/店员是群管，所有门店客户是群成员\n\n### 门店群详情字段\n\n| 字段 | 说明 |\n|------|------|\n| 门店名称 | 群来源门店 |\n| 所属代理 | 门店所属代理 |\n| 群主 | 店长/店员 |\n| 店员数 | 门店内部成员数量 |\n| 客户数（白名单）| 门店白名单客户数量 |\n| 群状态 | 正常 / 待同步 |\n| 最近同步时间 | 最近客户同步时间 |\n\n### 代理群详情字段\n\n| 字段 | 说明 |\n|------|------|\n| 代理名称 | 群来源代理 |\n| 群主（代理）| 代理本人 |\n| 覆盖门店列表 | 代理下所有门店 |\n| 群管 | 各店店长/店员 |\n| 客户数 | 所有门店客户总数 |\n| 群状态 | 正常 / 待同步 |'
+    content: '### 群类型\n\n| 类型 | 说明 |\n|------|------|\n| 门店群 | 每个门店一个群，店员/店长切换身份时自动创建 |\n| 代理群 | 代理下所有门店的群，代理是群主 |\n\n### 群自动创建逻辑\n\n- 店员/店长在个人中心切换到某店铺身份 → 系统自动创建该店铺群\n- 代理登录 → 系统自动创建代理下所有门店的群\n- 群成员：白名单客户（黑名单客户不在群内）\n- 代理群：代理是群主，各店店长/店员是群管，所有门店客户是群成员\n\n### 群详情页结构（PRD 第8章）\n\n- 群基础信息：群名称、群类型、来源门店、当前身份、所属租户、创建方式、群状态\n- 成员概览：群主1人、群管N人、客户N人、异常N人、待同步N人\n- 群主信息卡：姓名/昵称、角色、身份、状态\n- 群管列表：姓名｜身份｜状态\n- 客户列表（白名单客户）：姓名｜手机号脱敏\n- 异常提示：异常成员数、待同步数\n- 进入群聊按钮（条件展示）\n\n### 群状态（PRD 12.1）\n\n| 状态 | 说明 |\n|------|------|\n| 正常 | 群可正常查看 |\n| 异常 | 群主、群管、成员数据异常 |\n| 停用 | 群不可用 |\n| 待同步 | 后台成员数据变化，待同步 |\n| 已删除 | 不展示 |\n\n### 客户手机号脱敏（PRD 8.7）\n\n客户列表中手机号默认脱敏显示，如"138****1234"。完整手机号查看由权限控制。\n\n### 异常提示（PRD 8.8）\n\nV1.0只提示，不做复杂处理：\n- 群主停用\n- 群管离职\n- 客户状态异常\n- 群成员待同步\n- 跨租户数据异常'
   },
   {
     id: 5,
