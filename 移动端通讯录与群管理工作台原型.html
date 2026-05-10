@@ -1056,7 +1056,7 @@ function renderGroupSection() {
   }
   html += '<div class="group-section-title">' + sectionTitle + '</div>';
   groups.forEach(function(g){
-    var statusCls = g.status === '正常' ? 'normal' : g.status === '待同步' ? 'sync' : g.status === '停用' ? 'disabled' : 'error';
+    var statusCls = g.status === '正常' ? 'normal' : g.status === '停用' ? 'disabled' : 'error';
     var ownerDisplay = g.owner;
     if(currentRole === 'agent' && g.ownerRole === '代理') ownerDisplay = g.owner + '（当前代理）';
     html += '<div class="group-card" onclick="showGroupDetail('+g.id+')">';
@@ -1388,7 +1388,7 @@ function showGroupDetail(groupId) {
   document.getElementById('subNavAction').innerHTML = '';
   var r = ROLES[currentRole];
   var currentIdentity = r.identity;
-  var statusCls = g.status === '正常' ? 'status-normal' : g.status === '待同步' ? 'status-sync' : g.status === '停用' ? 'status-disabled' : 'status-error';
+  var statusCls = g.status === '正常' ? 'status-normal' : g.status === '停用' ? 'status-disabled' : 'status-error';
   var html = '';
   html += '<div id="groupDetailAnchor" style="position:relative">';
   html += '<div class="gd-section">';
@@ -1663,7 +1663,7 @@ var ANNOTATIONS = [
     target: '#groupDetailAnchor',
     page: 'sub',
     subFilter: function() { var t = document.getElementById('subNavTitle'); return t && (t.textContent === '群详情'); },
-    content: '### 8.1 页面目标\n\n展示某个门店群的群基础信息、群主、群管和白名单客户成员。\n\n### 8.2 页面结构\n\n群基础信息 → 群成员概览 → 群主信息 → 群管列表 → 客户列表 → 异常提示 → 进入群聊按钮\n\n### 8.3 群基础信息\n\n| 字段 | 说明 |\n|------|------|\n| 群名称 | 门店群聊名称 |\n| 群类型 | 门店群 |\n| 来源门店 | 当前群所属门店 |\n| 当前身份 | 当前用户查看身份 |\n| 所属租户 | 当前身份所属租户 |\n| 创建方式 | 系统自动创建 |\n| 创建时间 | 群生成时间 |\n| 群状态 | 正常/异常 |\n\n### 8.4 群成员概览\n\n| 指标 | 说明 |\n|------|------|\n| 群主 | 代理/店长 |\n| 群管人数 | 店长、店员人数 |\n| 客户人数 | 白名单客户数量 |\n| 黑名单客户 | 不进入群，不在成员列表展示 |\n| 异常成员 | 离职、停用、失效成员 |\n\n### 8.5 群主展示\n\n姓名/昵称、身份（代理/店长）、所属门店、状态\n\n### 8.6 群管展示\n\n姓名/昵称、身份（店长/店员）、所属门店、状态\n\n### 8.7 客户列表\n\n只展示白名单客户。客户手机号默认脱敏：138****5678\n\n### 8.8 异常提示\n\n| 异常 | 说明 |\n|------|------|\n| 群主停用 | 群主账号不可用 |\n| 群管离职 | 店长/店员离职 |\n| 客户状态异常 | 客户被拉黑或停用 |\n| 群成员待同步 | 后台数据与群成员不一致 |\n| 跨租户数据异常 | 群成员不属于当前租户 |\n\n### 8.9 进入群聊按钮\n\n| 场景 | 处理 |\n|------|------|\n| 已有群聊能力 | 展示「进入群聊」按钮 |\n| 暂无群聊能力 | 不展示按钮，只展示通讯录关系 |\n| 用户无群聊权限 | 按钮置灰或隐藏 |'
+    content: '### 8.1 页面目标\n\n展示某个门店群的群基础信息、群主、群管和白名单客户成员。\n\n### 8.2 页面结构\n\n群基础信息 → 群成员概览 → 群主信息 → 群管列表 → 客户列表 → 异常提示 → 进入群聊按钮\n\n### 8.3 群基础信息\n\n| 字段 | 说明 |\n|------|------|\n| 群名称 | 门店群聊名称 |\n| 群类型 | 门店群 |\n| 来源门店 | 当前群所属门店 |\n| 当前身份 | 当前用户查看身份 |\n| 所属租户 | 当前身份所属租户 |\n| 创建方式 | 系统自动创建 |\n| 创建时间 | 群生成时间 |\n| 群状态 | 正常/异常/停用 |\n\n### 8.4 群成员概览\n\n| 指标 | 说明 |\n|------|------|\n| 群主 | 代理/店长 |\n| 群管人数 | 店长、店员人数 |\n| 客户人数 | 白名单客户数量 |\n| 黑名单客户 | 不进入群，不在成员列表展示 |\n| 异常成员 | 离职、停用、失效成员 |\n\n### 8.5 群主展示\n\n姓名/昵称、身份（代理/店长）、所属门店、状态\n\n### 8.6 群管展示\n\n姓名/昵称、身份（店长/店员）、所属门店、状态\n\n### 8.7 客户列表\n\n只展示白名单客户。客户手机号默认脱敏：138****5678\n\n### 8.8 异常提示\n\n| 异常 | 说明 |\n|------|------|\n| 群主停用 | 群主账号不可用 |\n| 群管离职 | 店长/店员离职 |\n| 客户状态异常 | 客户被拉黑或停用 |\n| 跨租户数据异常 | 群成员不属于当前租户 |\n\n> 注：由于采用全自动实时同步机制（见5.6），不存在"群成员待同步"异常场景。\n\n### 8.9 进入群聊按钮\n\n| 场景 | 处理 |\n|------|------|\n| 已有群聊能力 | 展示「进入群聊」按钮 |\n| 暂无群聊能力 | 不展示按钮，只展示通讯录关系 |\n| 用户无群聊权限 | 按钮置灰或隐藏 |\n| 群已停用 | 按钮置灰，显示"群已停用" |'
   },
   {
     id: 4,
