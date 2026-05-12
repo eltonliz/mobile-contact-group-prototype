@@ -1399,7 +1399,9 @@ function showGroupDetail(groupId) {
   html += '<div class="gd-row"><span class="gd-label">当前身份</span><span class="gd-value">'+currentIdentity+'</span></div>';
   html += '<div class="gd-row"><span class="gd-label">创建方式</span><span class="gd-value">系统自动创建</span></div>';
   html += '<div class="gd-row"><span class="gd-label">创建时间</span><span class="gd-value">'+g.createdTime+'</span></div>';
+  html += '<div id="groupStatusAnchor" style="position:relative">';
   html += '<div class="gd-row"><span class="gd-label">群状态</span><span class="gd-value '+statusCls+'">'+g.status+'</span></div>';
+  html += '</div>';
   html += '</div>';
   html += '<div class="gd-overview">';
   html += '<div class="gd-overview-item"><div class="gd-overview-num">1</div><div class="gd-overview-label">群主</div></div>';
@@ -1428,6 +1430,7 @@ function showGroupDetail(groupId) {
     html += '</div>';
   });
   var whitelistCustomers = GROUP_CUSTOMERS.filter(function(c){ return c.groupId === groupId && c.status === '白名单'; });
+  html += '<div id="groupCustomerAnchor" style="position:relative">';
   html += '<div class="gd-section-title">客户列表（白名单）</div>';
   if(whitelistCustomers.length === 0) {
     html += '<div class="group-empty-state"><div class="empty-icon">📋</div><div class="empty-text">当前群暂无白名单客户</div></div>';
@@ -1441,6 +1444,8 @@ function showGroupDetail(groupId) {
       html += '</div>';
     });
   }
+  html += '</div>';
+  html += '<div id="groupAnomalyAnchor" style="position:relative">';
   if(g.anomalyCount > 0) {
     html += '<div class="gd-section-title">异常提示</div>';
     var blacklisted = GROUP_CUSTOMERS.filter(function(c){ return c.groupId === groupId && c.status === '黑名单'; });
@@ -1460,6 +1465,7 @@ function showGroupDetail(groupId) {
     }
     html += '<div style="padding:8px 16px 12px;font-size:11px;color:var(--text-tertiary);background:var(--bg-card)">💡 异常为临时状态，后台处理完成后将自动恢复正常</div>';
   }
+  html += '</div>';
   if(currentRole !== 'buyer' && g.status !== '停用') {
     html += '<div class="gd-enter-chat"><button class="btn btn-wechat btn-block" onclick="showToast(\'进入群聊\')">进入群聊</button></div>';
   } else if(g.status === '停用') {
@@ -1684,7 +1690,7 @@ var ANNOTATIONS = [
   {
     id: 6,
     title: '白名单/黑名单规则',
-    target: '#groupDetailAnchor',
+    target: '#groupCustomerAnchor',
     page: 'sub',
     subFilter: function() { var t = document.getElementById('subNavTitle'); return t && t.textContent === '群详情'; },
     content: '### 10.1 白名单客户规则\n\n只有白名单客户进入群成员展示。\n\n客户属于当前门店 且 客户状态=白名单 → 展示在群成员中\n\n### 10.2 黑名单客户规则\n\n黑名单客户不进入群，不展示在群成员列表。\n\n客户状态=黑名单 → 不展示\n\n如客户从白名单变为黑名单，系统应在后台同步后从群成员中移除或隐藏。\n\n### 10.3 客户状态规则\n\n| 客户状态 | 是否展示在群内 |\n|----------|----------------|\n| 白名单 | 是 |\n| 黑名单 | 否 |\n| 停用 | 否 |\n| 删除 | 否 |\n| 未确认 | 否，除非后台规则允许 |'
@@ -1699,7 +1705,7 @@ var ANNOTATIONS = [
   {
     id: 8,
     title: '状态规则',
-    target: '#groupDetailAnchor',
+    target: '#groupStatusAnchor',
     page: 'sub',
     subFilter: function() { var t = document.getElementById('subNavTitle'); return t && t.textContent === '群详情'; },
     content: '### 12.1 群状态\n\n| 状态 | 说明 |\n|------|------|\n| 正常 | 群可正常查看 |\n| 异常 | 群主、群管、成员数据异常 |\n| 停用 | 群不可用 |\n| 已删除 | 不展示 |\n\n> 注：由于采用全自动实时同步机制（见5.6），不存在"待同步"状态。成员变更实时生效，无需手动确认。\n\n### 12.2 成员状态\n\n| 状态 | 是否展示 | 说明 |\n|------|----------|------|\n| 正常 | 是 | 正常群成员 |\n| 离职 | 可显示为异常或隐藏 | 店员/店长离职 |\n| 停用 | 否或异常提示 | 账号停用 |\n| 黑名单 | 否 | 黑名单客户不展示 |\n| 已删除 | 否 | 删除成员不展示 |'
@@ -1707,7 +1713,7 @@ var ANNOTATIONS = [
   {
     id: 9,
     title: '异常场景',
-    target: '#groupDetailAnchor',
+    target: '#groupAnomalyAnchor',
     page: 'sub',
     subFilter: function() { var t = document.getElementById('subNavTitle'); return t && t.textContent === '群详情'; },
     content: '### 16.1 当前身份不存在\n\n用户登录后未选择身份，或当前身份失效。\n\n提示：当前身份不可用，请前往个人中心切换身份\n\n### 16.2 当前身份无群\n\n店员/店长身份下，当前门店尚未创建群。\n\n提示：当前门店暂无群聊，请联系管理员确认\n\n### 16.3 代理无门店\n\n代理身份下无绑定门店。\n\n提示：暂无可管理的门店群，当前代理身份下尚未绑定门店\n\n### 16.4 跨租户数据异常\n\n接口返回非当前租户数据。前端不展示，后端记录异常日志。\n\n提示：数据异常，请稍后重试\n\n### 16.5 客户数据为空\n\n群内无白名单客户。\n\n提示：当前群暂无白名单客户\n\n> 注：由于采用全自动实时同步机制（见5.6），不存在"群成员待同步"异常场景。'
