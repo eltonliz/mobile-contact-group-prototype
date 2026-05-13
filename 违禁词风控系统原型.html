@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SaaS直播违禁词风控体系 - 全流程管理平台</title>
+<style>
+:root {
+  --bg-primary: #080c14; --bg-secondary: #0f1621; --bg-tertiary: #141c2b;
+  --bg-card: #111827; --bg-hover: #1a2332; --border: #1e2d3d;
+  --border-active: #00d4aa; --text-primary: #e2e8f0; --text-secondary: #94a3b8;
+  --text-muted: #64748b; --accent: #00d4aa; --accent-dim: rgba(0,212,170,0.15);
+  --danger: #ff4757; --danger-dim: rgba(255,71,87,0.15); --warning: #ffa502;
+  --warning-dim: rgba(255,165,2,0.15); --info: #3742fa; --info-dim: rgba(55,66,250,0.15);
+  --radius: 6px; --radius-lg: 10px; --shadow: 0 4px 24px rgba(0,0,0,0.4);
+  --transition: 0.2s cubic-bezier(0.4,0,0.2,1);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family:'PingFang SC','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  background:var(--bg-primary); color:var(--text-primary); min-height:100vh; overflow-x:hidden; line-height:1.5;
+}
+body::before {
+  content:''; position:fixed; inset:0;
+  background:radial-gradient(ellipse at 20% 20%,rgba(0,212,170,0.03) 0%,transparent 50%),
+             radial-gradient(ellipse at 80% 80%,rgba(55,66,250,0.03) 0%,transparent 50%);
+  pointer-events:none; z-index:0;
+}
+.app { display:flex; min-height:100vh; position:relative; z-index:1; }
+.sidebar { width:240px; background:var(--bg-secondary); border-right:1px solid var(--border); display:flex; flex-direction:column; flex-shrink:0; position:sticky; top:0; height:100vh; z-index:10; }
+.sidebar-header { padding:20px; border-bottom:1px solid var(--border); }
+.sidebar-logo { display:flex; align-items:center; gap:10px; }
+.logo-icon { width:36px; height:36px; background:linear-gradient(135deg,var(--accent),#00b894); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:18px; color:#000; font-weight:700; }
+.logo-text { font-size:14px; font-weight:600; color:var(--text-primary); letter-spacing:0.5px; }
+.logo-sub { font-size:10px; color:var(--accent); font-weight:400; letter-spacing:1px; text-transform:uppercase; }
+.sidebar-nav { flex:1; padding:12px 8px; overflow-y:auto; }
+.nav-item { display:flex; align-items:center; gap:10px; padding:10px 14px; margin-bottom:2px; border-radius:var(--radius); cursor:pointer; transition:all var(--transition); color:var(--text-secondary); font-size:13px; font-weight:500; position:relative; user-select:none; }
+.nav-item:hover { background:var(--bg-hover); color:var(--text-primary); }
+.nav-item.active { background:var(--accent-dim); color:var(--accent); }
+.nav-item.active::before { content:''; position:absolute; left:-8px; top:50%; transform:translateY(-50%); width:3px; height:20px; background:var(--accent); border-radius:2px; }
+.nav-icon { width:20px; height:20px; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; }
+.nav-badge { margin-left:auto; background:var(--danger); color:#fff; font-size:10px; padding:1px 6px; border-radius:10px; font-weight:600; }
+.main { flex:1; display:flex; flex-direction:column; min-width:0; }
+.topbar { padding:14px 24px; background:var(--bg-secondary); border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:5; }
+.breadcrumb { font-size:13px; color:var(--text-secondary); }
+.breadcrumb span { color:var(--accent); font-weight:600; }
+.topbar-actions { display:flex; align-items:center; gap:16px; }
+.status-indicator { display:flex; align-items:center; gap:6px; font-size:12px; color:var(--text-secondary); }
+.status-dot { width:8px; height:8px; border-radius:50%; background:var(--accent); animation:pulse 2s infinite; }
+.status-dot.warn { background:var(--warning); }
+@keyframes pulse { 0%,100%{ opacity:1; box-shadow:0 0 0 0 rgba(0,212,170,0.4); } 50%{ opacity:0.7; box-shadow:0 0 0 6px rgba(0,212,170,0); } }
+.topbar-user { display:flex; align-items:center; gap:8px; cursor:pointer; padding:4px 10px; border-radius:var(--radius); transition:background var(--transition); }
+.topbar-user:hover { background:var(--bg-hover); }
+.user-avatar { width:30px; height:30px; border-radius:50%; background:linear-gradient(135deg,var(--accent),#00897b); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:#000; }
+.content { flex:1; padding:24px; overflow-y:auto; }
+.page { display:none; } .page.active { display:block; }
+.page-header { margin-bottom:20px; }
+.page-title { font-size:22px; font-weight:700; color:var(--text-primary); margin-bottom:4px; }
+.page-desc { font-size:13px; color:var(--text-muted); }
+.stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:20px; }
+.stat-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); padding:16px 20px; transition:all var(--transition); cursor:pointer; }
+.stat-card:hover { border-color:var(--border-active); transform:translateY(-2px); box-shadow:0 8px 30px rgba(0,212,170,0.08); }
+.stat-label { font-size:12px; color:var(--text-muted); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.5px; }
+.stat-value { font-size:28px; font-weight:700; color:var(--text-primary); }
+.stat-value.danger { color:var(--danger); } .stat-value.warning { color:var(--warning); } .stat-value.success { color:var(--accent); }
+.stat-change { font-size:11px; margin-top:4px; color:var(--text-muted); }
+.stat-change.up { color:var(--accent); } .stat-change.down { color:var(--danger); }
+.card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; }
+.card-header { padding:14px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+.card-title { font-size:14px; font-weight:600; color:var(--text-primary); }
+.card-body { padding:16px 20px; }
+.toolbar { display:flex; align-items:center; gap:10px; margin-bottom:16px; flex-wrap:wrap; }
+.btn { padding:8px 16px; border-radius:var(--radius); border:1px solid var(--border); background:var(--bg-tertiary); color:var(--text-primary); font-size:13px; cursor:pointer; transition:all var(--transition); font-family:inherit; display:inline-flex; align-items:center; gap:6px; white-space:nowrap; }
+.btn:hover { background:var(--bg-hover); border-color:var(--text-muted); } .btn:active { transform:scale(0.97); }
+.btn-primary { background:var(--accent); color:#000; border-color:var(--accent); font-weight:600; }
+.btn-primary:hover { background:#00e6b8; border-color:#00e6b8; }
+.btn-danger { background:var(--danger); color:#fff; border-color:var(--danger); font-weight:600; }
+.btn-danger:hover { background:#ff5e6c; border-color:#ff5e6c; }
+.btn-sm { padding:5px 10px; font-size:12px; } .btn-xs { padding:3px 8px; font-size:11px; border-radius:4px; }
+.search-box { display:flex; align-items:center; background:var(--bg-tertiary); border:1px solid var(--border); border-radius:var(--radius); padding:0 10px; transition:border-color var(--transition); }
+.search-box:focus-within { border-color:var(--accent); }
+.search-box input { background:transparent; border:none; color:var(--text-primary); padding:8px 6px; font-size:13px; outline:none; width:200px; font-family:inherit; }
+.search-box input::placeholder { color:var(--text-muted); } .search-icon { color:var(--text-muted); font-size:14px; }
+select.filter-select { background:var(--bg-tertiary); border:1px solid var(--border); color:var(--text-primary); padding:7px 12px; border-radius:var(--radius); font-size:13px; cursor:pointer; font-family:inherit; outline:none; }
+select.filter-select:focus { border-color:var(--accent); }
+table { width:100%; border-collapse:collapse; font-size:13px; }
+thead th { background:var(--bg-tertiary); padding:10px 12px; text-align:left; color:var(--text-secondary); font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid var(--border); white-space:nowrap; }
+tbody td { padding:10px 12px; border-bottom:1px solid var(--border); color:var(--text-primary); }
+tbody tr { transition:background var(--transition); } tbody tr:hover { background:var(--bg-hover); }
+.badge { display:inline-flex; align-items:center; padding:3px 10px; border-radius:12px; font-size:11px; font-weight:600; }
+.badge-high { background:var(--danger-dim); color:var(--danger); }
+.badge-mid { background:var(--warning-dim); color:var(--warning); }
+.badge-low { background:var(--accent-dim); color:var(--accent); }
+.badge-info { background:var(--info-dim); color:var(--info); }
+.badge-status { display:inline-flex; align-items:center; gap:4px; padding:3px 10px; border-radius:12px; font-size:11px; font-weight:600; }
+.badge-status::before { content:''; width:6px; height:6px; border-radius:50%; }
+.badge-live { background:var(--danger-dim); color:var(--danger); } .badge-live::before { background:var(--danger); animation:pulse 1.5s infinite; }
+.badge-ended { background:rgba(100,116,139,0.15); color:var(--text-muted); } .badge-ended::before { background:var(--text-muted); }
+.badge-pending { background:var(--warning-dim); color:var(--warning); } .badge-pending::before { background:var(--warning); }
+.action-links { display:flex; gap:8px; }
+.link { color:var(--accent); cursor:pointer; font-size:12px; font-weight:500; transition:opacity var(--transition); }
+.link:hover { opacity:0.8; } .link.danger { color:var(--danger); }
+.pagination { display:flex; align-items:center; justify-content:space-between; padding:12px 0; font-size:12px; color:var(--text-muted); }
+.pagination-btns { display:flex; gap:4px; }
+.page-btn { width:30px; height:30px; display:flex; align-items:center; justify-content:center; border:1px solid var(--border); border-radius:var(--radius); background:var(--bg-tertiary); color:var(--text-secondary); cursor:pointer; font-size:12px; transition:all var(--transition); }
+.page-btn:hover { border-color:var(--accent); color:var(--accent); }
+.page-btn.active { background:var(--accent); color:#000; border-color:var(--accent); font-weight:700; }
+.modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:100; display:none; align-items:center; justify-content:center; backdrop-filter:blur(4px); }
+.modal-overlay.show { display:flex; }
+.modal { background:var(--bg-secondary); border:1px solid var(--border); border-radius:var(--radius-lg); width:560px; max-height:80vh; overflow-y:auto; box-shadow:var(--shadow); animation:modalIn 0.25s ease; }
+.modal.wide { width:720px; }
+@keyframes modalIn { from{ opacity:0; transform:translateY(20px) scale(0.97); } to{ opacity:1; transform:translateY(0) scale(1); } }
+.modal-header { padding:16px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+.modal-title { font-size:16px; font-weight:600; }
+.modal-close { width:28px; height:28px; display:flex; align-items:center; justify-content:center; border-radius:50%; cursor:pointer; color:var(--text-muted); transition:all var(--transition); border:none; background:transparent; font-size:16px; }
+.modal-close:hover { background:var(--bg-hover); color:var(--text-primary); }
+.modal-body { padding:20px; } .modal-footer { padding:14px 20px; border-top:1px solid var(--border); display:flex; justify-content:flex-end; gap:10px; }
+.form-group { margin-bottom:16px; } .form-label { display:block; font-size:13px; font-weight:500; color:var(--text-secondary); margin-bottom:6px; }
+.form-input,.form-select,.form-textarea { width:100%; padding:9px 12px; background:var(--bg-tertiary); border:1px solid var(--border); border-radius:var(--radius); color:var(--text-primary); font-size:13px; font-family:inherit; outline:none; transition:border-color var(--transition); }
+.form-input:focus,.form-select:focus,.form-textarea:focus { border-color:var(--accent); }
+.form-textarea { min-height:80px; resize:vertical; } .form-row { display:flex; gap:12px; } .form-row>*{ flex:1; }
+.form-hint { font-size:11px; color:var(--text-muted); margin-top:4px; }
+.tabs { display:flex; border-bottom:1px solid var(--border); margin-bottom:16px; }
+.tab { padding:10px 20px; font-size:13px; font-weight:500; color:var(--text-muted); cursor:pointer; border-bottom:2px solid transparent; transition:all var(--transition); user-select:none; }
+.tab:hover { color:var(--text-primary); } .tab.active { color:var(--accent); border-bottom-color:var(--accent); }
+.toast-container { position:fixed; top:20px; right:20px; z-index:200; display:flex; flex-direction:column; gap:8px; }
+.toast { padding:12px 20px; background:var(--bg-secondary); border:1px solid var(--border); border-radius:var(--radius); font-size:13px; color:var(--text-primary); box-shadow:var(--shadow); animation:toastIn 0.3s ease; min-width:280px; }
+.toast.success { border-left:3px solid var(--accent); } .toast.error { border-left:3px solid var(--danger); } .toast.warning { border-left:3px solid var(--warning); }
+@keyframes toastIn { from{ opacity:0; transform:translateX(40px); } to{ opacity:1; transform:translateX(0); } }
+.progress-bar { height:6px; background:var(--bg-tertiary); border-radius:3px; overflow:hidden; }
+.progress-fill { height:100%; border-radius:3px; transition:width 0.6s ease; }
+.progress-fill.high { background:var(--danger); } .progress-fill.mid { background:var(--warning); } .progress-fill.low { background:var(--accent); }
+.monitor-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.monitor-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); padding:16px; }
+.monitor-card.full { grid-column:1/-1; }
+.monitor-title { font-size:13px; font-weight:600; color:var(--text-secondary); margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+.monitor-title .live-dot { width:8px; height:8px; background:var(--danger); border-radius:50%; animation:pulse 1s infinite; }
+.live-feed { max-height:300px; overflow-y:auto; }
+.feed-item { display:flex; align-items:flex-start; gap:10px; padding:8px 0; border-bottom:1px solid var(--border); font-size:12px; }
+.feed-time { color:var(--text-muted); white-space:nowrap; min-width:50px; font-family:'SF Mono','Cascadia Code',monospace; }
+.feed-content { flex:1; } .feed-word { color:var(--accent); font-weight:600; } .feed-level { margin-top:2px; }
+.rule-chain { display:flex; align-items:center; gap:12px; padding:16px; flex-wrap:wrap; }
+.chain-node { background:var(--bg-tertiary); border:1px solid var(--border); border-radius:var(--radius); padding:12px 16px; text-align:center; min-width:100px; }
+.chain-node.active { border-color:var(--accent); background:var(--accent-dim); }
+.chain-arrow { color:var(--accent); font-size:18px; font-weight:700; }
+.chain-label { font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; }
+.chain-value { font-size:14px; font-weight:600; color:var(--text-primary); margin-top:2px; }
+.tag-input { display:flex; flex-wrap:wrap; gap:6px; padding:8px; background:var(--bg-tertiary); border:1px solid var(--border); border-radius:var(--radius); min-height:40px; align-items:center; }
+.tag { display:inline-flex; align-items:center; gap:4px; padding:2px 10px; background:var(--accent-dim); border:1px solid rgba(0,212,170,0.2); border-radius:12px; font-size:12px; color:var(--accent); }
+.tag-remove { cursor:pointer; font-size:14px; opacity:0.6; transition:opacity var(--transition); } .tag-remove:hover { opacity:1; }
+.tag-input input { border:none; background:transparent; color:var(--text-primary); font-size:13px; outline:none; min-width:100px; flex:1; font-family:inherit; }
+.tag.danger-tag { background:var(--danger-dim); border-color:rgba(255,71,87,0.2); color:var(--danger); }
+::-webkit-scrollbar { width:6px; height:6px; } ::-webkit-scrollbar-track { background:var(--bg-primary); } ::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; } ::-webkit-scrollbar-thumb:hover { background:var(--text-muted); }
+.sop-flow { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:20px; }
+.sop-phase { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); padding:20px; }
+.sop-phase-header { display:flex; align-items:center; gap:10px; margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid var(--border); }
+.sop-phase-icon { width:40px; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:20px; }
+.sop-phase-icon.before { background:var(--info-dim); color:var(--info); }
+.sop-phase-icon.during { background:var(--danger-dim); color:var(--danger); }
+.sop-phase-icon.after { background:var(--accent-dim); color:var(--accent); }
+.sop-phase-title { font-size:15px; font-weight:700; } .sop-phase-sub { font-size:11px; color:var(--text-muted); }
+.sop-step { display:flex; gap:10px; padding:8px 0; font-size:12px; color:var(--text-secondary); }
+.sop-step-num { width:20px; height:20px; border-radius:50%; background:var(--bg-tertiary); color:var(--text-muted); display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; flex-shrink:0; }
+.sop-step-text { line-height:20px; }
+.detail-row { display:flex; gap:20px; margin-bottom:12px; }
+.detail-item { flex:1; }
+.detail-label { font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px; }
+.detail-value { font-size:14px; color:var(--text-primary); font-weight:500; }
+.empty-state { text-align:center; padding:40px 20px; color:var(--text-muted); }
+.empty-state-icon { font-size:48px; margin-bottom:12px; opacity:0.4; } .empty-state-text { font-size:14px; }
+.info-block { background:var(--bg-tertiary); border-radius:var(--radius); padding:12px 16px; margin-bottom:12px; }
+.info-block-title { font-size:12px; font-weight:600; color:var(--accent); margin-bottom:8px; }
+.info-block-row { display:flex; justify-content:space-between; font-size:12px; padding:4px 0; color:var(--text-secondary); }
+.switch { position:relative; display:inline-block; width:44px; height:24px; }
+.switch input { opacity:0; width:0; height:0; }
+.switch-slider { position:absolute; cursor:pointer; inset:0; background:var(--bg-tertiary); border:1px solid var(--border); border-radius:24px; transition:all var(--transition); }
+.switch-slider::before { content:''; position:absolute; height:18px; width:18px; left:2px; bottom:2px; background:var(--text-muted); border-radius:50%; transition:all var(--transition); }
+.switch input:checked+.switch-slider { background:var(--accent-dim); border-color:var(--accent); }
+.switch input:checked+.switch-slider::before { background:var(--accent); transform:translateX(20px); }
+.checkbox-item { display:flex; align-items:center; gap:6px; font-size:13px; color:var(--text-secondary); cursor:pointer; padding:6px 12px; background:var(--bg-tertiary); border:1px solid var(--border); border-radius:var(--radius); transition:all var(--transition); }
+.checkbox-item:hover { border-color:var(--accent); }
+.checkbox-item input[type="checkbox"] { accent-color:var(--accent); width:16px; height:16px; cursor:pointer; }
+.empty-state { text-align:center; padding:40px 20px; color:var(--text-muted); }
+.empty-state-icon { font-size:48px; margin-bottom:12px; opacity:0.4; } .empty-state-text { font-size:14px; }
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+<div class="sidebar-header"><div class="sidebar-logo"><div class="logo-icon">S</div><div><div class="logo-text">SaaS风控中心</div><div class="logo-sub">Risk Control</div></div></div></div>
+<nav class="sidebar-nav">
+<div class="nav-item active" data-page="overview"><span class="nav-icon">⊞</span>全流程总览</div>
+<div class="nav-item" data-page="platform-words"><span class="nav-icon">⊡</span>平台违禁词库<span class="nav-badge" id="wordBadge">10</span></div>
+<div class="nav-item" data-page="tenant-control"><span class="nav-icon">⊟</span>租户风控管理</div>
+<div class="nav-item" data-page="session-config"><span class="nav-icon">⊠</span>场次风控配置</div>
+<div class="nav-item" data-page="realtime-monitor"><span class="nav-icon">◎</span>实时监控看板<span class="nav-badge" style="animation:pulse 1.5s infinite">●</span></div>
+<div class="nav-item" data-page="review-report"><span class="nav-icon">⊛</span>风控报告复盘</div>
+</nav>
+</aside>
+<div class="main">
+<div class="topbar">
+<div class="breadcrumb">直播风控 / <span id="currentPage">全流程总览</span></div>
+<div class="topbar-actions">
+<div class="status-indicator"><div class="status-dot"></div>系统运行正常</div>
+<div class="status-indicator"><div class="status-dot warn"></div>3条待处理告警</div>
+<div class="topbar-user"><div class="user-avatar">管</div><span style="font-size:13px;">平台管理员</span></div>
+</div>
+</div>
+<div class="content">
+<div class="page active" id="page-overview">
+<div class="page-header"><div class="page-title">SaaS直播违禁词风控体系 · 全流程总览</div><div class="page-desc">四层分级管控：平台顶层规则 → SaaS租户专属配置 → 直播场次参数 → 实时直播内容风控 → 违禁词识别与处置</div></div>
+<div class="stats-grid">
+<div class="stat-card"><div class="stat-label">平台违禁词总数</div><div class="stat-value" id="overviewWordCount">10</div><div class="stat-change up">+23 本周新增</div></div>
+<div class="stat-card"><div class="stat-label">活跃租户数</div><div class="stat-value">48</div><div class="stat-change">32个已开启风控</div></div>
+<div class="stat-card"><div class="stat-label">今日直播场次</div><div class="stat-value warning">156</div><div class="stat-change">12场直播中</div></div>
+<div class="stat-card"><div class="stat-label">今日命中次数</div><div class="stat-value danger">2,847</div><div class="stat-change down">↓12% vs 昨日</div></div>
+</div>
+<div class="sop-flow">
+<div class="sop-phase"><div class="sop-phase-header"><div class="sop-phase-icon before">⓵</div><div><div class="sop-phase-title">事前预防</div><div class="sop-phase-sub">开播前 · 规则加载+内容预审</div></div></div>
+<div class="sop-step"><div class="sop-step-num">1</div><div class="sop-step-text">平台初始化全局规则，同步至所有租户</div></div>
+<div class="sop-step"><div class="sop-step-num">2</div><div class="sop-step-text">租户配置专属风控规则，继承平台词库</div></div>
+<div class="sop-step"><div class="sop-step-num">3</div><div class="sop-step-text">场次级个性化配置，增删临时违禁词</div></div>
+<div class="sop-step"><div class="sop-step-num">4</div><div class="sop-step-text">直播素材&脚本全量违禁词预审检测</div></div>
+<div class="sop-step"><div class="sop-step-num">5</div><div class="sop-step-text">开播瞬间规则固化，生成本场专属风控包</div></div>
+</div>
+<div class="sop-phase"><div class="sop-phase-header"><div class="sop-phase-icon during">⓶</div><div><div class="sop-phase-title">事中监控</div><div class="sop-phase-sub">直播中 · 实时识别+分级处置</div></div></div>
+<div class="sop-step"><div class="sop-step-num">1</div><div class="sop-step-text">实时内容采集+ASR语音转文本</div></div>
+<div class="sop-step"><div class="sop-step-num">2</div><div class="sop-step-text">多层级违禁词智能匹配（精准/模糊/语义/变体）</div></div>
+<div class="sop-step"><div class="sop-step-num">3</div><div class="sop-step-text">风险等级智能判定：高危/中危/低危</div></div>
+<div class="sop-step"><div class="sop-step-num">4</div><div class="sop-step-text">分级自动处置：预警→告警→拦截→禁播</div></div>
+<div class="sop-step"><div class="sop-step-num">5</div><div class="sop-step-text">人工复核+实时日志同步留存</div></div>
+</div>
+<div class="sop-phase"><div class="sop-phase-header"><div class="sop-phase-icon after">⓷</div><div><div class="sop-phase-title">事后复盘</div><div class="sop-phase-sub">播后 · 溯源归档+迭代优化</div></div></div>
+<div class="sop-step"><div class="sop-step-num">1</div><div class="sop-step-text">自动生成可视化风控复盘报告</div></div>
+<div class="sop-step"><div class="sop-step-num">2</div><div class="sop-step-text">违规溯源与证据固化归档</div></div>
+<div class="sop-step"><div class="sop-step-num">3</div><div class="sop-step-text">违规整改处罚落地（扣分/限流/封禁）</div></div>
+<div class="sop-step"><div class="sop-step-num">4</div><div class="sop-step-text">词库与规则迭代优化</div></div>
+<div class="sop-step"><div class="sop-step-num">5</div><div class="sop-step-text">数据沉淀与多租户权限对账</div></div>
+</div>
+</div>
+<div class="card"><div class="card-header"><div class="card-title">四层分级管控架构</div></div>
+<div class="card-body"><div class="rule-chain" style="justify-content:center;">
+<div class="chain-node active" style="cursor:pointer" onclick="switchPage('platform-words')"><div class="chain-label">第1层 · 最高优先级</div><div class="chain-value">平台强制层</div><div style="font-size:11px;color:var(--text-muted);margin-top:4px;">全局强制生效</div></div>
+<div class="chain-arrow">→</div>
+<div class="chain-node active" style="cursor:pointer" onclick="switchPage('tenant-control')"><div class="chain-label">第2层 · 次级优先级</div><div class="chain-value">租户自定义层</div><div style="font-size:11px;color:var(--text-muted);margin-top:4px;">继承+个性化</div></div>
+<div class="chain-arrow">→</div>
+<div class="chain-node active" style="cursor:pointer" onclick="switchPage('session-config')"><div class="chain-label">第3层 · 场景优先级</div><div class="chain-value">场次定制层</div><div style="font-size:11px;color:var(--text-muted);margin-top:4px;">单场临时规则</div></div>
+<div class="chain-arrow">→</div>
+<div class="chain-node active" style="cursor:pointer" onclick="switchPage('realtime-monitor')"><div class="chain-label">第4层 · 执行落地层</div><div class="chain-value">实时直播层</div><div style="font-size:11px;color:var(--text-muted);margin-top:4px;">规则最终载体</div></div>
+</div></div></div>
+</div>
+
+<div class="page" id="page-platform-words">
+<div class="page-header"><div class="page-title">平台违禁词库管理</div><div class="page-desc">由SaaS系统运营平台统一管控，所有租户、所有场次强制生效，租户不可删除、不可降级，仅可查看</div></div>
+<div class="stats-grid">
+<div class="stat-card"><div class="stat-label">总词条数</div><div class="stat-value" id="wordStatTotal">10</div></div>
+<div class="stat-card"><div class="stat-label">高危词</div><div class="stat-value danger" id="wordStatHigh">3</div><div class="stat-change">法律法规/政治/色情/赌博</div></div>
+<div class="stat-card"><div class="stat-label">中危词</div><div class="stat-value warning" id="wordStatMid">4</div><div class="stat-change">虚假宣传/违规营销</div></div>
+<div class="stat-card"><div class="stat-label">低危词</div><div class="stat-value success" id="wordStatLow">3</div><div class="stat-change">敏感歧义/轻度违规</div></div>
+</div>
+<div class="card"><div class="card-header"><div class="card-title">违禁词列表</div><div>
+<button class="btn btn-primary btn-sm" onclick="openWordAdd()">+ 添加违禁词</button>
+<button class="btn btn-sm" onclick="showImportModal()" style="margin-left:8px;">导入</button>
+<button class="btn btn-sm" onclick="exportWords()" style="margin-left:8px;">导出</button>
+<button class="btn btn-sm btn-danger" onclick="batchDeleteWords()" style="margin-left:8px;">批量删除</button>
+</div></div>
+<div class="card-body">
+<div class="toolbar">
+<div class="search-box"><span class="search-icon">⌕</span><input type="text" placeholder="搜索违禁词..." id="wordSearch" oninput="filterWordTable()"></div>
+<select class="filter-select" onchange="filterWordTable()" id="wordLevelFilter"><option value="">全部等级</option><option value="高危">高危</option><option value="中危">中危</option><option value="低危">低危</option></select>
+<select class="filter-select" onchange="filterWordTable()" id="wordTypeFilter"><option value="">全部类型</option><option value="广告法">广告法</option><option value="刑法">刑法</option><option value="食品安全法">食品安全法</option><option value="药品安全法">药品安全法</option><option value="政治敏感">政治敏感</option><option value="色情违规">色情违规</option></select>
+<button class="btn btn-sm" onclick="resetWordFilter()">重置</button>
+</div>
+<table><thead><tr>
+<th style="width:40px"><input type="checkbox" onclick="toggleAllCheckbox(this,'word-check')"></th>
+<th>违禁词</th><th>风险等级</th><th>类型</th><th>处置动作</th><th>变体词</th><th>命中次数</th><th>更新时间</th><th>操作</th>
+</tr></thead><tbody id="wordTableBody"></tbody></table>
+<div class="pagination"><span>共 <b id="wordTotal">10</b> 条记录</span><div class="pagination-btns"><div class="page-btn">←</div><div class="page-btn active">1</div><div class="page-btn">2</div><div class="page-btn">→</div></div></div>
+</div></div></div>
+
+<div class="page" id="page-tenant-control">
+<div class="page-header"><div class="page-title">租户风控管理</div><div class="page-desc">租户继承平台基础词库，自定义行业专属违禁词、白名单及处置策略，不可修改/删除平台高危强制词库</div></div>
+<div class="stats-grid">
+<div class="stat-card"><div class="stat-label">总租户数</div><div class="stat-value">48</div></div>
+<div class="stat-card"><div class="stat-label">已开启风控</div><div class="stat-value success">32</div></div>
+<div class="stat-card"><div class="stat-label">自定义词总数</div><div class="stat-value">2,184</div><div class="stat-change">平均每租户68词</div></div>
+<div class="stat-card"><div class="stat-label">今日违规租户</div><div class="stat-value danger">5</div></div>
+</div>
+<div class="card"><div class="card-header"><div class="card-title">租户列表</div><div>
+<button class="btn btn-primary btn-sm" onclick="openTenantConfig(null)">+ 添加租户</button>
+</div></div>
+<div class="card-body">
+<div class="toolbar">
+<div class="search-box"><span class="search-icon">⌕</span><input type="text" placeholder="搜索租户..." id="tenantSearch" oninput="filterTenantTable()"></div>
+<select class="filter-select" onchange="filterTenantTable()" id="tenantStatusFilter"><option value="">全部状态</option><option value="已开启">已开启</option><option value="未开启">未开启</option></select>
+</div>
+<table><thead><tr><th>租户名称</th><th>行业</th><th>风控状态</th><th>自定义词数</th><th>白名单词数</th><th>今日命中</th><th>违规率</th><th style="width:130px">操作</th></tr></thead><tbody id="tenantTableBody"></tbody></table>
+<div class="pagination"><span>共 <b>48</b> 条记录</span><div class="pagination-btns"><div class="page-btn">←</div><div class="page-btn active">1</div><div class="page-btn">2</div><div class="page-btn">→</div></div></div>
+</div></div></div>
+
+<div class="page" id="page-session-config">
+<div class="page-header"><div class="page-title">场次风控配置</div><div class="page-desc">租户针对单场直播独立配置，仅生效当前场次，优先级高于租户全局规则，适配专场活动的差异化风控需求</div></div>
+<div class="card"><div class="card-header"><div class="card-title">直播场次列表</div><div><button class="btn btn-primary btn-sm" onclick="openSessionConfig(null)">+ 新建场次配置</button></div></div>
+<div class="card-body">
+<div class="toolbar">
+<div class="search-box"><span class="search-icon">⌕</span><input type="text" placeholder="搜索场次..." id="sessionSearch" oninput="filterSessionTable()"></div>
+<select class="filter-select" onchange="filterSessionTable()" id="sessionStatusFilter"><option value="">全部状态</option><option value="预告中">预告中</option><option value="直播中">直播中</option><option value="已结束">已结束</option><option value="已终止">已终止</option></select>
+</div>
+<table><thead><tr><th>场次编号</th><th>直播间名称</th><th>所属租户</th><th>场次状态</th><th>临时违禁词</th><th>风控严格度</th><th>预审状态</th><th>操作</th></tr></thead><tbody id="sessionTableBody"></tbody></table>
+<div class="pagination"><span>共 <b>10</b> 条记录</span><div class="pagination-btns"><div class="page-btn">←</div><div class="page-btn active">1</div><div class="page-btn">→</div></div></div>
+</div></div></div>
+
+<div class="page" id="page-realtime-monitor">
+<div class="page-header"><div class="page-title">实时监控看板</div><div class="page-desc">实时加载「平台+租户+场次」叠加规则，对口播、弹幕、评论、标题、简介、商品话术等全内容实时检测</div></div>
+<div class="stats-grid">
+<div class="stat-card"><div class="stat-label">当前直播场次</div><div class="stat-value" style="color:var(--danger);">12 <span style="font-size:12px;color:var(--text-muted);">场直播中</span></div><div class="stat-change">实时数据</div></div>
+<div class="stat-card"><div class="stat-label">今日检测总量</div><div class="stat-value">128,456</div><div class="stat-change">条文本/语音/图片</div></div>
+<div class="stat-card"><div class="stat-label">高危命中</div><div class="stat-value danger">23</div><div class="stat-change">已触发处置动作</div></div>
+<div class="stat-card"><div class="stat-label">平均响应延迟</div><div class="stat-value success">86ms</div><div class="stat-change">目标≤200ms ✓</div></div>
+</div>
+<div class="monitor-grid">
+<div class="monitor-card full"><div class="monitor-title"><span class="live-dot"></span> 实时命中记录</div><div class="live-feed" id="liveFeed">
+<div class="feed-item"><div class="feed-time">14:32:08</div><div class="feed-content">命中词：<span class="feed-word">全网最低价</span><div class="feed-level"><span class="badge badge-mid">中危</span> · 租户：美妆优选 · 场次：S20260513-008 · 动作：屏蔽+告警</div></div></div>
+<div class="feed-item"><div class="feed-time">14:31:52</div><div class="feed-content">命中词：<span class="feed-word">绝对安全</span><div class="feed-level"><span class="badge badge-mid">中危</span> · 租户：健康生活馆 · 场次：S20260513-005 · 动作：预警提示</div></div></div>
+<div class="feed-item"><div class="feed-time">14:31:15</div><div class="feed-content">命中词：<span class="feed-word">独家秘方</span><div class="feed-level"><span class="badge badge-low">低危</span> · 租户：养生堂 · 场次：S20260513-003 · 动作：记录日志</div></div></div>
+<div class="feed-item"><div class="feed-time">14:30:44</div><div class="feed-content">命中词：<span class="feed-word">股票推荐</span><div class="feed-level"><span class="badge badge-high">高危</span> · 租户：财经直通车 · 场次：S20260513-002 · 动作：拦截+禁播</div></div></div>
+<div class="feed-item"><div class="feed-time">14:30:18</div><div class="feed-content">命中词：<span class="feed-word">第一品牌</span><div class="feed-level"><span class="badge badge-mid">中危</span> · 租户：数码旗舰店 · 场次：S20260513-001 · 动作：屏蔽文案</div></div></div>
+</div></div>
+<div class="monitor-card"><div class="monitor-title">风险等级分布（今日）</div>
+<div style="display:flex;flex-direction:column;gap:14px;padding:12px 0;">
+<div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;"><span style="color:var(--danger);">高危 23次</span><span>0.8%</span></div><div class="progress-bar"><div class="progress-fill high" style="width:0.8%"></div></div></div>
+<div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;"><span style="color:var(--warning);">中危 856次</span><span>30.1%</span></div><div class="progress-bar"><div class="progress-fill mid" style="width:30.1%"></div></div></div>
+<div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;"><span style="color:var(--accent);">低危 1,968次</span><span>69.1%</span></div><div class="progress-bar"><div class="progress-fill low" style="width:69.1%"></div></div></div>
+</div></div>
+<div class="monitor-card"><div class="monitor-title">内容类型命中分布</div>
+<div style="display:flex;flex-direction:column;gap:14px;padding:12px 0;">
+<div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;"><span>ASR口播 1,245次</span><span>43.7%</span></div><div class="progress-bar"><div class="progress-fill low" style="width:43.7%"></div></div></div>
+<div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;"><span>弹幕/评论 892次</span><span>31.3%</span></div><div class="progress-bar"><div class="progress-fill mid" style="width:31.3%"></div></div></div>
+<div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;"><span>商品文案 456次</span><span>16.0%</span></div><div class="progress-bar"><div class="progress-fill low" style="width:16%"></div></div></div>
+<div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;"><span>图片OCR 254次</span><span>8.9%</span></div><div class="progress-bar"><div class="progress-fill low" style="width:8.9%"></div></div></div>
+</div></div></div></div>
+
+<div class="page" id="page-review-report">
+<div class="page-header"><div class="page-title">风控报告复盘</div><div class="page-desc">直播结束后自动生成可视化风控报告，违规溯源取证归档，完成违规闭环与词库迭代优化</div></div>
+<div class="stats-grid">
+<div class="stat-card"><div class="stat-label">已生成报告</div><div class="stat-value">3,842</div></div>
+<div class="stat-card"><div class="stat-label">违规整改中</div><div class="stat-value warning">28</div></div>
+<div class="stat-card"><div class="stat-label">已闭环处理</div><div class="stat-value success">3,810</div></div>
+<div class="stat-card"><div class="stat-label">处罚执行中</div><div class="stat-value danger">4</div></div>
+</div>
+<div class="card"><div class="card-header"><div class="card-title">复盘报告列表</div></div>
+<div class="card-body">
+<div class="toolbar">
+<div class="search-box"><span class="search-icon">⌕</span><input type="text" placeholder="搜索报告..." id="reportSearch" oninput="filterReportTable()"></div>
+<select class="filter-select" onchange="filterReportTable()" id="reportStatusFilter"><option value="">全部状态</option><option value="已闭环">已闭环</option><option value="整改中">整改中</option><option value="待审核">待审核</option></select>
+</div>
+<table><thead><tr><th>场次编号</th><th>直播间</th><th>租户</th><th>违规次数</th><th>高危/中危/低危</th><th>处置状态</th><th>播完时间</th><th>操作</th></tr></thead><tbody id="reportTableBody"></tbody></table>
+<div class="pagination"><span>共 <b>3,842</b> 条记录</span><div class="pagination-btns"><div class="page-btn">←</div><div class="page-btn active">1</div><div class="page-btn">2</div><div class="page-btn">3</div><div class="page-btn">→</div></div></div>
+</div></div></div>
+</div></div></div>
+
+<!-- 违禁词添加/编辑弹窗 -->
+<div class="modal-overlay" id="wordModal"><div class="modal"><div class="modal-header"><div class="modal-title" id="wordModalTitle">添加违禁词</div><button class="modal-close" onclick="closeModal('wordModal')">✕</button></div>
+<div class="modal-body">
+<input type="hidden" id="editWordIndex" value="">
+<div class="form-group"><div class="form-label">违禁词内容 *</div><input class="form-input" placeholder="请输入违禁词" id="newWord"></div>
+<div class="form-row">
+<div class="form-group"><div class="form-label">风险等级 *</div><select class="form-select" id="newWordLevel"><option value="高危">高危 - 立即拦截/禁播</option><option value="中危" selected>中危 - 屏蔽+告警</option><option value="低危">低危 - 预警记录</option></select></div>
+<div class="form-group"><div class="form-label">类型 *</div><select class="form-select" id="newWordType"><option value="广告法">广告法</option><option value="刑法">刑法</option><option value="食品安全法">食品安全法</option><option value="药品安全法">药品安全法</option><option value="政治敏感">政治敏感</option><option value="色情违规">色情违规</option></select></div>
+</div>
+<div class="form-group"><div class="form-label">处置动作</div><select class="form-select" id="newWordAction"><option>预警提示主播</option><option>屏蔽违规内容</option><option>触发后台告警</option><option>立即拦截内容</option><option>禁言用户</option><option>强制断播</option><option>仅记录日志</option></select></div>
+<div class="form-group"><div class="form-label">变体词/谐音词（回车添加）</div><div class="tag-input" id="variantInput"><input placeholder="输入变体词后回车" onkeydown="addVariant(event,this)"></div><div class="form-hint">支持添加谐音、拆分、替换字等变体词，提升绕控识别能力</div></div>
+</div>
+<div class="modal-footer"><button class="btn" onclick="closeModal('wordModal')">取消</button><button class="btn btn-primary" id="wordSaveBtn" onclick="saveWord()">确认添加</button></div></div></div>
+
+<!-- 导入弹窗 -->
+<div class="modal-overlay" id="importModal"><div class="modal"><div class="modal-header"><div class="modal-title">批量导入违禁词</div><button class="modal-close" onclick="closeModal('importModal')">✕</button></div>
+<div class="modal-body">
+<div class="form-group"><div class="form-label">上传文件</div><input class="form-input" type="text" placeholder="支持 .xlsx / .csv 格式" readonly style="cursor:pointer" onclick="this.value='违禁词导入模板.xlsx'" value=""><div class="form-hint">点击选择文件，支持 Excel / CSV 批量导入</div></div>
+<div class="form-group"><div class="form-label">导入说明</div><div style="font-size:12px;color:var(--text-muted);line-height:1.8;">1. 下载标准模板，按格式填写违禁词<br>2. 必填字段：违禁词、风险等级、类型<br>3. 选填字段：变体词、处置动作<br>4. 系统自动去重，与现有词库合并</div></div>
+</div>
+<div class="modal-footer"><button class="btn" onclick="closeModal('importModal')">取消</button><button class="btn btn-primary" onclick="handleImport()">开始导入</button></div></div></div>
+
+<!-- 删除确认弹窗 -->
+<div class="modal-overlay" id="confirmDeleteModal"><div class="modal" style="width:420px;"><div class="modal-header"><div class="modal-title">确认删除</div><button class="modal-close" onclick="closeModal('confirmDeleteModal')">✕</button></div>
+<div class="modal-body"><div style="text-align:center;padding:10px 0;"><div style="font-size:40px;margin-bottom:12px;color:var(--danger);">⚠</div><p id="confirmDeleteMsg" style="font-size:14px;color:var(--text-secondary);">确定要删除此条记录吗？此操作不可撤销。</p></div></div>
+<div class="modal-footer"><button class="btn" onclick="closeModal('confirmDeleteModal')">取消</button><button class="btn btn-danger" id="confirmDeleteBtn" onclick="execDelete()">确认删除</button></div></div></div>
+
+<!-- 租户详情弹窗 -->
+<div class="modal-overlay" id="tenantDetailModal"><div class="modal wide"><div class="modal-header"><div class="modal-title" id="tenantDetailTitle">租户风控详情</div><button class="modal-close" onclick="closeModal('tenantDetailModal')">✕</button></div>
+<div class="modal-body"><div id="tenantDetailContent"></div></div>
+<div class="modal-footer"><button class="btn" onclick="closeModal('tenantDetailModal')">关闭</button><button class="btn btn-primary" id="tenantConfigFromDetailBtn">配置风控</button></div></div></div>
+
+<!-- 租户配置弹窗 -->
+<div class="modal-overlay" id="tenantConfigModal"><div class="modal wide"><div class="modal-header"><div class="modal-title" id="tenantConfigTitle">配置租户风控</div><button class="modal-close" onclick="closeModal('tenantConfigModal')">✕</button></div>
+<div class="modal-body">
+<div class="form-group" id="tenantNameGroup"><div class="form-label">租户名称 *</div><input class="form-input" id="tenantName" placeholder="请输入租户名称"></div>
+<div class="form-group"><div class="form-label">风控开关</div><label class="switch"><input type="checkbox" id="tenantRiskSwitch" checked><span class="switch-slider"></span></label></div>
+<div class="form-row">
+<div class="form-group"><div class="form-label">风控严格度</div><select class="form-select" id="tenantStrictness"><option value="严格">严格</option><option value="标准" selected>标准</option><option value="宽松">宽松</option></select></div>
+<div class="form-group"><div class="form-label">行业类型</div><select class="form-select" id="tenantIndustry"><option>电商/美妆</option><option>医疗健康</option><option>金融财经</option><option>3C数码</option><option>食品保健</option><option>教育培训</option><option>服饰穿搭</option><option>家居日用</option></select></div>
+</div>
+<div class="form-group"><div class="form-label">自定义违禁词（回车添加）</div><div class="tag-input" id="tenantCustomWords"><input placeholder="输入自定义违禁词后回车" onkeydown="addTagEnter(event,this,'tenantCustomWords')"></div></div>
+<div class="form-group"><div class="form-label">白名单词（回车添加）</div><div class="tag-input" id="tenantWhiteWords"><input placeholder="输入白名单词后回车" onkeydown="addTagEnter(event,this,'tenantWhiteWords')"></div></div>
+<div class="form-group"><div class="form-label">处置策略</div><div style="display:flex;gap:12px;flex-wrap:wrap;">
+<label class="checkbox-item"><input type="checkbox" id="tcWarn" checked>预警提示</label>
+<label class="checkbox-item"><input type="checkbox" id="tcBlock" checked>屏蔽内容</label>
+<label class="checkbox-item"><input type="checkbox" id="tcAlert" checked>后台告警</label>
+<label class="checkbox-item"><input type="checkbox" id="tcBan">自动禁播</label>
+</div></div>
+</div>
+<div class="modal-footer"><button class="btn" onclick="closeModal('tenantConfigModal')">取消</button><button class="btn btn-primary" onclick="saveTenantConfig()">保存配置</button></div></div></div>
+
+<!-- 场次配置弹窗 -->
+<div class="modal-overlay" id="sessionConfigModal"><div class="modal wide"><div class="modal-header"><div class="modal-title" id="sessionConfigTitle">场次风控配置</div><button class="modal-close" onclick="closeModal('sessionConfigModal')">✕</button></div>
+<div class="modal-body">
+<div class="form-row">
+<div class="form-group"><div class="form-label">场次编号</div><input class="form-input" id="sessionId" placeholder="自动生成" readonly></div>
+<div class="form-group"><div class="form-label">直播间名称 *</div><input class="form-input" id="sessionName" placeholder="请输入直播间名称"></div>
+</div>
+<div class="form-row">
+<div class="form-group"><div class="form-label">所属租户</div><select class="form-select" id="sessionTenant"><option>数码旗舰店</option><option>财经直通车</option><option>养生堂官方</option><option>时尚穿搭馆</option><option>健康生活馆</option><option>美妆优选旗舰店</option><option>家居生活汇</option></select></div>
+<div class="form-group"><div class="form-label">风控严格度</div><select class="form-select" id="sessionStrictness"><option value="严格">严格</option><option value="标准" selected>标准</option><option value="宽松">宽松</option></select></div>
+</div>
+<div class="form-group"><div class="form-label">临时违禁词（回车添加，仅本场次生效）</div><div class="tag-input" id="sessionTmpWords"><input placeholder="输入临时违禁词后回车" onkeydown="addTagEnter(event,this,'sessionTmpWords')"></div><div class="form-hint">场次临时规则 &gt; 租户全局规则 &gt; 平台基础规则</div></div>
+<div class="form-group"><div class="form-label">临时白名单（回车添加）</div><div class="tag-input" id="sessionWhiteWords"><input placeholder="输入白名单词后回车" onkeydown="addTagEnter(event,this,'sessionWhiteWords')"></div></div>
+<div class="form-group"><div class="form-label">特殊豁免场景</div><select class="form-select" id="sessionExempt"><option value="">无豁免</option><option>品牌专场豁免</option><option>新品发布豁免</option><option>行业峰会豁免</option><option>内部培训豁免</option></select></div>
+</div>
+<div class="modal-footer"><button class="btn" onclick="closeModal('sessionConfigModal')">取消</button><button class="btn btn-primary" onclick="saveSessionConfig()">保存配置</button></div></div></div>
+
+<!-- 预审报告弹窗 -->
+<div class="modal-overlay" id="auditModal"><div class="modal wide"><div class="modal-header"><div class="modal-title" id="auditTitle">素材预审报告</div><button class="modal-close" onclick="closeModal('auditModal')">✕</button></div>
+<div class="modal-body"><div id="auditContent"></div></div>
+<div class="modal-footer"><button class="btn" onclick="closeModal('auditModal')">关闭</button><button class="btn btn-primary" onclick="closeModal('auditModal');showToast('预审已通过，场次可正常开播','success')">标记为已通过</button></div></div></div>
+
+<!-- 报告详情弹窗 -->
+<div class="modal-overlay" id="reportDetailModal"><div class="modal wide"><div class="modal-header"><div class="modal-title" id="reportDetailTitle">风控复盘报告详情</div><button class="modal-close" onclick="closeModal('reportDetailModal')">✕</button></div>
+<div class="modal-body"><div id="reportDetailContent"></div></div>
+<div class="modal-footer"><button class="btn" onclick="closeModal('reportDetailModal')">关闭</button><button class="btn btn-primary" id="reportActionBtn" onclick="closeModal('reportDetailModal');showToast('已标记为闭环处理','success')">标记闭环</button></div></div></div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+// ==================== 全局数据存储 ====================
+let wordData = [
+  { word:'国家级',level:'高危',type:'广告法',action:'立即拦截内容',variants:['国+家级','国家级别','國傢級'],hits:342,time:'2026-05-12 10:23' },
+  { word:'最高级',level:'高危',type:'广告法',action:'立即拦截内容',variants:['最高级别','顶级'],hits:287,time:'2026-05-12 10:23' },
+  { word:'全网第一',level:'高危',type:'广告法',action:'强制断播',variants:['全网第1','全网冠军'],hits:156,time:'2026-05-11 16:45' },
+  { word:'绝对有效',level:'中危',type:'药品安全法',action:'屏蔽违规内容',variants:['100%有效','绝对疗效'],hits:98,time:'2026-05-10 09:12' },
+  { word:'股票推荐',level:'高危',type:'刑法',action:'强制断播',variants:['荐股','股票指导','内幕消息'],hits:73,time:'2026-05-09 14:30' },
+  { word:'保证赚钱',level:'中危',type:'广告法',action:'屏蔽违规内容',variants:['稳赚不赔','保证盈利'],hits:215,time:'2026-05-08 11:05' },
+  { word:'特效药',level:'中危',type:'药品安全法',action:'触发后台告警',variants:['神药','特效疗法'],hits:64,time:'2026-05-08 08:22' },
+  { word:'免费领取',level:'低危',type:'广告法',action:'仅记录日志',variants:[],hits:1823,time:'2026-05-07 17:00' },
+  { word:'根治',level:'中危',type:'药品安全法',action:'屏蔽违规内容',variants:['彻底治愈','断根'],hits:312,time:'2026-05-06 15:20' },
+  { word:'限量抢购',level:'低危',type:'广告法',action:'仅记录日志',variants:['最后一批','绝版'],hits:567,time:'2026-05-05 09:45' },
+  { word:'永久美白',level:'高危',type:'药品安全法',action:'立即拦截内容',variants:['永jiu白','永久嫩白'],hits:89,time:'2026-05-13 08:15' },
+  { word:'100%纯天然',level:'中危',type:'广告法',action:'屏蔽违规内容',variants:['百分百天然','纯天然无添加'],hits:456,time:'2026-05-13 07:30' },
+  { word:'总统同款',level:'高危',type:'政治敏感',action:'强制断播',variants:['总理同款','领导人同款'],hits:23,time:'2026-05-13 06:45' },
+  { word:'壮阳',level:'高危',type:'色情违规',action:'立即拦截内容',variants:['补肾壮yang','强肾'],hits:145,time:'2026-05-12 22:10' },
+  { word:'假一赔十',level:'低危',type:'广告法',action:'预警提示主播',variants:['假一罚十','假1赔10'],hits:678,time:'2026-05-12 18:30' },
+  { word:'清仓甩卖',level:'低危',type:'广告法',action:'仅记录日志',variants:['最后一天','关门清仓'],hits:1234,time:'2026-05-12 15:00' },
+];
+
+let tenantData = [
+  { name:'美妆优选旗舰店',industry:'电商/美妆',status:'已开启',custom:86,whitelist:12,hits:234,rate:'2.1%',strictness:'严格',customWords:['竞品A','竞品B','仿品','山寨'],whiteWords:['天然','植物'] },
+  { name:'健康生活馆',industry:'医疗健康',status:'已开启',custom:124,whitelist:8,hits:456,rate:'4.8%',strictness:'严格',customWords:['处方药','注射','手术','临床'],whiteWords:['健康','养生'] },
+  { name:'财经直通车',industry:'金融财经',status:'已开启',custom:98,whitelist:5,hits:89,rate:'1.2%',strictness:'严格',customWords:['涨停','跌停','庄家','配资'],whiteWords:['分析','参考'] },
+  { name:'数码旗舰店',industry:'3C数码',status:'已开启',custom:45,whitelist:20,hits:67,rate:'0.8%',strictness:'标准',customWords:['原装','正品保障','假一罚十'],whiteWords:['性价比','推荐'] },
+  { name:'养生堂官方',industry:'食品保健',status:'已开启',custom:67,whitelist:15,hits:178,rate:'3.2%',strictness:'标准',customWords:['疗效','疗程','秘方'],whiteWords:['食疗','调理'] },
+  { name:'教育在线课堂',industry:'教育培训',status:'未开启',custom:0,whitelist:0,hits:0,rate:'-',strictness:'标准',customWords:[],whiteWords:[] },
+  { name:'时尚穿搭馆',industry:'服饰穿搭',status:'已开启',custom:32,whitelist:18,hits:45,rate:'0.5%',strictness:'宽松',customWords:['原单','尾单','外贸'],whiteWords:['搭配','风格'] },
+  { name:'家居生活汇',industry:'家居日用',status:'未开启',custom:0,whitelist:0,hits:0,rate:'-',strictness:'标准',customWords:[],whiteWords:[] },
+];
+
+let sessionData = [
+  { id:'S20260513-001',name:'数码新品发布会',tenant:'数码旗舰店',status:'直播中',tmpWords:['首发价','最低价','限量'],strictness:'严格',audit:'已通过',whiteWords:[] },
+  { id:'S20260513-002',name:'财经午间解读',tenant:'财经直通车',status:'已终止',tmpWords:['大盘','走势','预测'],strictness:'严格',audit:'已通过',whiteWords:[] },
+  { id:'S20260513-003',name:'养生知识分享',tenant:'养生堂官方',status:'直播中',tmpWords:['偏方','土方'],strictness:'标准',audit:'已通过',whiteWords:['食疗'] },
+  { id:'S20260513-004',name:'春季穿搭指南',tenant:'时尚穿搭馆',status:'直播中',tmpWords:[],strictness:'宽松',audit:'已通过',whiteWords:[] },
+  { id:'S20260513-005',name:'健康好物推荐',tenant:'健康生活馆',status:'直播中',tmpWords:['治疗仪','理疗仪','康复'],strictness:'严格',audit:'整改中',whiteWords:[] },
+  { id:'S20260513-006',name:'家居大促专场',tenant:'家居生活汇',status:'预告中',tmpWords:['清仓','甩卖'],strictness:'标准',audit:'待审核',whiteWords:[] },
+  { id:'S20260513-007',name:'美妆达人分享',tenant:'美妆优选旗舰店',status:'预告中',tmpWords:['秒杀','抢购'],strictness:'标准',audit:'待审核',whiteWords:['天然'] },
+  { id:'S20260513-008',name:'美妆限时秒杀',tenant:'美妆优选旗舰店',status:'直播中',tmpWords:['全网最低','亏本'],strictness:'严格',audit:'已通过',whiteWords:[] },
+  { id:'S20260513-009',name:'食品年货节',tenant:'养生堂官方',status:'预告中',tmpWords:['包治百病','灵丹'],strictness:'严格',audit:'待审核',whiteWords:['食疗','养生'] },
+  { id:'S20260513-010',name:'数码配件专场',tenant:'数码旗舰店',status:'已结束',tmpWords:[],strictness:'标准',audit:'已通过',whiteWords:['性价比'] },
+];
+
+let reportData = [
+  { id:'S20260512-015',room:'财经晚间解读',tenant:'财经直通车',violations:12,breakdown:'1/5/6',status:'已闭环',time:'2026-05-12 22:30',details:[
+    { word:'涨停预测',level:'高危',time:'20:15:32',content:'口播内容涉及涨停预测...',action:'强制断播' },
+    { word:'稳赚',level:'中危',time:'20:08:15',content:'弹幕区出现稳赚不赔...',action:'屏蔽内容' },
+  ]},
+  { id:'S20260512-012',room:'健康养生专场',tenant:'健康生活馆',violations:45,breakdown:'3/28/14',status:'整改中',time:'2026-05-12 20:00',details:[
+    { word:'根治糖尿病',level:'高危',time:'19:22:10',content:'口播声称可根治糖尿病...',action:'拦截+警告' },
+    { word:'特效秘方',level:'中危',time:'19:18:45',content:'商品文案含特效秘方...',action:'屏蔽文案' },
+  ]},
+  { id:'S20260512-010',room:'数码好物推荐',tenant:'数码旗舰店',violations:8,breakdown:'0/3/5',status:'已闭环',time:'2026-05-12 18:30',details:[
+    { word:'绝对最好',level:'中危',time:'18:12:05',content:'主播口播称绝对最好用...',action:'预警提示' },
+  ]},
+  { id:'S20260512-008',room:'美妆达人秀',tenant:'美妆优选旗舰店',violations:23,breakdown:'2/12/9',status:'待审核',time:'2026-05-12 16:00',details:[
+    { word:'永久美白',level:'高危',time:'15:45:22',content:'口播声称永久美白效果...',action:'拦截内容' },
+    { word:'第一品牌',level:'中危',time:'15:40:18',content:'直播间标题含第一品牌...',action:'屏蔽文案' },
+  ]},
+  { id:'S20260512-005',room:'春季穿搭秀',tenant:'时尚穿搭馆',violations:5,breakdown:'0/1/4',status:'已闭环',time:'2026-05-12 14:00',details:[
+    { word:'原单正品',level:'中危',time:'13:28:15',content:'商品描述含原单正品...',action:'屏蔽内容' },
+  ]},
+  { id:'S20260512-003',room:'养生知识课堂',tenant:'养生堂官方',violations:18,breakdown:'1/8/9',status:'已闭环',time:'2026-05-12 11:30',details:[
+    { word:'治愈',level:'高危',time:'11:05:32',content:'口播称可治愈慢性病...',action:'拦截+警告' },
+  ]},
+  { id:'S20260512-001',room:'食品保健专场',tenant:'养生堂官方',violations:31,breakdown:'2/18/11',status:'整改中',time:'2026-05-12 09:00',details:[
+    { word:'包治百病',level:'高危',time:'08:45:10',content:'口播宣传包治百病功效...',action:'强制断播' },
+    { word:'祖传秘方',level:'中危',time:'08:30:22',content:'商品详情含祖传秘方...',action:'屏蔽文案' },
+  ]},
+  { id:'S20260511-020',room:'家居清仓直播',tenant:'家居生活汇',violations:7,breakdown:'0/2/5',status:'已闭环',time:'2026-05-11 23:00',details:[
+    { word:'最后一天',level:'低危',time:'22:35:18',content:'口播反复强调最后一天...',action:'预警提示' },
+  ]},
+];
+
+let pendingDelete = null;
+
+// ==================== 导航 ====================
+const navItems=document.querySelectorAll('.nav-item'),pages=document.querySelectorAll('.page'),currentPageLabel=document.getElementById('currentPage');
+const pageNames={ 'overview':'全流程总览','platform-words':'平台违禁词库','tenant-control':'租户风控管理','session-config':'场次风控配置','realtime-monitor':'实时监控看板','review-report':'风控报告复盘' };
+navItems.forEach(item=>{ item.addEventListener('click',()=>switchPage(item.dataset.page)); });
+function switchPage(page){
+  navItems.forEach(n=>n.classList.remove('active')); pages.forEach(p=>p.classList.remove('active'));
+  const nav=document.querySelector(`[data-page="${page}"]`),pg=document.getElementById(`page-${page}`);
+  if(nav)nav.classList.add('active'); if(pg)pg.classList.add('active');
+  currentPageLabel.textContent=pageNames[page]||page;
+}
+
+// ==================== Toast ====================
+function showToast(msg,type='success'){
+  const c=document.getElementById('toastContainer'),t=document.createElement('div');
+  t.className=`toast ${type}`; t.textContent=msg; c.appendChild(t);
+  setTimeout(()=>{t.style.opacity='0';t.style.transition='opacity 0.3s'},2500);
+  setTimeout(()=>t.remove(),2800);
+}
+
+// ==================== Modal 通用 ====================
+function closeModal(id){ document.getElementById(id).classList.remove('show'); }
+function openModal(id){ document.getElementById(id).classList.add('show'); }
+
+// ==================== 违禁词 增删改查 ====================
+function renderWordTable(){
+  const tbody=document.getElementById('wordTableBody'); tbody.innerHTML='';
+  wordData.forEach((w,i)=>{
+    const lb=w.level==='高危'?'badge-high':w.level==='中危'?'badge-mid':'badge-low';
+    const vs=w.variants&&w.variants.length?w.variants.slice(0,3).map(v=>`<span class="tag" style="font-size:10px;padding:1px 6px;">${v}</span>`).join(' ')+((w.variants.length>3)?` <span style="font-size:10px;color:var(--text-muted);">+${w.variants.length-3}</span>`:''):'<span style="color:var(--text-muted);font-size:11px;">-</span>';
+    tbody.innerHTML+=`<tr><td><input type="checkbox" class="word-check"></td><td><b>${w.word}</b></td><td><span class="badge ${lb}">${w.level}</span></td><td>${w.type}</td><td>${w.action}</td><td>${vs}</td><td>${w.hits}</td><td>${w.time}</td><td><div class="action-links"><span class="link" onclick="openWordEdit(${i})">编辑</span><span class="link" onclick="viewWordDetail(${i})">详情</span><span class="link danger" onclick="confirmDeleteWord(${i})">删除</span></div></td></tr>`;
+  });
+  updateWordStats();
+}
+function updateWordStats(){
+  const c=wordData.length; document.getElementById('wordTotal').textContent=c;
+  document.getElementById('wordBadge').textContent=c;
+  document.getElementById('wordStatTotal').textContent=c;
+  document.getElementById('overviewWordCount').textContent=c;
+  document.getElementById('wordStatHigh').textContent=wordData.filter(w=>w.level==='高危').length;
+  document.getElementById('wordStatMid').textContent=wordData.filter(w=>w.level==='中危').length;
+  document.getElementById('wordStatLow').textContent=wordData.filter(w=>w.level==='低危').length;
+}
+function openWordAdd(){
+  document.getElementById('editWordIndex').value='';
+  document.getElementById('wordModalTitle').textContent='添加违禁词';
+  document.getElementById('wordSaveBtn').textContent='确认添加';
+  document.getElementById('newWord').value='';
+  document.getElementById('newWordLevel').value='中危';
+  document.getElementById('newWordType').value='广告法';
+  document.getElementById('newWordAction').value='屏蔽违规内容';
+  document.querySelectorAll('#variantInput .tag').forEach(t=>t.remove());
+  openModal('wordModal'); document.getElementById('newWord').focus();
+}
+function openWordEdit(i){
+  const w=wordData[i];
+  document.getElementById('editWordIndex').value=i;
+  document.getElementById('wordModalTitle').textContent='编辑违禁词';
+  document.getElementById('wordSaveBtn').textContent='保存修改';
+  document.getElementById('newWord').value=w.word;
+  document.getElementById('newWordLevel').value=w.level;
+  document.getElementById('newWordType').value=w.type;
+  document.getElementById('newWordAction').value=w.action;
+  document.querySelectorAll('#variantInput .tag').forEach(t=>t.remove());
+  if(w.variants)w.variants.forEach(v=>addTagToContainer('variantInput',v));
+  openModal('wordModal'); document.getElementById('newWord').focus();
+}
+function saveWord(){
+  const word=document.getElementById('newWord').value.trim();
+  if(!word){ showToast('请输入违禁词内容','error'); return; }
+  const level=document.getElementById('newWordLevel').value;
+  const type=document.getElementById('newWordType').value;
+  const action=document.getElementById('newWordAction').value;
+  const variants=Array.from(document.querySelectorAll('#variantInput .tag')).map(t=>t.textContent.replace('×','').trim());
+  const idx=document.getElementById('editWordIndex').value;
+  const now=new Date().toLocaleString('zh-CN',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});
+  if(idx===''){
+    wordData.unshift({word,level,type,action,variants,hits:0,time:now});
+    showToast(`违禁词「${word}」添加成功`,'success');
+  } else {
+    const oldHits=wordData[parseInt(idx)].hits;
+    wordData[parseInt(idx)]={word,level,type,action,variants,hits:oldHits,time:now};
+    showToast(`违禁词「${word}」修改成功`,'success');
+  }
+  closeModal('wordModal'); renderWordTable();
+}
+function viewWordDetail(i){
+  const w=wordData[i];
+  const lb=w.level==='高危'?'badge-high':w.level==='中危'?'badge-mid':'badge-low';
+  const vs=w.variants&&w.variants.length?w.variants.map(v=>`<span class="tag">${v}</span>`).join(' '):'<span style="color:var(--text-muted);">无</span>';
+  const content=`
+    <div class="detail-row"><div class="detail-item"><div class="detail-label">违禁词</div><div class="detail-value" style="font-size:18px;">${w.word}</div></div></div>
+    <div class="detail-row"><div class="detail-item"><div class="detail-label">风险等级</div><div class="detail-value"><span class="badge ${lb}">${w.level}</span></div></div><div class="detail-item"><div class="detail-label">类型</div><div class="detail-value">${w.type}</div></div><div class="detail-item"><div class="detail-label">命中次数</div><div class="detail-value">${w.hits} 次</div></div></div>
+    <div class="detail-row"><div class="detail-item"><div class="detail-label">处置动作</div><div class="detail-value">${w.action}</div></div><div class="detail-item"><div class="detail-label">更新时间</div><div class="detail-value">${w.time}</div></div></div>
+    <div class="detail-row"><div class="detail-item"><div class="detail-label">变体词/谐音词</div><div style="margin-top:6px;">${vs}</div></div></div>
+  `;
+  document.getElementById('tenantDetailTitle').textContent=`违禁词详情 - ${w.word}`;
+  document.getElementById('tenantDetailContent').innerHTML=content;
+  document.getElementById('tenantConfigFromDetailBtn').style.display='none';
+  openModal('tenantDetailModal');
+}
+function confirmDeleteWord(i){
+  pendingDelete={type:'word',index:i};
+  document.getElementById('confirmDeleteMsg').textContent=`确定要删除违禁词「${wordData[i].word}」吗？此操作不可撤销。`;
+  openModal('confirmDeleteModal');
+}
+function batchDeleteWords(){
+  const checked=document.querySelectorAll('.word-check:checked');
+  if(checked.length===0){ showToast('请先选择要删除的违禁词','warning'); return; }
+  pendingDelete={type:'batchWords',count:checked.length};
+  document.getElementById('confirmDeleteMsg').textContent=`确定要删除选中的 ${checked.length} 条违禁词吗？此操作不可撤销。`;
+  openModal('confirmDeleteModal');
+}
+function execDelete(){
+  if(!pendingDelete)return;
+  if(pendingDelete.type==='word'){
+    const w=wordData[pendingDelete.index];
+    wordData.splice(pendingDelete.index,1);
+    showToast(`违禁词「${w.word}」已删除`,'success');
+  } else if(pendingDelete.type==='batchWords'){
+    const checks=document.querySelectorAll('#wordTableBody .word-check:checked');
+    const indices=[];
+    checks.forEach(cb=>{const tr=cb.closest('tr');if(tr){indices.push(Array.from(tr.parentElement.children).indexOf(tr));}});
+    indices.sort((a,b)=>b-a);
+    indices.forEach(idx=>wordData.splice(idx,1));
+    showToast(`已删除 ${indices.length} 条违禁词`,'success');
+  } else if(pendingDelete.type==='tenant'){
+    const t=tenantData[pendingDelete.index];
+    tenantData.splice(pendingDelete.index,1);
+    showToast(`租户「${t.name}」已删除`,'success');
+  } else if(pendingDelete.type==='session'){
+    sessionData[pendingDelete.index].status='已终止';
+    showToast(`场次「${sessionData[pendingDelete.index].name}」已终止`,'warning');
+  }
+  pendingDelete=null; closeModal('confirmDeleteModal');
+   renderWordTable(); renderTenantTable(); renderSessionTable();
+}
+function filterWordTable(){
+  const s=(document.getElementById('wordSearch').value||'').toLowerCase();
+  const l=document.getElementById('wordLevelFilter').value;
+  const t=document.getElementById('wordTypeFilter').value;
+  document.querySelectorAll('#wordTableBody tr').forEach(tr=>{
+    const w=tr.cells[1].textContent.toLowerCase(),lv=tr.cells[2].textContent.trim(),tp=tr.cells[3].textContent.trim();
+    tr.style.display=(w.includes(s)&&(!l||lv===l)&&(!t||tp===t))?'':'none';
+  });
+}
+function resetWordFilter(){ document.getElementById('wordSearch').value='';document.getElementById('wordLevelFilter').value='';document.getElementById('wordTypeFilter').value='';filterWordTable(); }
+function addVariant(e,input){ if(e.key==='Enter'&&input.value.trim()){ e.preventDefault();addTagToContainer('variantInput',input.value.trim());input.value=''; } }
+function addTagToContainer(containerId,text){
+  const c=document.getElementById(containerId),input=c.querySelector('input');
+  const tag=document.createElement('span');tag.className='tag';
+  tag.innerHTML=`${text} <span class="tag-remove" onclick="this.parentElement.remove()">×</span>`;
+  c.insertBefore(tag,input);
+}
+function exportWords(){ showToast('违禁词数据已导出为 Excel 文件','success'); }
+
+// ==================== 导入弹窗 ====================
+function showImportModal(){ openModal('importModal'); }
+function handleImport(){ closeModal('importModal');
+  const newWords=[{word:'全网独家',level:'高危',type:'广告法',action:'立即拦截内容',variants:['独家首发'],hits:0,time:new Date().toLocaleString('zh-CN',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})},{word:'100%纯天然',level:'中危',type:'广告法',action:'屏蔽违规内容',variants:[],hits:0,time:new Date().toLocaleString('zh-CN',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})},{word:'权威认证',level:'低危',type:'广告法',action:'仅记录日志',variants:[],hits:0,time:new Date().toLocaleString('zh-CN',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})}];
+  wordData=[...newWords,...wordData]; renderWordTable(); showToast('导入成功，共新增 3 条，去重 0 条','success');
+}
+
+// ==================== 租户 查/配 ====================
+function renderTenantTable(){
+  const tbody=document.getElementById('tenantTableBody');tbody.innerHTML='';
+  tenantData.forEach((t,i)=>{
+    const sb=t.status==='已开启'?'badge-low':'badge-info';
+    tbody.innerHTML+=`<tr><td><b>${t.name}</b></td><td>${t.industry}</td><td><span class="badge ${sb}">${t.status}</span></td><td>${t.custom}</td><td>${t.whitelist}</td><td>${t.hits}</td><td>${t.rate}</td><td><div class="action-links"><span class="link" onclick="viewTenantDetail(${i})">查看</span><span class="link" onclick="openTenantConfig(${i})">配置</span><span class="link danger" onclick="confirmDeleteTenant(${i})">删除</span></div></td></tr>`;
+  });
+}
+function viewTenantDetail(i){
+  const t=tenantData[i];
+  const sb=t.status==='已开启'?'badge-low':'badge-info';
+  const cw=t.customWords&&t.customWords.length?t.customWords.map(w=>`<span class="tag danger-tag">${w}</span>`).join(' '):'<span style="color:var(--text-muted);">无</span>';
+  const ww=t.whiteWords&&t.whiteWords.length?t.whiteWords.map(w=>`<span class="tag">${w}</span>`).join(' '):'<span style="color:var(--text-muted);">无</span>';
+  document.getElementById('tenantDetailTitle').textContent=`租户风控详情 - ${t.name}`;
+  document.getElementById('tenantDetailContent').innerHTML=`
+    <div class="detail-row"><div class="detail-item"><div class="detail-label">租户名称</div><div class="detail-value" style="font-size:16px;">${t.name}</div></div><div class="detail-item"><div class="detail-label">行业</div><div class="detail-value">${t.industry}</div></div><div class="detail-item"><div class="detail-label">风控状态</div><div class="detail-value"><span class="badge ${sb}">${t.status}</span></div></div></div>
+    <div class="info-block"><div class="info-block-title">风控数据概览</div><div class="info-block-row"><span>自定义违禁词</span><span>${t.custom} 词</span></div><div class="info-block-row"><span>白名单词</span><span>${t.whitelist} 词</span></div><div class="info-block-row"><span>今日命中次数</span><span>${t.hits} 次</span></div><div class="info-block-row"><span>违规率</span><span>${t.rate}</span></div><div class="info-block-row"><span>风控严格度</span><span>${t.strictness}</span></div></div>
+    <div class="detail-row"><div class="detail-item"><div class="detail-label">自定义违禁词列表</div><div style="margin-top:6px;">${cw}</div></div></div>
+    <div class="detail-row"><div class="detail-item"><div class="detail-label">白名单词列表</div><div style="margin-top:6px;">${ww}</div></div></div>
+  `;
+  document.getElementById('tenantConfigFromDetailBtn').style.display='inline-flex';
+  document.getElementById('tenantConfigFromDetailBtn').onclick=()=>{closeModal('tenantDetailModal');openTenantConfig(i);};
+  openModal('tenantDetailModal');
+}
+function openTenantConfig(i){
+  window._configTenantIndex=i;
+  const nameGroup=document.getElementById('tenantNameGroup');
+  const nameInput=document.getElementById('tenantName');
+  if(i!==null){
+    const t=tenantData[i];
+    nameGroup.style.display='none';
+    document.getElementById('tenantConfigTitle').textContent=`配置租户风控 - ${t.name}`;
+    document.getElementById('tenantRiskSwitch').checked=t.status==='已开启';
+    document.getElementById('tenantStrictness').value=t.strictness||'标准';
+    document.getElementById('tenantIndustry').value=t.industry;
+    document.querySelectorAll('#tenantCustomWords .tag').forEach(x=>x.remove());
+    document.querySelectorAll('#tenantWhiteWords .tag').forEach(x=>x.remove());
+    if(t.customWords)t.customWords.forEach(w=>addTagToContainer('tenantCustomWords',w));
+    if(t.whiteWords)t.whiteWords.forEach(w=>addTagToContainer('tenantWhiteWords',w));
+  } else {
+    nameGroup.style.display='block';
+    nameInput.value='';
+    document.getElementById('tenantConfigTitle').textContent='添加新租户';
+    document.getElementById('tenantRiskSwitch').checked=true;
+    document.getElementById('tenantStrictness').value='标准';
+    document.getElementById('tenantIndustry').value='电商/美妆';
+    document.querySelectorAll('#tenantCustomWords .tag').forEach(x=>x.remove());
+    document.querySelectorAll('#tenantWhiteWords .tag').forEach(x=>x.remove());
+  }
+  openModal('tenantConfigModal');
+}
+function saveTenantConfig(){
+  const i=window._configTenantIndex;
+  const customWords=Array.from(document.querySelectorAll('#tenantCustomWords .tag')).map(x=>x.textContent.replace('×','').trim());
+  const whiteWords=Array.from(document.querySelectorAll('#tenantWhiteWords .tag')).map(x=>x.textContent.replace('×','').trim());
+  const status=document.getElementById('tenantRiskSwitch').checked?'已开启':'未开启';
+  const strictness=document.getElementById('tenantStrictness').value;
+  const industry=document.getElementById('tenantIndustry').value;
+  if(i!==null){
+    const t=tenantData[i];
+    t.status=status; t.strictness=strictness; t.industry=industry;
+    t.customWords=customWords; t.custom=customWords.length;
+    t.whiteWords=whiteWords; t.whitelist=whiteWords.length;
+    showToast(`租户「${t.name}」风控配置已保存`,'success');
+  } else {
+    const nameInput=document.getElementById('tenantName');
+    if(!nameInput.value.trim()){showToast('请输入租户名称','error');return;}
+    const name=nameInput.value.trim();
+    tenantData.push({name,industry,status,custom:customWords.length,whitelist:whiteWords.length,hits:0,rate:'0%',strictness,customWords,whiteWords});
+    showToast(`新租户「${name}」已创建`,'success');
+  }
+  closeModal('tenantConfigModal'); renderTenantTable();
+}
+function confirmDeleteTenant(i){
+  pendingDelete={type:'tenant',index:i};
+  document.getElementById('confirmDeleteMsg').textContent=`确定要删除租户「${tenantData[i].name}」吗？该租户的所有自定义风控配置将被清除。此操作不可撤销。`;
+  openModal('confirmDeleteModal');
+}
+function addTagEnter(e,input,containerId){ if(e.key==='Enter'&&input.value.trim()){ e.preventDefault();addTagToContainer(containerId,input.value.trim());input.value=''; } }
+function filterTenantTable(){
+  const s=(document.getElementById('tenantSearch').value||'').toLowerCase();
+  const st=document.getElementById('tenantStatusFilter').value;
+  document.querySelectorAll('#tenantTableBody tr').forEach(tr=>{
+    const n=tr.cells[0].textContent.toLowerCase(),sst=tr.cells[2].textContent.trim();
+    tr.style.display=(n.includes(s)&&(!st||sst===st))?'':'none';
+  });
+}
+
+// ==================== 场次 查/配/预审/终止 ====================
+function renderSessionTable(){
+  const tbody=document.getElementById('sessionTableBody');tbody.innerHTML='';
+  sessionData.forEach((s,i)=>{
+    let sbadge;switch(s.status){case'直播中':sbadge='badge-live';break;case'已终止':sbadge='badge-ended';break;case'预告中':sbadge='badge-pending';break;default:sbadge='badge-ended';}
+    const ab=s.audit==='已通过'?'badge-low':s.audit==='整改中'?'badge-mid':'badge-info';
+    tbody.innerHTML+=`<tr><td>${s.id}</td><td><b>${s.name}</b></td><td>${s.tenant}</td><td><span class="badge-status ${sbadge}">${s.status}</span></td><td>${s.tmpWords.length} 词</td><td>${s.strictness}</td><td><span class="badge ${ab}">${s.audit}</span></td><td><div class="action-links"><span class="link" onclick="openSessionConfig(${i})">配置</span><span class="link" onclick="viewAuditReport(${i})">预审</span><span class="link danger" onclick="terminateSession(${i})">终止</span></div></td></tr>`;
+  });
+}
+function openSessionConfig(i){
+  window._configSessionIndex=i;
+  if(i!==null){
+    const s=sessionData[i];
+    document.getElementById('sessionConfigTitle').textContent=`编辑场次配置 - ${s.name}`;
+    document.getElementById('sessionId').value=s.id;
+    document.getElementById('sessionName').value=s.name;
+    document.getElementById('sessionTenant').value=s.tenant;
+    document.getElementById('sessionStrictness').value=s.strictness;
+    document.querySelectorAll('#sessionTmpWords .tag').forEach(x=>x.remove());
+    document.querySelectorAll('#sessionWhiteWords .tag').forEach(x=>x.remove());
+    if(s.tmpWords)s.tmpWords.forEach(w=>addTagToContainer('sessionTmpWords',w));
+    if(s.whiteWords)s.whiteWords.forEach(w=>addTagToContainer('sessionWhiteWords',w));
+  } else {
+    document.getElementById('sessionConfigTitle').textContent='新建场次配置';
+    document.getElementById('sessionId').value='S'+new Date().toISOString().slice(0,10).replace(/-/g,'')+'-'+(sessionData.length+1).toString().padStart(3,'0');
+    document.getElementById('sessionName').value='';
+    document.getElementById('sessionTenant').value='数码旗舰店';
+    document.getElementById('sessionStrictness').value='标准';
+    document.querySelectorAll('#sessionTmpWords .tag').forEach(x=>x.remove());
+    document.querySelectorAll('#sessionWhiteWords .tag').forEach(x=>x.remove());
+  }
+  openModal('sessionConfigModal');
+}
+function saveSessionConfig(){
+  const i=window._configSessionIndex;
+  const name=document.getElementById('sessionName').value.trim();
+  if(!name){showToast('请输入直播间名称','error');return;}
+  const data={
+    id:document.getElementById('sessionId').value,
+    name:name,
+    tenant:document.getElementById('sessionTenant').value,
+    status:i!==null?sessionData[i].status:'预告中',
+    tmpWords:Array.from(document.querySelectorAll('#sessionTmpWords .tag')).map(x=>x.textContent.replace('×','').trim()),
+    strictness:document.getElementById('sessionStrictness').value,
+    audit:i!==null?sessionData[i].audit:'待审核',
+    whiteWords:Array.from(document.querySelectorAll('#sessionWhiteWords .tag')).map(x=>x.textContent.replace('×','').trim()),
+  };
+  if(i!==null){sessionData[i]=data;}else{sessionData.push(data);}
+  closeModal('sessionConfigModal');renderSessionTable();
+  showToast(`场次「${name}」配置已保存`,'success');
+}
+function viewAuditReport(i){
+  const s=sessionData[i];
+  document.getElementById('auditTitle').textContent=`素材预审报告 - ${s.name}`;
+  const mockIssues=s.audit==='已通过'?[]:[
+    {item:'直播脚本',word:'全网最低价',level:'中危',pos:'第3段第2句',suggestion:'建议改为「超值优惠价」'},
+    {item:'商品标题',word:'第一品牌',level:'中危',pos:'商品#P001标题',suggestion:'建议改为「优质品牌」'},
+    {item:'口播文案',word:'绝对安全',level:'中危',pos:'口播稿第5段',suggestion:'建议改为「安全可靠」'},
+  ];
+  const issuesHtml=mockIssues.length?mockIssues.map(m=>{
+    const lb=m.level==='高危'?'badge-high':m.level==='中危'?'badge-mid':'badge-low';
+    return `<tr><td>${m.item}</td><td><span class="feed-word">${m.word}</span></td><td><span class="badge ${lb}">${m.level}</span></td><td>${m.pos}</td><td style="color:var(--accent);">${m.suggestion}</td></tr>`;
+  }).join(''):'<tr><td colspan="5" style="text-align:center;color:var(--accent);padding:20px;">✓ 所有素材均通过预审，未检测到违禁词</td></tr>';
+  document.getElementById('auditContent').innerHTML=`
+    <div class="detail-row"><div class="detail-item"><div class="detail-label">场次编号</div><div class="detail-value">${s.id}</div></div><div class="detail-item"><div class="detail-label">直播间</div><div class="detail-value">${s.name}</div></div><div class="detail-item"><div class="detail-label">预审状态</div><div class="detail-value"><span class="badge ${s.audit==='已通过'?'badge-low':s.audit==='整改中'?'badge-mid':'badge-info'}">${s.audit}</span></div></div></div>
+    <div style="margin-top:16px;"><div class="form-label" style="margin-bottom:8px;">检测结果明细</div>
+    <table><thead><tr><th>检测项</th><th>命中违禁词</th><th>风险等级</th><th>位置</th><th>修改建议</th></tr></thead><tbody>${issuesHtml}</tbody></table></div>
+    ${mockIssues.length?`<div style="margin-top:12px;padding:10px;background:var(--warning-dim);border-radius:var(--radius);font-size:12px;color:var(--warning);">⚠ 共检测到 ${mockIssues.length} 处违规项，建议整改后重新提交预审</div>`:''}
+  `;
+  openModal('auditModal');
+}
+function terminateSession(i){
+  pendingDelete={type:'session',index:i};
+  document.getElementById('confirmDeleteMsg').textContent=`确定要终止场次「${sessionData[i].name}」吗？终止后该场次将无法继续直播。`;
+  openModal('confirmDeleteModal');
+}
+function filterSessionTable(){
+  const s=(document.getElementById('sessionSearch').value||'').toLowerCase();
+  const st=document.getElementById('sessionStatusFilter').value;
+  document.querySelectorAll('#sessionTableBody tr').forEach(tr=>{
+    const n=tr.cells[1].textContent.toLowerCase(),sst=tr.cells[3].textContent.trim();
+    tr.style.display=(n.includes(s)&&(!st||sst===st))?'':'none';
+  });
+}
+
+// ==================== 报告 查看 ====================
+function renderReportTable(){
+  const tbody=document.getElementById('reportTableBody');tbody.innerHTML='';
+  reportData.forEach((r,i)=>{
+    const sb=r.status==='已闭环'?'badge-low':r.status==='整改中'?'badge-mid':'badge-info';
+    tbody.innerHTML+=`<tr><td>${r.id}</td><td><b>${r.room}</b></td><td>${r.tenant}</td><td>${r.violations} 次</td><td>${r.breakdown}</td><td><span class="badge ${sb}">${r.status}</span></td><td>${r.time}</td><td><div class="action-links"><span class="link" onclick="viewReportDetail(${i})">查看</span><span class="link" onclick="showToast('证据包下载中...','success')">下载</span></div></td></tr>`;
+  });
+}
+function viewReportDetail(i){
+  const r=reportData[i];
+  document.getElementById('reportDetailTitle').textContent=`风控复盘报告 - ${r.room}`;
+  document.getElementById('reportActionBtn').style.display=r.status==='已闭环'?'none':'inline-flex';
+  document.getElementById('reportActionBtn').onclick=()=>{
+    r.status='已闭环';closeModal('reportDetailModal');renderReportTable();
+    showToast(`报告「${r.room}」已标记为闭环处理`,'success');
+  };
+  const detailsHtml=r.details.map(d=>{
+    const lb=d.level==='高危'?'badge-high':d.level==='中危'?'badge-mid':'badge-low';
+    return `<tr><td>${d.time}</td><td><span class="feed-word">${d.word}</span></td><td><span class="badge ${lb}">${d.level}</span></td><td>${d.content}</td><td>${d.action}</td></tr>`;
+  }).join('');
+  const sb=r.status==='已闭环'?'badge-low':r.status==='整改中'?'badge-mid':'badge-info';
+  document.getElementById('reportDetailContent').innerHTML=`
+    <div class="detail-row"><div class="detail-item"><div class="detail-label">场次编号</div><div class="detail-value">${r.id}</div></div><div class="detail-item"><div class="detail-label">直播间</div><div class="detail-value">${r.room}</div></div><div class="detail-item"><div class="detail-label">所属租户</div><div class="detail-value">${r.tenant}</div></div></div>
+    <div class="detail-row"><div class="detail-item"><div class="detail-label">播完时间</div><div class="detail-value">${r.time}</div></div><div class="detail-item"><div class="detail-label">违规总次数</div><div class="detail-value" style="color:var(--danger);">${r.violations} 次</div></div><div class="detail-item"><div class="detail-label">高危/中危/低危</div><div class="detail-value">${r.breakdown}</div></div></div>
+    <div class="detail-row"><div class="detail-item"><div class="detail-label">处置状态</div><div class="detail-value"><span class="badge ${sb}">${r.status}</span></div></div></div>
+    <div style="margin-top:16px;"><div class="form-label" style="margin-bottom:8px;">违规明细记录</div>
+    <table><thead><tr><th>时间</th><th>命中词</th><th>等级</th><th>内容摘要</th><th>处置动作</th></tr></thead><tbody>${detailsHtml}</tbody></table></div>
+  `;
+  openModal('reportDetailModal');
+}
+function filterReportTable(){
+  const s=(document.getElementById('reportSearch').value||'').toLowerCase();
+  const st=document.getElementById('reportStatusFilter').value;
+  document.querySelectorAll('#reportTableBody tr').forEach(tr=>{
+    const n=tr.cells[1].textContent.toLowerCase(),sst=tr.cells[5].textContent.trim();
+    tr.style.display=(n.includes(s)&&(!st||sst===st))?'':'none';
+  });
+}
+
+// ==================== 全选 ====================
+function toggleAllCheckbox(el,cls){ document.querySelectorAll(`.${cls}`).forEach(cb=>cb.checked=el.checked); }
+
+// ==================== 实时Feed ====================
+function simulateLiveFeed(){
+  const feed=document.getElementById('liveFeed');
+  const hitPool=[
+    {word:'第一品牌',level:'中危',tenant:'数码旗舰店',session:'S20260513-001',action:'屏蔽文案',lc:'badge-mid'},
+    {word:'保证治愈',level:'中危',tenant:'健康生活馆',session:'S20260513-005',action:'触发告警',lc:'badge-mid'},
+    {word:'限时特价',level:'低危',tenant:'时尚穿搭馆',session:'S20260513-004',action:'记录日志',lc:'badge-low'},
+    {word:'国家领导人',level:'高危',tenant:'财经直通车',session:'S20260513-002',action:'立即禁播',lc:'badge-high'},
+    {word:'全网最低价',level:'中危',tenant:'美妆优选旗舰店',session:'S20260513-008',action:'屏蔽+告警',lc:'badge-mid'},
+    {word:'绝对安全',level:'中危',tenant:'健康生活馆',session:'S20260513-005',action:'预警提示',lc:'badge-mid'},
+    {word:'独家秘方',level:'低危',tenant:'养生堂官方',session:'S20260513-003',action:'记录日志',lc:'badge-low'},
+    {word:'涨停预测',level:'高危',tenant:'财经直通车',session:'S20260513-002',action:'强制断播',lc:'badge-high'},
+    {word:'原单正品',level:'中危',tenant:'时尚穿搭馆',session:'S20260513-004',action:'屏蔽内容',lc:'badge-mid'},
+    {word:'永久美白',level:'高危',tenant:'美妆优选旗舰店',session:'S20260513-008',action:'拦截内容',lc:'badge-high'},
+    {word:'特效秘方',level:'中危',tenant:'健康生活馆',session:'S20260513-005',action:'屏蔽文案',lc:'badge-mid'},
+    {word:'假一赔十',level:'低危',tenant:'数码旗舰店',session:'S20260513-001',action:'预警提示',lc:'badge-low'},
+  ];
+  let feedIdx=0;
+  setInterval(()=>{
+    const hit=hitPool[feedIdx%hitPool.length]; feedIdx++;
+    const time=new Date().toLocaleTimeString('zh-CN',{hour12:false});
+    const item=document.createElement('div');item.className='feed-item';item.style.animation='toastIn 0.3s ease';
+    item.innerHTML=`<div class="feed-time">${time}</div><div class="feed-content">命中词：<span class="feed-word">${hit.word}</span><div class="feed-level"><span class="badge ${hit.lc}">${hit.level}</span> · 租户：${hit.tenant} · 场次：${hit.session} · 动作：${hit.action}</div></div>`;
+    feed.insertBefore(item,feed.firstChild);
+    if(feed.children.length>25)feed.lastChild.remove();
+  },4000+Math.random()*3000);
+}
+
+// ==================== 弹窗遮罩关闭 ====================
+document.querySelectorAll('.modal-overlay').forEach(o=>{o.addEventListener('click',function(e){if(e.target===this)this.classList.remove('show');});});
+
+// ==================== 启动 ====================
+renderWordTable(); renderTenantTable(); renderSessionTable(); renderReportTable(); simulateLiveFeed();
+console.log('SaaS直播违禁词风控体系原型 v2.0 已就绪 - 增删改查全部可操作');
+</script>
+</body>
+</html>
