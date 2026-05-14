@@ -6,7 +6,7 @@
 <title>运营后台AI能力原型</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
-html,body{width:1440px;height:100%;font-family:'PingFangSC-Regular','PingFang SC','Microsoft YaHei',sans-serif;background:#F0F2F5;color:rgba(0,0,0,0.647);font-size:14px;overflow-x:hidden;}
+html,body{min-width:1440px;width:100%;height:100%;font-family:'PingFangSC-Regular','PingFang SC','Microsoft YaHei',sans-serif;background:#F0F2F5;color:rgba(0,0,0,0.647);font-size:14px;overflow-x:auto;}
 ::-webkit-scrollbar{width:6px;height:6px;}
 ::-webkit-scrollbar-thumb{background:#D9D9D9;border-radius:3px;}
 ::-webkit-scrollbar-track{background:transparent;}
@@ -21,7 +21,7 @@ html,body{width:1440px;height:100%;font-family:'PingFangSC-Regular','PingFang SC
 .sidebar .sub-menu{display:none;}
 .sidebar .sub-menu.show{display:block;}
 .sidebar .sub-menu .menu-item{padding-left:36px;height:40px;line-height:40px;font-size:13px;}
-.status-bar{position:fixed;top:0;left:141px;width:1285px;height:64px;background:#FAFAFA;border-bottom:1px solid #E8E8E8;display:flex;align-items:center;justify-content:space-between;padding:0 24px;z-index:98;}
+.status-bar{position:fixed;top:0;left:141px;right:0;height:64px;background:#FAFAFA;border-bottom:1px solid #E8E8E8;display:flex;align-items:center;justify-content:space-between;padding:0 24px;z-index:98;}
 .breadcrumb{font-size:14px;color:rgba(0,0,0,0.447);}
 .breadcrumb .current{color:rgba(0,0,0,0.647);}
 .breadcrumb .sep{margin:0 8px;color:rgba(0,0,0,0.247);}
@@ -30,7 +30,7 @@ html,body{width:1440px;height:100%;font-family:'PingFangSC-Regular','PingFang SC
 .user-info .name{font-size:14px;color:rgba(0,0,0,0.647);}
 .user-info .dropdown-arrow{font-size:10px;color:rgba(0,0,0,0.247);}
 .content-area{margin-left:151px;margin-top:64px;padding:16px 16px 24px 16px;min-height:calc(100vh - 64px);}
-.content-card{width:1265px;background:#fff;border-radius:4px;padding:24px;box-shadow:0 1px 4px rgba(0,0,0,0.04);}
+.content-card{width:100%;background:#fff;border-radius:4px;padding:24px;box-shadow:0 1px 4px rgba(0,0,0,0.04);}
 .page-title{font-family:'PingFangSC-Semibold','PingFang SC',sans-serif;font-size:20px;color:rgba(0,0,0,0.847);margin-bottom:20px;}
 .btn{display:inline-flex;align-items:center;justify-content:center;height:32px;padding:0 16px;border-radius:4px;font-size:14px;cursor:pointer;border:1px solid transparent;transition:all .2s;user-select:none;font-family:inherit;}
 .btn-primary{background:#1890FF;color:#fff;border-color:#1890FF;}
@@ -149,6 +149,9 @@ td .ops{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
 .optimize-area{display:flex;gap:8px;margin-top:12px;}
 .optimize-area .input{flex:1;height:32px;border:1px solid #D9D9D9;border-radius:4px;padding:0 12px;font-size:14px;font-family:inherit;outline:none;}
 .optimize-area .input:focus{border-color:#1890FF;}
+.var-chip{display:inline-block;padding:2px 10px;background:#E6F7FF;color:#1890FF;border:1px solid #91D5FF;border-radius:12px;font-size:12px;cursor:pointer;user-select:none;transition:all .15s;white-space:nowrap;}
+.var-chip:hover{background:#1890FF;color:#fff;border-color:#1890FF;}
+.var-chip.used{background:#F6FFED;color:#52C41A;border-color:#B7EB8F;}
 </style>
 </head>
 <body>
@@ -196,6 +199,7 @@ td .ops{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
 <div class="menu-item" data-page="ai-ctrl" onclick="navTo('ai-ctrl')">AI控制管理</div>
 <div class="menu-item" data-page="service-buy" onclick="navTo('service-buy')">服务购买</div>
 <div class="menu-item" data-page="usage-log" onclick="navTo('usage-log')">使用记录</div>
+<div class="menu-item" data-page="prompt-tmpl" onclick="navTo('prompt-tmpl')">提示词模版管理</div>
 </div>
 <div class="menu-item" onclick="toggleSub(this)"><span>通讯录</span><span class="arrow">&#9654;</span></div>
 <div class="sub-menu">
@@ -267,6 +271,88 @@ td .ops{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
 </table>
 </div>
 <div class="pagination"><span class="pg-info">共 5 条</span><div class="pg-btn active">1</div></div>
+</div>
+</div>
+
+<div class="page-section" id="page-prompt-tmpl">
+<div class="content-card">
+<div class="page-title">提示词模版管理</div>
+
+<div style="display:flex;gap:16px;margin-bottom:16px;align-items:center;">
+<span style="font-size:14px;color:rgba(0,0,0,0.647);">当前生效版本：</span>
+<select class="select" style="width:200px;" onchange="switchTemplateVersion(this.value)">
+<option value="v1">V1.0.0 - 通用带货直播模版（生效中）</option>
+<option value="v2">V2.0.0 - 多品类直播模版</option>
+<option value="v3">V3.0.0 - 品牌专场直播模版</option>
+</select>
+<button class="btn btn-default btn-sm" onclick="openModal('tmplVersionModal')">新建版本</button>
+<button class="btn btn-default btn-sm" onclick="showToast('模版已复制','success')">复制当前版本</button>
+<button class="btn btn-primary btn-sm" onclick="showToast('版本已设为生效','success')">设为生效</button>
+</div>
+
+<div style="display:flex;gap:16px;">
+<div style="flex:1;min-width:0;">
+<div style="font-family:'PingFangSC-Semibold','PingFang SC',sans-serif;font-size:15px;color:rgba(0,0,0,0.847);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #E8E8E8;">📋 可配置输入参数</div>
+<div class="table-wrap">
+<table>
+<thead><tr><th style="width:50px">序号</th><th style="width:120px">参数名称</th><th style="width:80px">参数分类</th><th style="width:120px">变量名</th><th style="width:100px">数据类型</th><th style="width:120px">数据来源</th><th style="width:80px">状态</th><th style="width:100px">操作</th></tr></thead>
+<tbody id="tmplParamList">
+</tbody>
+</table>
+</div>
+<div style="display:flex;gap:8px;margin-top:12px;">
+<button class="btn btn-default btn-sm" onclick="openModal('tmplParamModal')">添加参数</button>
+<button class="btn btn-default btn-sm" onclick="showToast('排序已保存','success')">保存排序</button>
+</div>
+</div>
+</div>
+
+<div style="margin-top:20px;">
+<div style="font-family:'PingFangSC-Semibold','PingFang SC',sans-serif;font-size:15px;color:rgba(0,0,0,0.847);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #E8E8E8;">📝 提示词模版编辑器</div>
+<div style="margin-bottom:8px;display:flex;align-items:center;gap:12px;">
+<span style="font-size:13px;color:rgba(0,0,0,0.447);">可用变量：</span>
+<span class="var-chip" onclick="insertVar('{直播计划}')" title="直播计划介绍">{直播计划}</span>
+<span class="var-chip" onclick="insertVar('{主播特点}')" title="主播特点描述">{主播特点}</span>
+<span class="var-chip" onclick="insertVar('{主播风格}')" title="主播话术风格">{主播风格}</span>
+<span class="var-chip" onclick="insertVar('{擅长品类}')" title="主播擅长品类">{擅长品类}</span>
+<span class="var-chip" onclick="insertVar('{商品列表}')" title="商品信息列表">{商品列表}</span>
+<span class="var-chip" onclick="insertVar('{营销活动}')" title="营销活动列表">{营销活动}</span>
+<span class="var-chip" onclick="insertVar('{直播主题}')" title="直播主题">{直播主题}</span>
+<span class="var-chip" onclick="insertVar('{目标用户}')" title="目标用户">{目标用户}</span>
+<span class="var-chip" onclick="insertVar('{直播目标}')" title="直播目标">{直播目标}</span>
+<span class="var-chip" onclick="insertVar('{话术风格}')" title="话术风格">{话术风格}</span>
+<span class="var-chip" onclick="insertVar('{字数要求}')" title="字数要求">{字数要求}</span>
+</div>
+<textarea id="tmplEditor" style="width:100%;height:260px;border:1px solid #D9D9D9;border-radius:4px;padding:12px;font-size:14px;font-family:'PingFangSC-Regular','PingFang SC',sans-serif;color:rgba(0,0,0,0.647);line-height:1.8;resize:vertical;outline:none;" onfocus="this.style.borderColor='#1890FF'" onblur="this.style.borderColor='#D9D9D9'"></textarea>
+<div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px;">
+<button class="btn btn-default" onclick="resetTemplate()">重置为默认</button>
+<button class="btn btn-primary" onclick="previewTemplate()">预览模版效果</button>
+<button class="btn btn-primary" onclick="saveTemplate()">保存模版</button>
+</div>
+</div>
+
+<div style="margin-top:20px;">
+<div style="font-family:'PingFangSC-Semibold','PingFang SC',sans-serif;font-size:15px;color:rgba(0,0,0,0.847);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #E8E8E8;">🔄 变量映射预览（填入示例数据查看渲染效果）</div>
+<div style="background:#FAFAFA;border:1px solid #E8E8E8;border-radius:4px;padding:16px;margin-bottom:12px;">
+<div style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:12px;">
+<div style="flex:1;min-width:200px;"><label style="font-size:13px;color:rgba(0,0,0,0.647);display:block;margin-bottom:4px;">{直播计划}</label><input class="input" id="previewVarPlan" value="春季新品发布直播，主打连衣裙和护肤品类，目标GMV 50万" style="width:100%;" oninput="renderTemplatePreview()"/></div>
+<div style="flex:1;min-width:200px;"><label style="font-size:13px;color:rgba(0,0,0,0.647);display:block;margin-bottom:4px;">{主播特点}</label><input class="input" id="previewVarTrait" value="亲和力强、语速适中、擅长种草" style="width:100%;" oninput="renderTemplatePreview()"/></div>
+<div style="flex:1;min-width:200px;"><label style="font-size:13px;color:rgba(0,0,0,0.647);display:block;margin-bottom:4px;">{主播风格}</label><input class="input" id="previewVarStyle" value="亲切温暖、活泼有趣" style="width:100%;" oninput="renderTemplatePreview()"/></div>
+</div>
+<div style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:12px;">
+<div style="flex:1;min-width:200px;"><label style="font-size:13px;color:rgba(0,0,0,0.647);display:block;margin-bottom:4px;">{擅长品类}</label><input class="input" id="previewVarCategory" value="连衣裙、护肤品、数码产品" style="width:100%;" oninput="renderTemplatePreview()"/></div>
+<div style="flex:1;min-width:200px;"><label style="font-size:13px;color:rgba(0,0,0,0.647);display:block;margin-bottom:4px;">{商品列表}</label><input class="input" id="previewVarProducts" value="引流款：春季新款连衣裙 ¥299\n利润款：保湿精华液30ml ¥189\n爆款：智能蓝牙耳机Pro ¥459" style="width:100%;" oninput="renderTemplatePreview()"/></div>
+<div style="flex:1;min-width:200px;"><label style="font-size:13px;color:rgba(0,0,0,0.647);display:block;margin-bottom:4px;">{营销活动}</label><input class="input" id="previewVarPromo" value="满200减50优惠券、前50名下单赠送小样、整点抽奖福袋" style="width:100%;" oninput="renderTemplatePreview()"/></div>
+</div>
+<div style="display:flex;flex-wrap:wrap;gap:12px;">
+<div style="flex:1;min-width:200px;"><label style="font-size:13px;color:rgba(0,0,0,0.647);display:block;margin-bottom:4px;">{直播主题}</label><input class="input" id="previewVarTheme" value="春季焕新好物推荐" style="width:100%;" oninput="renderTemplatePreview()"/></div>
+<div style="flex:1;min-width:200px;"><label style="font-size:13px;color:rgba(0,0,0,0.647);display:block;margin-bottom:4px;">{目标用户}</label><input class="input" id="previewVarTarget" value="25-35岁年轻女性、职场白领" style="width:100%;" oninput="renderTemplatePreview()"/></div>
+<div style="flex:1;min-width:200px;"><label style="font-size:13px;color:rgba(0,0,0,0.647);display:block;margin-bottom:4px;">{直播目标}</label><input class="input" id="previewVarGoal" value="商品销售+粉丝增长" style="width:100%;" oninput="renderTemplatePreview()"/></div>
+</div>
+</div>
+<div style="font-family:'PingFangSC-Semibold','PingFang SC',sans-serif;font-size:14px;color:rgba(0,0,0,0.847);margin-bottom:8px;">渲染结果预览</div>
+<div style="background:#fff;border:1px solid #E8E8E8;border-radius:4px;padding:16px;min-height:120px;font-size:14px;color:rgba(0,0,0,0.647);line-height:1.8;white-space:pre-wrap;" id="tmplPreviewResult"></div>
+</div>
 </div>
 </div>
 
@@ -946,6 +1032,17 @@ td .ops{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
 <div class="modal" style="width:800px;">
 <div class="modal-header"><h3>撰写直播稿</h3><div class="close-btn" onclick="closeModal('writeScriptModal')">&#10005;</div></div>
 <div class="modal-body" id="writeScriptBody">
+<div style="background:#F6FFED;border:1px solid #B7EB8F;border-radius:4px;padding:8px 12px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;">
+<div style="font-size:13px;color:#52C41A;"><span style="font-weight:600;">提示词模版：</span><span id="scriptTmplLabel">V1.0.0 - 通用带货直播模版</span></div>
+<div style="display:flex;align-items:center;gap:8px;">
+<select class="select" style="width:200px;font-size:12px;" id="scriptTmplSelect" onchange="switchScriptTmpl()">
+<option value="v1">V1.0.0 - 通用带货直播模版</option>
+<option value="v2">V2.0.0 - 多品类直播模版</option>
+<option value="v3">V3.0.0 - 品牌专场直播模版</option>
+</select>
+<a class="btn-link" onclick="closeModal('writeScriptModal');navTo('prompt-tmpl');" style="font-size:12px;">管理模版</a>
+</div>
+</div>
 <div id="scriptFormStep">
 <div class="form-row">
 <div class="form-group"><label><span class="required">*</span>直播场次</label><select class="select" onchange="autoFillScript(this)"><option value="">请选择场次</option><option value="1">LC001-春季新品发布</option><option value="2">LC002-年货节专场</option><option value="3">LC003-美妆好物推荐</option></select></div>
@@ -1239,6 +1336,45 @@ td .ops{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
 </div>
 </div>
 
+<div class="modal-overlay" id="tmplVersionModal">
+<div class="modal" style="width:500px;">
+<div class="modal-header"><h3>新建模版版本</h3><div class="close-btn" onclick="closeModal('tmplVersionModal')">&#10005;</div></div>
+<div class="modal-body">
+<div class="form-group"><label><span class="required">*</span>版本号</label><input class="input" placeholder="如：V1.0.0"/></div>
+<div class="form-group"><label><span class="required">*</span>版本名称</label><input class="input" placeholder="如：通用带货直播模版"/></div>
+<div class="form-group"><label>版本描述</label><textarea placeholder="版本说明..."></textarea></div>
+<div class="form-group"><label>基于版本</label><select class="select"><option>V1.0.0 - 通用带货直播模版</option><option>V2.0.0 - 多品类直播模版</option><option>V3.0.0 - 品牌专场直播模版</option></select></div>
+</div>
+<div class="modal-footer"><button class="btn btn-default" onclick="closeModal('tmplVersionModal')">取消</button><button class="btn btn-primary" onclick="closeModal('tmplVersionModal');showToast('新版本已创建','success')">创建</button></div>
+</div>
+</div>
+
+<div class="modal-overlay" id="tmplParamModal">
+<div class="modal" style="width:500px;">
+<div class="modal-header"><h3>添加参数</h3><div class="close-btn" onclick="closeModal('tmplParamModal')">&#10005;</div></div>
+<div class="modal-body">
+<div class="form-row">
+<div class="form-group"><label><span class="required">*</span>参数名称</label><input class="input" placeholder="如：直播计划"/></div>
+<div class="form-group"><label><span class="required">*</span>参数分类</label><select class="select"><option value="直播计划">直播计划</option><option value="主播信息">主播信息</option><option value="商品信息">商品信息</option><option value="营销活动">营销活动</option><option value="直播配置">直播配置</option></select></div>
+</div>
+<div class="form-row">
+<div class="form-group"><label><span class="required">*</span>变量名</label><input class="input" placeholder="如：{计划介绍}"/></div>
+<div class="form-group"><label>数据类型</label><select class="select"><option>文本</option><option>数字</option><option>列表</option><option>JSON对象</option></select></div>
+</div>
+<div class="form-group"><label>数据来源</label><input class="input" placeholder="如：场次数据-场次介绍"/></div>
+</div>
+<div class="modal-footer"><button class="btn btn-default" onclick="closeModal('tmplParamModal')">取消</button><button class="btn btn-primary" onclick="addTmplParam()">确定</button></div>
+</div>
+</div>
+
+<div class="modal-overlay" id="tmplPreviewModal">
+<div class="modal" style="width:700px;">
+<div class="modal-header"><h3>模版效果预览</h3><div class="close-btn" onclick="closeModal('tmplPreviewModal')">&#10005;</div></div>
+<div class="modal-body"><div style="font-size:14px;color:rgba(0,0,0,0.647);line-height:1.8;white-space:pre-wrap;" id="tmplPreviewModalContent"></div></div>
+<div class="modal-footer"><button class="btn btn-default" onclick="closeModal('tmplPreviewModal')">关闭</button></div>
+</div>
+</div>
+
 <div class="teleprompter-view" id="teleprompterView">
 <div class="teleprompter-header">
 <h3>提词器模式</h3>
@@ -1292,6 +1428,7 @@ var pageMap={
 'ai-ctrl':'AI应用 / AI控制管理',
 'service-buy':'AI应用 / 服务购买',
 'usage-log':'AI应用 / 使用记录',
+'prompt-tmpl':'AI应用 / 提示词模版管理',
 'contacts-mgr':'通讯录 / 通讯录管理',
 'auto-group':'通讯录 / 自动建群',
 'group-mgr':'通讯录 / 群聊管理',
@@ -1345,6 +1482,7 @@ bc='<span>'+parts[0]+'</span><span class="sep">/</span><span class="current">'+p
 bc='<span class="current">'+parts[0]+'</span>';
 }
 document.getElementById('breadcrumb').innerHTML=bc;
+if(page==='prompt-tmpl'){setTimeout(initTmplPage,50);}
 }
 
 function toggleSub(el){
@@ -1395,6 +1533,13 @@ function toggleCheckbox(label){
 var cb=label.querySelector('input');
 cb.checked=!cb.checked;
 label.classList.toggle('checked',cb.checked);
+}
+
+function switchScriptTmpl(){
+var v=document.getElementById('scriptTmplSelect').value;
+var names={v1:'V1.0.0 - 通用带货直播模版',v2:'V2.0.0 - 多品类直播模版',v3:'V3.0.0 - 品牌专场直播模版'};
+document.getElementById('scriptTmplLabel').textContent=names[v];
+showToast('已切换至 '+names[v],'info');
 }
 
 function generateScript(){
@@ -1662,6 +1807,105 @@ function sendPush(){
 var select=document.getElementById('pushContentSelect');
 if(!select.value){showToast('请选择推送内容','error');return;}
 showToast('推送成功','success');
+}
+
+var tmplVersions={
+v1:{name:'V1.0.0 - 通用带货直播模版',content:'你作为{擅长品类}带货直播专家，目前我作为一名主播，我的直播计划是{直播计划}。\n\n我的特点是{主播特点}，擅长{擅长品类}，风格偏向{主播风格}。\n\n本次直播的主题是{直播主题}，目标用户是{目标用户}，直播主要目标是{直播目标}。\n\n计划本次直播安排的营销活动有：{营销活动}。\n\n本场直播的商品安排如下：\n{商品列表}\n\n请根据以上信息，帮我生成一份完整的直播稿，要求：\n1. 包含开场话术、品牌/店铺介绍、商品逐个讲解、优惠活动介绍、互动引导、成交转化话术、结尾话术\n2. 整体风格{话术风格}\n3. 字数控制在{字数要求}字以内\n4. 话术自然口语化，适合直播现场朗读\n5. 突出商品核心卖点和优惠力度',params:[{seq:0,name:'直播计划',cat:'直播计划',var:'{直播计划}',type:'文本',source:'场次数据-场次介绍',status:'启用'},{seq:1,name:'主播特点',cat:'主播信息',var:'{主播特点}',type:'文本',source:'主播档案-主播人设',status:'启用'},{seq:2,name:'主播风格',cat:'主播信息',var:'{主播风格}',type:'文本',source:'主播档案-话术风格',status:'启用'},{seq:3,name:'擅长品类',cat:'主播信息',var:'{擅长品类}',type:'文本',source:'主播档案-擅长品类',status:'启用'},{seq:4,name:'商品列表',cat:'商品信息',var:'{商品列表}',type:'列表',source:'直播间商品+用户勾选',status:'启用'},{seq:5,name:'营销活动',cat:'营销活动',var:'{营销活动}',type:'列表',source:'直播间配置-营销活动',status:'启用'},{seq:6,name:'直播主题',cat:'直播配置',var:'{直播主题}',type:'文本',source:'场次数据+用户填写',status:'启用'},{seq:7,name:'目标用户',cat:'直播配置',var:'{目标用户}',type:'文本',source:'用户选择',status:'启用'},{seq:8,name:'直播目标',cat:'直播配置',var:'{直播目标}',type:'文本',source:'用户选择',status:'启用'},{seq:9,name:'话术风格',cat:'直播配置',var:'{话术风格}',type:'文本',source:'用户选择',status:'启用'},{seq:10,name:'字数要求',cat:'直播配置',var:'{字数要求}',type:'数字',source:'用户填写',status:'启用'}]},
+v2:{name:'V2.0.0 - 多品类直播模版',content:'你是一位资深{擅长品类}直播带货专家，拥有多年直播经验。\n\n当前直播计划：{直播计划}\n主播画像：{主播特点}\n主播风格：{主播风格}\n直播主题：{直播主题}\n目标人群：{目标用户}\n直播目标：{直播目标}\n\n营销活动配置：{营销活动}\n\n商品清单：\n{商品列表}\n\n请以{话术风格}的风格，生成一份{字数要求}字以内的完整直播稿，要求包含开场暖场、商品分段讲解、活动穿插、互动环节、逼单成交、结尾预告等标准直播流程。',params:[{seq:0,name:'直播计划',cat:'直播计划',var:'{直播计划}',type:'文本',source:'场次数据-场次介绍',status:'启用'},{seq:1,name:'主播特点',cat:'主播信息',var:'{主播特点}',type:'文本',source:'主播档案-主播人设',status:'启用'},{seq:2,name:'主播风格',cat:'主播信息',var:'{主播风格}',type:'文本',source:'主播档案-话术风格',status:'启用'},{seq:3,name:'擅长品类',cat:'主播信息',var:'{擅长品类}',type:'文本',source:'主播档案-擅长品类',status:'启用'},{seq:4,name:'商品列表',cat:'商品信息',var:'{商品列表}',type:'列表',source:'直播间商品+用户勾选',status:'启用'},{seq:5,name:'营销活动',cat:'营销活动',var:'{营销活动}',type:'列表',source:'直播间配置-营销活动',status:'启用'},{seq:6,name:'直播主题',cat:'直播配置',var:'{直播主题}',type:'文本',source:'场次数据+用户填写',status:'启用'},{seq:7,name:'目标用户',cat:'直播配置',var:'{目标用户}',type:'文本',source:'用户选择',status:'启用'},{seq:8,name:'直播目标',cat:'直播配置',var:'{直播目标}',type:'文本',source:'用户选择',status:'启用'},{seq:9,name:'话术风格',cat:'直播配置',var:'{话术风格}',type:'文本',source:'用户选择',status:'启用'},{seq:10,name:'字数要求',cat:'直播配置',var:'{字数要求}',type:'数字',source:'用户填写',status:'启用'}]},
+v3:{name:'V3.0.0 - 品牌专场直播模版',content:'角色设定：你是{擅长品类}领域的顶级带货主播，拥有专业产品知识和超强带货能力。\n\n任务：基于以下信息生成品牌专场直播稿。\n\n【直播计划】{直播计划}\n【主播特点】{主播特点}\n【话术风格】{主播风格}\n【专场主题】{直播主题}\n【目标受众】{目标用户}\n【专场目标】{直播目标}\n【营销活动】{营销活动}\n【专场商品】\n{商品列表}\n\n生成要求：\n- 风格：{话术风格}\n- 字数：不超过{字数要求}字\n- 结构：开场引流入题 → 品牌故事/背书 → 商品逐一深讲 → 活动穿插刺激 → 互动留人 → 限时逼单 → 结尾预告下期',params:[{seq:0,name:'直播计划',cat:'直播计划',var:'{直播计划}',type:'文本',source:'场次数据-场次介绍',status:'启用'},{seq:1,name:'主播特点',cat:'主播信息',var:'{主播特点}',type:'文本',source:'主播档案-主播人设',status:'启用'},{seq:2,name:'主播风格',cat:'主播信息',var:'{主播风格}',type:'文本',source:'主播档案-话术风格',status:'启用'},{seq:3,name:'擅长品类',cat:'主播信息',var:'{擅长品类}',type:'文本',source:'主播档案-擅长品类',status:'启用'},{seq:4,name:'商品列表',cat:'商品信息',var:'{商品列表}',type:'列表',source:'直播间商品+用户勾选',status:'启用'},{seq:5,name:'营销活动',cat:'营销活动',var:'{营销活动}',type:'列表',source:'直播间配置-营销活动',status:'启用'},{seq:6,name:'直播主题',cat:'直播配置',var:'{直播主题}',type:'文本',source:'场次数据+用户填写',status:'启用'},{seq:7,name:'目标用户',cat:'直播配置',var:'{目标用户}',type:'文本',source:'用户选择',status:'启用'},{seq:8,name:'直播目标',cat:'直播配置',var:'{直播目标}',type:'文本',source:'用户选择',status:'启用'},{seq:9,name:'话术风格',cat:'直播配置',var:'{话术风格}',type:'文本',source:'用户选择',status:'启用'},{seq:10,name:'字数要求',cat:'直播配置',var:'{字数要求}',type:'数字',source:'用户填写',status:'启用'}]}
+};
+var currentTmplVersion='v1';
+
+function renderTmplParams(version){
+var list=tmplVersions[version].params;
+var html='';
+for(var i=0;i<list.length;i++){
+var p=list[i];
+html+='<tr>';
+html+='<td>'+(i+1)+'</td>';
+html+='<td>'+p.name+'</td>';
+html+='<td><span class="status-tag blue">'+p.cat+'</span></td>';
+html+='<td style="font-family:monospace;color:#1890FF;">'+p.var+'</td>';
+html+='<td>'+p.type+'</td>';
+html+='<td style="font-size:12px;">'+p.source+'</td>';
+html+='<td><span class="status-tag green">'+p.status+'</span></td>';
+html+='<td class="ops"><a class="btn-link">编辑</a><a class="btn-link" style="color:#FF4D4F;">删除</a></td>';
+html+='</tr>';
+}
+document.getElementById('tmplParamList').innerHTML=html;
+}
+
+function switchTemplateVersion(v){
+currentTmplVersion=v;
+document.getElementById('tmplEditor').value=tmplVersions[v].content;
+renderTmplParams(v);
+renderTemplatePreview();
+}
+
+function initTmplPage(){
+document.getElementById('tmplEditor').value=tmplVersions.v1.content;
+renderTmplParams('v1');
+renderTemplatePreview();
+}
+
+function insertVar(v){
+var editor=document.getElementById('tmplEditor');
+var start=editor.selectionStart;
+var end=editor.selectionEnd;
+var text=editor.value;
+editor.value=text.substring(0,start)+v+text.substring(end);
+editor.selectionStart=editor.selectionEnd=start+v.length;
+editor.focus();
+}
+
+function addTmplParam(){
+closeModal('tmplParamModal');
+showToast('参数已添加','success');
+}
+
+function resetTemplate(){
+document.getElementById('tmplEditor').value=tmplVersions[currentTmplVersion].content;
+showToast('已重置为默认模版','info');
+renderTemplatePreview();
+}
+
+function saveTemplate(){
+tmplVersions[currentTmplVersion].content=document.getElementById('tmplEditor').value;
+showToast('模版保存成功','success');
+}
+
+function previewTemplate(){
+var content=document.getElementById('tmplEditor').value;
+var rendered=renderTemplateVars(content);
+document.getElementById('tmplPreviewModalContent').textContent=rendered;
+openModal('tmplPreviewModal');
+}
+
+function renderTemplatePreview(){
+var content=document.getElementById('tmplEditor').value;
+var rendered=renderTemplateVars(content);
+document.getElementById('tmplPreviewResult').textContent=rendered;
+}
+
+function renderTemplateVars(content){
+var vars={
+'{直播计划}':document.getElementById('previewVarPlan').value,
+'{主播特点}':document.getElementById('previewVarTrait').value,
+'{主播风格}':document.getElementById('previewVarStyle').value,
+'{擅长品类}':document.getElementById('previewVarCategory').value,
+'{商品列表}':document.getElementById('previewVarProducts').value,
+'{营销活动}':document.getElementById('previewVarPromo').value,
+'{直播主题}':document.getElementById('previewVarTheme').value,
+'{目标用户}':document.getElementById('previewVarTarget').value,
+'{直播目标}':document.getElementById('previewVarGoal').value,
+'{话术风格}':document.getElementById('previewVarStyle').value,
+'{字数要求}':'3000'
+};
+var result=content;
+for(var key in vars){
+result=result.split(key).join(vars[key]);
+}
+return result;
 }
 
 document.querySelectorAll('.modal-overlay').forEach(function(overlay){

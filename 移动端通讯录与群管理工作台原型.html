@@ -614,7 +614,7 @@ body {
 }
 .group-card-status.normal { background: var(--primary-light); color: var(--wechat-green); }
 .group-card-status.sync { background: #FFF3E0; color: var(--warning); }
-.group-card-status.error { background: var(--danger-light); color: var(--danger); }
+.group-card-status.error { background: var(--primary-light); color: var(--wechat-green); }
 .group-card-status.disabled { background: #F0F0F0; color: var(--text-tertiary); }
 .group-empty-state {
   text-align: center; padding: 32px 20px; background: var(--bg-card);
@@ -636,7 +636,7 @@ body {
 .gd-value { flex: 1; color: var(--text-primary); }
 .gd-value.status-normal { color: var(--wechat-green); }
 .gd-value.status-sync { color: var(--warning); }
-.gd-value.status-error { color: var(--danger); }
+.gd-value.status-error { color: var(--wechat-green); }
 .gd-value.status-disabled { color: var(--text-tertiary); }
 .gd-overview {
   display: flex; padding: 14px 16px; gap: 0;
@@ -665,7 +665,7 @@ body {
   font-size: 11px; padding: 2px 6px; border-radius: 3px; flex-shrink: 0;
 }
 .gd-member-status.normal { background: var(--primary-light); color: var(--wechat-green); }
-.gd-member-status.anomaly { background: var(--danger-light); color: var(--danger); }
+.gd-member-status.anomaly { background: var(--primary-light); color: var(--wechat-green); }
 .gd-customer-item {
   display: flex; align-items: center; padding: 10px 16px;
   border-bottom: 0.5px solid var(--border); background: var(--bg-card);
@@ -854,7 +854,7 @@ var AVATAR_COLORS = ['#5B9BD5','#70AD47','#FFC000','#ED7D31','#A855F7','#EC4899'
 function getAvatarColor(name) { var h=0; for(var i=0;i<name.length;i++) h=name.charCodeAt(i)+((h<<5)-h); return AVATAR_COLORS[Math.abs(h)%AVATAR_COLORS.length]; }
 
 var ROLES = {
-  buyer: { key:'buyer', name:'买家', icon:'👤', identity:'买家', desc:'订单关联门店', tenant:'个人' },
+  buyer: { key:'buyer', name:'买家', icon:'👤', identity:'买家', desc:'绑定门店', tenant:'个人' },
   clerk: { key:'clerk', name:'店员', icon:'🏪', identity:'店员', desc:'南山门店、福田门店、朝阳门店', tenant:'天津租赁' },
   manager: { key:'manager', name:'店长', icon:'👔', identity:'南山门店店长', desc:'南山门店', tenant:'天津租赁' },
   agent: { key:'agent', name:'代理', icon:'🏢', identity:'代理', desc:'招募渠道关联门店', tenant:'天津租赁' }
@@ -892,12 +892,12 @@ var MY_GROUPS = [
 ];
 
 var GROUPS = [
-  { id:1, name:'南山门店群聊', type:'门店群', source:'南山门店', owner:'王店长', ownerRole:'店长', managers:['李店员','张店员'], customers:128, status:'正常', updatedTime:'今天 10:20', tenant:'天津租赁', createdTime:'2025-01-15', anomalyCount:0 },
-  { id:2, name:'福田门店群聊', type:'门店群', source:'福田门店', owner:'陈代理', ownerRole:'代理', managers:['赵店长','孙店员'], customers:195, status:'正常', updatedTime:'昨天 16:30', tenant:'天津租赁', createdTime:'2025-02-20', anomalyCount:1 },
-  { id:3, name:'宝安门店群聊', type:'门店群', source:'宝安门店', owner:'陈代理', ownerRole:'代理', managers:['刘店长','周店员'], customers:82, status:'异常', updatedTime:'3天前', tenant:'天津租赁', createdTime:'2025-03-10', anomalyCount:2 },
-  { id:4, name:'深圳区域代理群', type:'代理群', source:'全部门店', owner:'陈代理', ownerRole:'代理', managers:['王店长','赵店长','刘店长'], customers:405, status:'正常', updatedTime:'今天 09:15', tenant:'天津租赁', createdTime:'2025-01-01', anomalyCount:0 },
-  { id:5, name:'龙岗门店群聊', type:'门店群', source:'龙岗门店', owner:'陈代理', ownerRole:'代理', managers:['黄店长'], customers:0, status:'停用', updatedTime:'30天前', tenant:'天津租赁', createdTime:'2025-04-01', anomalyCount:0 },
-  { id:6, name:'朝阳门店群聊', type:'门店群', source:'朝阳门店', owner:'吴代理', ownerRole:'代理', managers:['郑店长','李店员'], customers:67, status:'正常', updatedTime:'今天 08:45', tenant:'北京租赁', createdTime:'2025-05-01', anomalyCount:0 }
+  { id:1, name:'南山门店群聊', type:'门店群', source:'南山门店', owner:'王店长', ownerRole:'店长', managers:['李店员','张店员'], customers:128, status:'正常', updatedTime:'今天 10:20', tenant:'天津租赁', createdTime:'2025-01-15', storeType:'直营' },
+  { id:2, name:'福田门店群聊', type:'门店群', source:'福田门店', owner:'陈代理', ownerRole:'代理', managers:['赵店长','孙店员'], customers:195, status:'正常', updatedTime:'昨天 16:30', tenant:'天津租赁', createdTime:'2025-02-20', storeType:'直营' },
+  { id:3, name:'宝安门店群聊', type:'门店群', source:'宝安门店', owner:'陈代理', ownerRole:'代理', managers:['刘店长','周店员'], customers:82, status:'正常', updatedTime:'今天 09:30', tenant:'天津租赁', createdTime:'2025-03-10', storeType:'非直营' },
+  { id:4, name:'深圳区域代理群', type:'代理群', source:'全部门店', owner:'陈代理', ownerRole:'代理', managers:['王店长','赵店长','刘店长'], customers:405, status:'正常', updatedTime:'今天 09:15', tenant:'天津租赁', createdTime:'2025-01-01', storeType:'直营' },
+  { id:5, name:'龙岗门店群聊', type:'门店群', source:'龙岗门店', owner:'陈代理', ownerRole:'代理', managers:['黄店长'], customers:0, status:'停用', updatedTime:'30天前', tenant:'天津租赁', createdTime:'2025-04-01', storeType:'非直营' },
+  { id:6, name:'朝阳门店群聊', type:'门店群', source:'朝阳门店', owner:'吴代理', ownerRole:'代理', managers:['郑店长','李店员'], customers:67, status:'正常', updatedTime:'今天 08:45', tenant:'北京租赁', createdTime:'2025-05-01', storeType:'直营' }
 ];
 
 var GROUP_CUSTOMERS = [
@@ -1043,36 +1043,70 @@ function renderGroupSection() {
   var role = currentRole;
   var html = '';
   var groups = getVisibleGroups();
-  var sectionTitle = (role === 'buyer') ? '订单关联门店群' : (role === 'agent') ? '我管理的门店群' : '我的门店群';
-  if(groups.length === 0) {
-    if(role === 'buyer') {
-      html += '<div class="group-section-title">' + sectionTitle + '</div>';
-      html += '<div class="group-empty-state"><div class="empty-icon">📋</div><div class="empty-text">暂无相关门店群<br>下单成功后，可在这里查看对应门店服务群</div></div>';
-    } else if(role === 'agent') {
-      html += '<div class="group-section-title">' + sectionTitle + '</div>';
+  
+  if(role === 'buyer') {
+    html += '<div class="group-section-title">绑定门店客服群</div>';
+    if(groups.length === 0) {
+      html += '<div class="group-empty-state"><div class="empty-icon">📋</div><div class="empty-text">暂无绑定门店<br>请先绑定门店查看客服人员</div></div>';
+      return html;
+    }
+    groups.forEach(function(g){
+      html += '<div class="group-card" onclick="showGroupDetail('+g.id+')">';
+      html += '<div class="group-card-avatar" style="background:'+getAvatarColor(g.name)+'">'+g.name.charAt(0)+'</div>';
+      html += '<div class="group-card-info">';
+      html += '<div class="group-card-name">'+g.name+'</div>';
+      html += '<div class="group-card-meta">门店：'+g.source+'</div>';
+      html += '<div class="group-card-meta">客服：店长 '+g.owner+'　店员 '+g.managers.join('、')+'</div>';
+      html += '</div><span class="group-card-arrow">›</span></div>';
+    });
+    return html;
+  }
+  
+  if(role === 'agent') {
+    var directGroups = groups.filter(function(g){ return g.type === '门店群' && g.storeType === '直营'; });
+    var indirectGroups = groups.filter(function(g){ return g.type === '门店群' && g.storeType === '非直营'; });
+    if(directGroups.length === 0 && indirectGroups.length === 0) {
+      html += '<div class="group-section-title">我管理的门店群</div>';
       html += '<div class="group-empty-state"><div class="empty-icon">📋</div><div class="empty-text">暂无可管理的门店群<br>当前代理身份下尚未绑定门店</div></div>';
-    } else {
-      html += '<div class="group-section-title">' + sectionTitle + '</div>';
-      html += '<div class="group-empty-state"><div class="empty-icon">📋</div><div class="empty-text">当前门店暂无群聊<br>请联系管理员确认</div></div>';
+      return html;
+    }
+    if(directGroups.length > 0) {
+      html += '<div class="group-section-title">直营门店群</div>';
+      directGroups.forEach(function(g){ html += renderGroupCard(g); });
+    }
+    if(indirectGroups.length > 0) {
+      html += '<div class="group-section-title">非直营门店群</div>';
+      indirectGroups.forEach(function(g){ html += renderGroupCard(g); });
     }
     return html;
   }
+  
+  var sectionTitle = '我的门店群';
+  if(groups.length === 0) {
+    html += '<div class="group-section-title">' + sectionTitle + '</div>';
+    html += '<div class="group-empty-state"><div class="empty-icon">📋</div><div class="empty-text">当前门店暂无群聊<br>请联系管理员确认</div></div>';
+    return html;
+  }
   html += '<div class="group-section-title">' + sectionTitle + '</div>';
-  groups.forEach(function(g){
-    var statusCls = g.status === '正常' ? 'normal' : g.status === '停用' ? 'disabled' : 'error';
-    var ownerDisplay = g.owner;
-    if(currentRole === 'agent' && g.ownerRole === '代理') ownerDisplay = g.owner + '（当前代理）';
-    html += '<div class="group-card" onclick="showGroupDetail('+g.id+')">';
-    html += '<div class="group-card-avatar" style="background:'+getAvatarColor(g.name)+'">'+g.name.charAt(0)+'</div>';
-    html += '<div class="group-card-info">';
-    html += '<div class="group-card-name">'+g.name+'</div>';
-    html += '<div class="group-card-meta">来源：'+g.source+'</div>';
-    html += '<div class="group-card-meta">群主：'+ownerDisplay+'　群管：'+g.managers.join('、')+'</div>';
-    html += '<div class="group-card-meta">客户 '+g.customers+' 人</div>';
-    html += '<div class="group-card-meta" style="font-size:11px;color:var(--text-tertiary)">更新：'+g.updatedTime+'</div>';
-    html += '<span class="group-card-status '+statusCls+'">'+g.status+'</span>';
-    html += '</div></div>';
-  });
+  groups.forEach(function(g){ html += renderGroupCard(g); });
+  return html;
+}
+
+function renderGroupCard(g) {
+  var html = '';
+  var statusCls = g.status === '正常' ? 'normal' : 'disabled';
+  var ownerDisplay = g.owner;
+  if(currentRole === 'agent' && g.ownerRole === '代理') ownerDisplay = g.owner + '（群主）';
+  html += '<div class="group-card" onclick="showGroupDetail('+g.id+')">';
+  html += '<div class="group-card-avatar" style="background:'+getAvatarColor(g.name)+'">'+g.name.charAt(0)+'</div>';
+  html += '<div class="group-card-info">';
+  html += '<div class="group-card-name">'+g.name+'</div>';
+  html += '<div class="group-card-meta">来源：'+g.source+'</div>';
+  html += '<div class="group-card-meta">群主：'+ownerDisplay+'　群管：'+g.managers.join('、')+'</div>';
+  html += '<div class="group-card-meta">客户 '+g.customers+' 人</div>';
+  html += '<div class="group-card-meta" style="font-size:11px;color:var(--text-tertiary)">更新：'+g.updatedTime+'</div>';
+  html += '<span class="group-card-status '+statusCls+'">'+g.status+'</span>';
+  html += '</div></div>';
   return html;
 }
 
@@ -1391,7 +1425,7 @@ function showGroupDetail(groupId) {
   document.getElementById('subNavAction').innerHTML = '';
   var r = ROLES[currentRole];
   var currentIdentity = r.identity;
-  var statusCls = g.status === '正常' ? 'status-normal' : g.status === '停用' ? 'status-disabled' : 'status-error';
+  var statusCls = g.status === '正常' ? 'status-normal' : 'status-disabled';
   var html = '';
   html += '<div id="groupDetailAnchor" style="position:relative">';
   html += '<div class="gd-section">';
@@ -1408,26 +1442,20 @@ function showGroupDetail(groupId) {
   html += '<div class="gd-overview-item"><div class="gd-overview-num">1</div><div class="gd-overview-label">群主</div></div>';
   html += '<div class="gd-overview-item"><div class="gd-overview-num">'+g.managers.length+'</div><div class="gd-overview-label">群管</div></div>';
   html += '<div class="gd-overview-item"><div class="gd-overview-num">'+g.customers+'</div><div class="gd-overview-label">客户</div></div>';
-  html += '<div class="gd-overview-item"><div class="gd-overview-num">'+g.anomalyCount+'</div><div class="gd-overview-label">异常</div></div>';
   html += '</div>';
   html += '<div class="gd-section-title">群主</div>';
-  var ownerStatus = 'normal';
-  var ownerStatusText = '正常';
   html += '<div class="gd-member-card">';
   html += '<div class="gd-member-avatar" style="background:'+getAvatarColor(g.owner)+'">'+g.owner.charAt(0)+'</div>';
   html += '<div class="gd-member-info"><div class="gd-member-name">'+g.owner+'</div><div class="gd-member-role">'+g.ownerRole+'｜'+g.source+'</div></div>';
-  html += '<span class="gd-member-status '+ownerStatus+'">'+ownerStatusText+'</span>';
+  html += '<span class="gd-member-status normal">群长</span>';
   html += '</div>';
   html += '<div class="gd-section-title">群管</div>';
   g.managers.forEach(function(mgr){
     var mgrRole = mgr.indexOf('店长') >= 0 ? '店长' : '店员';
-    var mgrStatus = 'normal';
-    var mgrStatusText = '正常';
-    if(g.id === 3 && mgr === '周店员') { mgrStatus = 'anomaly'; mgrStatusText = '离职'; }
     html += '<div class="gd-member-card">';
     html += '<div class="gd-member-avatar" style="background:'+getAvatarColor(mgr)+'">'+mgr.charAt(0)+'</div>';
     html += '<div class="gd-member-info"><div class="gd-member-name">'+mgr+'</div><div class="gd-member-role">'+mgrRole+'｜'+g.source+'</div></div>';
-    html += '<span class="gd-member-status '+mgrStatus+'">'+mgrStatusText+'</span>';
+    html += '<span class="gd-member-status normal">管理员</span>';
     html += '</div>';
   });
   var whitelistCustomers = GROUP_CUSTOMERS.filter(function(c){ return c.groupId === groupId && c.status === '白名单'; });
@@ -1436,35 +1464,18 @@ function showGroupDetail(groupId) {
   if(whitelistCustomers.length === 0) {
     html += '<div class="group-empty-state"><div class="empty-icon">📋</div><div class="empty-text">当前群暂无白名单客户</div></div>';
   } else {
+    var canBlock = currentRole === 'manager' || currentRole === 'clerk';
     whitelistCustomers.forEach(function(cust){
       var phoneDisplay = maskPhone(cust.phone);
       var canViewFull = currentRole === 'manager' || currentRole === 'agent';
       html += '<div class="gd-customer-item">';
       html += '<div class="gd-customer-avatar" style="background:'+getAvatarColor(cust.name)+'">'+cust.name.charAt(0)+'</div>';
       html += '<div class="gd-customer-info"><div class="gd-customer-name">'+cust.name+'</div><div class="gd-customer-phone" style="cursor:'+(canViewFull?'pointer':'default')+'" '+(canViewFull?'onclick="toggleFullPhone(this,\''+cust.phone+'\')"':'')+'>'+phoneDisplay+(canViewFull?' <span style="font-size:11px;color:var(--blue)">点击查看</span>':'')+'</div></div>';
+      if(canBlock) {
+        html += '<button class="btn btn-danger btn-sm" onclick="event.stopPropagation();showToast(\'已拉黑 '+cust.name+'\')" style="flex-shrink:0">拉黑</button>';
+      }
       html += '</div>';
     });
-  }
-  html += '</div>';
-  html += '<div id="groupAnomalyAnchor" style="position:relative">';
-  if(g.anomalyCount > 0) {
-    html += '<div class="gd-section-title">异常提示</div>';
-    var blacklisted = GROUP_CUSTOMERS.filter(function(c){ return c.groupId === groupId && c.status === '黑名单'; });
-    if(blacklisted.length > 0) {
-      blacklisted.forEach(function(bl){
-        html += '<div class="gd-anomaly-alert"><span class="gd-anomaly-icon">🚫</span><span class="gd-anomaly-text">客户 '+bl.name+' 已被加入黑名单，不在群成员中展示</span></div>';
-      });
-    }
-    var disabled = GROUP_CUSTOMERS.filter(function(c){ return c.groupId === groupId && c.status === '停用'; });
-    if(disabled.length > 0) {
-      disabled.forEach(function(dd){
-        html += '<div class="gd-anomaly-alert"><span class="gd-anomaly-icon">⛔</span><span class="gd-anomaly-text">客户 '+dd.name+' 账号已停用</span></div>';
-      });
-    }
-    if(g.id === 3) {
-      html += '<div class="gd-anomaly-alert"><span class="gd-anomaly-icon">👤</span><span class="gd-anomaly-text">群管 周店员 已离职</span></div>';
-    }
-    html += '<div style="padding:8px 16px 12px;font-size:11px;color:var(--text-tertiary);background:var(--bg-card)">💡 异常为临时状态，后台处理完成后将自动恢复正常</div>';
   }
   html += '</div>';
   if(currentRole !== 'buyer' && g.status !== '停用') {
@@ -1509,25 +1520,6 @@ function showToast(msg) {
   setTimeout(function(){toast.classList.remove('show')}, 2000);
 }
 
-function showAnomalyDemo() {
-  document.getElementById('subNavTitle').textContent = '异常场景演示';
-  document.getElementById('subNavAction').innerHTML = '';
-  var html = '<div style="padding:0">';
-  html += '<div class="gd-section-title">16.1 当前身份不存在</div>';
-  html += '<div class="gd-anomaly-alert" style="cursor:pointer" onclick="showToast(\'当前身份不可用，请前往个人中心切换身份\')"><span class="gd-anomaly-icon">⚠️</span><span class="gd-anomaly-text">用户登录后未选择身份，或当前身份失效。<br><strong>提示：当前身份不可用，请前往个人中心切换身份</strong></span></div>';
-  html += '<div class="gd-section-title">16.2 当前身份无群</div>';
-  html += '<div class="gd-anomaly-alert" style="cursor:pointer" onclick="showToast(\'当前门店暂无群聊，请联系管理员确认\')"><span class="gd-anomaly-icon">📋</span><span class="gd-anomaly-text">店员/店长身份下，当前门店尚未创建群。<br><strong>提示：当前门店暂无群聊，请联系管理员确认</strong></span></div>';
-  html += '<div class="gd-section-title">16.3 代理无门店</div>';
-  html += '<div class="gd-anomaly-alert" style="cursor:pointer" onclick="showToast(\'暂无可管理的门店群\')"><span class="gd-anomaly-icon">🏢</span><span class="gd-anomaly-text">代理身份下无绑定门店。<br><strong>提示：暂无可管理的门店群，当前代理身份下尚未绑定门店</strong></span></div>';
-  html += '<div class="gd-section-title">16.4 跨租户数据异常</div>';
-  html += '<div class="gd-anomaly-alert" style="cursor:pointer" onclick="showToast(\'数据异常，请稍后重试\')"><span class="gd-anomaly-icon">🔒</span><span class="gd-anomaly-text">接口返回非当前租户数据。前端不展示，后端记录异常日志。<br><strong>提示：数据异常，请稍后重试</strong></span></div>';
-  html += '<div class="gd-section-title">16.5 客户数据为空</div>';
-  html += '<div class="gd-anomaly-alert" style="cursor:pointer" onclick="showToast(\'当前群暂无白名单客户\')"><span class="gd-anomaly-icon">📭</span><span class="gd-anomaly-text">群内无白名单客户。<br><strong>提示：当前群暂无白名单客户</strong></span></div>';
-  html += '</div>';
-  document.getElementById('subPageContent').innerHTML = html;
-  document.getElementById('subPage').classList.add('show');
-}
-
 function openRoleSelector() {
   var selector = document.getElementById('roleSelector');
   selector.innerHTML = Object.values(ROLES).map(function(r){
@@ -1560,8 +1552,7 @@ function renderMinePage() {
   document.getElementById('mineTenant').textContent = r.tenant;
   var items = [
     {icon:'🔄',bg:'var(--primary-light)',label:'切换身份',action:'openRoleSelector()'},
-    {icon:'👥',bg:'var(--primary-light)',label:'我的群聊',action:'showMyGroups()'},
-    {icon:'⚠️',bg:'#FFF3E0',label:'异常场景演示',action:'showAnomalyDemo()'}
+    {icon:'👥',bg:'var(--primary-light)',label:'我的群聊',action:'showMyGroups()'}
   ];
   document.getElementById('mineItems').innerHTML = items.map(function(it){
     return '<div class="my-item" onclick="'+it.action+'"><div class="item-icon" style="background:'+it.bg+'">'+it.icon+'</div><span class="item-label">'+it.label+'</span><span class="item-arrow">›</span></div>';
@@ -1663,7 +1654,7 @@ var ANNOTATIONS = [
     title: '通讯录列表页',
     target: '#page-contacts',
     page: 'contacts',
-    content: '### 7.1 页面目标\n\n根据当前身份展示用户可见的群聊列表。\n\n### 7.2 页面结构\n\n顶部导航 → 当前身份展示 → 搜索框 → 群聊分类/分组 → 群聊列表 → 联系人列表 → 空状态\n\n### 7.3 顶部导航\n\n| 元素 | 说明 |\n|------|------|\n| 页面标题 | 通讯录 |\n| 返回按钮 | 返回消息页 |\n| 当前身份 | 展示当前用户身份 |\n| 搜索框 | 搜索群名/门店名 |\n\n### 7.4 当前身份展示\n\n当前身份：买家（订单关联门店）\n当前租户：天津租赁　当前身份：代理（招募渠道关联门店）\n\n> 注：前端不展示租户名称和tenant_id，租户信息通过后台隔离机制控制。\n\n### 7.5 搜索能力\n\n| 当前身份 | 搜索范围 |\n|----------|----------|\n| 买家 | 订单关联门店群 |\n| 店员 | 所在门店群（可跨门店） |\n| 店长 | 当前门店群 |\n| 代理 | 招募渠道关联门店群 |\n\n搜索字段：群名称、门店名称、群主名称、群管名称\n\n### 7.6 群聊分组\n\n- 买家：订单关联门店群\n- 店员：我的门店群\n- 店长：我的门店群\n- 代理：我管理的门店群\n\n### 7.7 群列表卡片字段\n\n| 字段 | 说明 |\n|------|------|\n| 群名称 | 群聊名称 |\n| 来源门店 | 群对应门店 |\n| 群主 | 代理/店长 |\n| 群管 | 店长、店员 |\n| 客户数 | 白名单客户数量 |\n| 群状态 | 正常/异常/停用 |\n| 更新时间 | 最近成员变化时间 |'
+    content: '### 7.1 页面目标\n\n根据当前身份展示用户可见的群聊列表。\n\n### 7.2 页面结构\n\n顶部导航 → 当前身份展示 → 搜索框 → 群聊分类/分组 → 群聊列表 → 联系人列表 → 空状态\n\n### 7.3 顶部导航\n\n| 元素 | 说明 |\n|------|------|\n| 页面标题 | 通讯录 |\n| 返回按钮 | 返回消息页 |\n| 当前身份 | 展示当前用户身份 |\n| 搜索框 | 搜索群名/门店名 |\n\n### 7.4 当前身份展示\n\n当前身份：买家（绑定门店）\n当前身份：代理（招募渠道关联门店）\n\n> 注：前端不展示租户名称和tenant_id，租户信息通过后台隔离机制控制。\n\n### 7.5 搜索能力\n\n| 当前身份 | 搜索范围 |\n|----------|----------|\n| 买家 | 绑定门店客服人员 |\n| 店员 | 所在门店群（可跨门店/跨租户） |\n| 店长 | 当前门店群 |\n| 代理 | 招募渠道关联门店群（含跨租户，按直营/非直营分组） |\n\n搜索字段：群名称、门店名称、群主名称、群管名称\n\n### 7.6 群聊分组\n\n| 身份 | 分组规则 |\n|------|----------|\n| 买家 | 绑定门店客服群（只展示店长+店员） |\n| 店员 | 我的门店群 |\n| 店长 | 我的门店群 |\n| 代理 | 直营门店群 + 非直营门店群 |\n\n### 7.7 群列表卡片字段\n\n| 字段 | 说明 |\n|------|------|\n| 群名称 | 群聊名称 |\n| 来源门店 | 群对应门店 |\n| 群主 | 代理/店长（群主=群长） |\n| 群管 | 店长、店员（群管=管理员） |\n| 客户数 | 白名单客户数量 |\n| 群状态 | 正常/停用 |\n| 更新时间 | 最近成员变化时间 |'
   },
   {
     id: 3,
@@ -1671,7 +1662,7 @@ var ANNOTATIONS = [
     target: '#groupDetailAnchor',
     page: 'sub',
     subFilter: function() { var t = document.getElementById('subNavTitle'); return t && (t.textContent === '群详情'); },
-    content: '### 8.1 页面目标\n\n展示某个门店群的群基础信息、群主、群管和白名单客户成员。\n\n### 8.2 页面结构\n\n群基础信息 → 群成员概览 → 群主信息 → 群管列表 → 客户列表 → 异常提示 → 进入群聊按钮\n\n### 8.3 群基础信息\n\n| 字段 | 说明 |\n|------|------|\n| 群名称 | 门店群聊名称 |\n| 来源门店 | 当前群所属门店 |\n| 当前身份 | 当前用户查看身份 |\n| 创建方式 | 系统自动创建 |\n| 创建时间 | 群生成时间 |\n| 群状态 | 正常/异常/停用 |\n\n> 注：群详情不展示"所属租户"和"群类型"字段。租户信息通过跨租户隔离机制在后台控制，前端不显示；群类型统一为门店群，无需额外展示。\n\n### 8.4 群成员概览\n\n| 指标 | 说明 |\n|------|------|\n| 群主 | 代理/店长 |\n| 群管人数 | 店长、店员人数 |\n| 客户人数 | 白名单客户数量 |\n| 黑名单客户 | 不进入群，不在成员列表展示 |\n| 异常成员 | 离职、停用、失效成员 |\n\n### 8.5 群主展示\n\n姓名/昵称、身份（代理/店长）、所属门店、状态\n\n### 8.6 群管展示\n\n姓名/昵称、身份（店长/店员）、所属门店、状态\n\n### 8.7 客户列表\n\n只展示白名单客户。客户手机号默认脱敏：138****5678\n\n### 8.8 异常提示\n\n| 异常 | 说明 |\n|------|------|\n| 群主停用 | 群主账号不可用 |\n| 群管离职 | 店长/店员离职 |\n| 客户状态异常 | 客户被拉黑或停用 |\n| 跨租户数据异常 | 群成员不属于当前租户 |\n\n> 注：由于采用全自动实时同步机制（见5.6），不存在"群成员待同步"异常场景。\n\n### 异常生命周期\n\n异常状态为临时状态，非永久存在：\n\n| 阶段 | 说明 |\n|------|------|\n| 异常产生 | 群管离职、客户被拉黑/停用、群主停用等 |\n| 异常展示 | 群状态标记为"异常"，群详情展示异常提示 |\n| 后台处理 | 管理员处理异常（替换离职店员、移除黑名单客户等） |\n| 自动恢复 | 后台处理完成后，系统实时同步，群状态自动恢复为"正常"，异常提示消失 |\n\n### 8.9 进入群聊按钮\n\n| 场景 | 处理 |\n|------|------|\n| 已有群聊能力 | 展示「进入群聊」按钮 |\n| 暂无群聊能力 | 不展示按钮，只展示通讯录关系 |\n| 用户无群聊权限 | 按钮置灰或隐藏 |\n| 群已停用 | 按钮置灰，显示"群已停用" |'
+    content: '### 8.1 页面目标\n\n展示某个门店群的群基础信息、群主/群长、管理员（群管）和白名单客户成员。\n\n### 8.2 页面结构\n\n群基础信息 → 群成员概览 → 群主信息 → 群管列表 → 客户列表 → 进入群聊按钮\n\n### 8.3 群基础信息\n\n| 字段 | 说明 |\n|------|------|\n| 群名称 | 门店群聊名称 |\n| 来源门店 | 当前群所属门店 |\n| 当前身份 | 当前用户查看身份 |\n| 创建方式 | 系统自动创建 |\n| 创建时间 | 群生成时间 |\n| 群状态 | 正常/停用 |\n\n> 注：群详情不展示"所属租户"和"群类型"字段。\n\n### 8.4 群成员概览\n\n| 指标 | 说明 |\n|------|------|\n| 群主/群长 | 代理/店长 |\n| 管理员（群管） | 店长、店员 |\n| 客户人数 | 白名单客户数量 |\n| 黑名单客户 | 不进入群，不在成员列表展示 |\n\n### 8.5 群主展示\n\n群主信息标注"群长"身份。姓名/昵称、身份（代理/店长）、所属门店\n\n### 8.6 群管展示\n\n群管信息标注"管理员"身份。姓名/昵称、身份（店长/店员）、所属门店\n\n### 8.7 客户列表\n\n只展示白名单客户。客户手机号默认脱敏：138****5678。店长/店员身份下可拉黑客户（同步业务后台黑名单），代理身份下不可拉黑客户。\n\n### 8.8 异常提示\n\n> ⚠️ 本期不做异常状态展示和异常处理。有异常就要有处理闭环，没有处理闭环先不做异常相关展示。\n\n### 8.9 进入群聊按钮\n\n| 场景 | 处理 |\n|------|------|\n| 已有群聊能力 | 展示「进入群聊」按钮 |\n| 暂无群聊能力 | 不展示按钮，只展示通讯录关系 |\n| 群已停用 | 按钮置灰，显示"群已停用" |\n\n### IM售后单闭环 ✅ 5.14新增\n\n买家在群聊中可通过「+」快捷操作发送售后单：\n点击快捷操作 → 跳转买家订单页面 → 选择售后单 → 发送到群\n\n店员/店长点击售后单消息 → 进入卖家侧售后单处理页面'
   },
   {
     id: 4,
@@ -1686,7 +1677,7 @@ var ANNOTATIONS = [
     title: '身份与跨租户规则',
     target: '#page-mine',
     page: 'mine',
-    content: '### 9.1 身份来源\n\n| 身份 | 来源 |\n|------|------|\n| 买家 | 默认身份，根据成功订单关联门店 |\n| 店员 | 组织成员，可跨门店、跨租户 |\n| 店长 | 组织成员，绑定单个门店 |\n| 代理 | 招募渠道组织成员 |\n\n### 9.2 身份数据结构\n\n| 字段 | 说明 |\n|------|------|\n| user_id | 当前用户ID |\n| tenant_id | 当前身份所属租户 |\n| identity_type | 身份类型：买家、店员、店长、代理、主播 |\n| store_ids | 当前身份关联门店ID列表，店员可多门店，店长单门店 |\n| agent_id | 当前代理ID |\n| role_name | 展示名称 |\n| permission_scope | 数据权限范围 |\n\n### 9.3 跨租户隔离规则\n\n通讯录数据必须按当前身份所属租户隔离。\n\n当前身份 tenant_id = A → 只查询租户A的群和成员 → 禁止展示租户B的任何数据\n\n前端不展示当前租户、所属租户、租户名称或 tenant_id。\n\n### 店员例外 ✅\n\n店员身份下，允许跨租户展示名下所有门店群。\n\n原因：店员可能同时服务于不同租户的多个门店，如果按租户严格隔离，店员每次查看不同租户的群都需要切换身份，体验极差。因此店员身份下，通讯录一次性展示该店员名下所有门店群（可跨租户），免去频繁切换身份的麻烦。\n\n| 身份 | 跨租户展示规则 |\n|------|----------------|\n| 买家 | 按当前租户隔离，只展示当前租户下订单关联门店群 |\n| 店员 | ✅ 例外：一次展示名下所有门店群，可跨租户 |\n| 店长 | 按当前租户隔离，只展示当前门店群 |\n| 代理 | 按当前租户隔离，只展示当前租户下招募渠道关联门店群 |\n\n### 9.4 跨租户示例\n\n| 当前用户 | 身份 | 租户 | 业务范围 |\n|----------|------|------|----------|\n| 张三 | 买家 | 租户A | 成功订单所属门店群 |\n| 张三 | 店员 | 租户A | A门店群、B门店群（可含跨租户门店群，一次展示） |\n| 张三 | 代理 | 租户B | 招募渠道关联B、C、D门店群 |\n\n切换为买家 → 通讯录展示：订单关联门店群\n切换为店员 → 通讯录展示：名下所有门店群（含跨租户，无需切换）\n切换为代理 → 通讯录展示：B门店群、C门店群、D门店群'
+    content: '### 9.1 身份来源\n\n| 身份 | 来源 |\n|------|------|\n| 买家 | 绑定门店（APP扫店铺成员码/后台创建客户时绑定） |\n| 店员 | 组织成员，可跨门店、跨租户 |\n| 店长 | 组织成员，绑定单个门店 |\n| 代理 | 招募渠道组织成员，只展示业务类型=招募渠道的成员 |\n\n### 9.2 身份数据结构\n\n| 字段 | 说明 |\n|------|------|\n| user_id | 当前用户ID |\n| tenant_id | 当前身份所属租户（后端隔离用，前端不展示） |\n| identity_type | 身份类型：买家、店员、店长、代理、主播 |\n| store_ids | 当前身份关联门店ID列表，店员可多门店，店长单门店 |\n| recruit_channel_org_id | 招募渠道组织ID，代理身份需要 |\n| role_name | 展示名称 |\n\n### 9.3 跨租户隔离规则\n\n通讯录数据必须按当前身份所属租户隔离。前端不展示当前租户、所属租户、租户名称或 tenant_id。\n\n### 店员例外 ✅ + 代理说明 ✅\n\n| 身份 | 跨租户展示规则 |\n|------|----------------|\n| 买家 | 按当前租户隔离，只展示绑定门店的客服人员 |\n| 店员 | ✅ 例外：一次展示名下所有门店群，可跨租户 |\n| 店长 | 按当前租户隔离，只展示当前门店群 |\n| 代理 | 代理可跨租户查看招募渠道关联的所有门店群（按直营/非直营分组） |\n\n### 9.4 跨租户示例\n\n| 当前用户 | 身份 | 租户 | 业务范围 |\n|----------|------|------|----------|\n| 张三 | 买家 | 租户A | 绑定门店的客服人员 |\n| 张三 | 店员 | 租户A | A门店群、B门店群（可含跨租户门店群，一次展示） |\n| 张三 | 代理 | 租户B | 招募渠道关联所有门店群（含跨租户，按直营/非直营分组） |\n\n切换为买家 → 通讯录展示：绑定门店客服群\n切换为店员 → 通讯录展示：名下所有门店群（含跨租户，无需切换）\n切换为代理 → 通讯录展示：招募渠道下所有门店群（含跨租户，按直营/非直营分组）'
   },
   {
     id: 6,
@@ -1701,7 +1692,7 @@ var ANNOTATIONS = [
     title: '权限规则',
     target: '#page-mine',
     page: 'mine',
-    content: '### 11.1 数据可见范围\n\n| 当前身份 | 可见范围 |\n|----------|----------|\n| 普通买家 | 成功订单所属门店群 |\n| 店员 | 名下所有门店群（可跨门店、跨租户，无需切换身份） |\n| 店长 | 自己负责的单一门店群 |\n| 代理 | 招募渠道组织招募/关联门店群 |\n| 主播 | V1.0暂不展示 |\n| 客户 | 不作为登录身份处理 |\n\n### 11.2 操作权限\n\n| 操作 | 普通买家 | 店员 | 店长 | 代理 |\n|------|----------|------|------|------|\n| 进入通讯录 | 是 | 是 | 是 | 是 |\n| 查看门店群 | 仅订单关联群 | 是（含跨租户门店群） | 是 | 是 |\n| 查看群详情 | 仅订单关联群 | 是 | 是 | 是 |\n| 查看群主 | 仅订单关联群 | 是 | 是 | 是 |\n| 查看群管 | 仅订单关联群 | 是 | 是 | 是 |\n| 查看客户列表 | 仅订单关联群 | 是 | 是 | 是 |\n| 查看完整手机号 | 否 | 按权限 | 按权限 | 按权限 |\n| 进入群聊 | 需IM user_id | 按权限 | 按权限 | 按权限 |\n| 管理群成员 | 否 | 按后台权限 | 按后台权限 | 按后台权限 |'
+    content: '### 11.1 数据可见范围\n\n| 当前身份 | 可见范围 |\n|----------|----------|\n| 买家 | 绑定门店的店长、店员（客服人员），不可见其他客户 |\n| 店员 | 名下所有门店群（可跨门店、跨租户） |\n| 店长 | 自己负责的单一门店群 |\n| 代理 | 招募渠道组织关联门店群（直营/非直营分组，可跨租户） |\n| 主播 | V1.0暂不展示 |\n\n### 11.2 可操作与不可操作\n\n| 身份 | 可操作 | 不可操作 |\n|------|--------|----------|\n| 买家 | 查看绑定门店客服、进入群聊、发送售后单 | 查看其他客户、拉黑客户、管理群 |\n| 店员 | 查看所在门店群、进入群聊、查看客户、拉黑客户（同步后台） | 删除群、解除门店关系、删除店员 |\n| 店长 | 查看门店群、进入群聊、查看客户、拉黑客户（同步后台） | 删除群、解除门店关系、删除店员 |\n| 代理 | 查看关联门店群、进入群聊、查看客户 | 拉黑客户、移除客户、删除群、解除代理关系 |\n\n> 注：拉黑客户后需同步租户业务后台客户黑名单'
   },
   {
     id: 8,
@@ -1709,7 +1700,7 @@ var ANNOTATIONS = [
     target: '#groupStatusAnchor',
     page: 'sub',
     subFilter: function() { var t = document.getElementById('subNavTitle'); return t && t.textContent === '群详情'; },
-    content: '### 12.1 群状态\n\n| 状态 | 说明 |\n|------|------|\n| 正常 | 群可正常查看 |\n| 异常 | 群主、群管、成员数据异常 |\n| 停用 | 群不可用 |\n| 已删除 | 不展示 |\n\n> 注：由于采用全自动实时同步机制（见5.6），不存在"待同步"状态。成员变更实时生效，无需手动确认。\n\n### 12.2 成员状态\n\n| 状态 | 是否展示 | 说明 |\n|------|----------|------|\n| 正常 | 是 | 正常群成员 |\n| 离职 | 可显示为异常或隐藏 | 店员/店长离职 |\n| 停用 | 否或异常提示 | 账号停用 |\n| 黑名单 | 否 | 黑名单客户不展示 |\n| 已删除 | 否 | 删除成员不展示 |'
+    content: '### 12.1 群状态\n\n| 状态 | 说明 |\n|------|------|\n| 正常 | 群可正常查看 |\n| 停用 | 群不可用 |\n| 已删除 | 不展示 |\n\n> ⚠️ 本期不做异常状态。有异常就要有处理闭环，没有处理闭环先不做异常。\n\n### 12.2 成员状态\n\n| 状态 | 是否展示 | 说明 |\n|------|----------|------|\n| 正常 | 是 | 正常群成员 |\n| 离职 | 不展示或隐藏 | 店员/店长离职 |\n| 停用 | 不展示 | 账号停用 |\n| 黑名单 | 否 | 黑名单客户不展示 |\n| 已删除 | 否 | 删除成员不展示 |'
   },
   {
     id: 9,
@@ -1717,21 +1708,21 @@ var ANNOTATIONS = [
     target: '#groupAnomalyAnchor',
     page: 'sub',
     subFilter: function() { var t = document.getElementById('subNavTitle'); return t && t.textContent === '群详情'; },
-    content: '### 16.1 当前身份不存在\n\n用户登录后未选择身份，或当前身份失效。\n\n提示：当前身份不可用，请前往个人中心切换身份\n\n### 16.2 当前身份无群\n\n店员/店长身份下，当前门店尚未创建群。\n\n提示：当前门店暂无群聊，请联系管理员确认\n\n### 16.3 代理无门店\n\n代理身份下无绑定门店。\n\n提示：暂无可管理的门店群，当前代理身份下尚未绑定门店\n\n### 16.4 跨租户数据异常\n\n接口返回非当前租户数据。前端不展示，后端记录异常日志。\n\n提示：数据异常，请稍后重试\n\n### 16.5 客户数据为空\n\n群内无白名单客户。\n\n提示：当前群暂无白名单客户\n\n> 注：由于采用全自动实时同步机制（见5.6），不存在"群成员待同步"异常场景。'
+    content: '### 16. 异常场景\n\n> ⚠️ 本期不做异常场景的展示和处理。负责人明确指示：有异常就要有处理异常，如果没有处理闭环，先暂时不要做异常。\n\n以下异常场景暂缓到后续版本：\n- 群主异常/停用\n- 群管离职\n- 客户状态异常\n- 跨租户数据异常\n- 群成员待同步（已改为全自动实时同步，不适用）\n\n### 本期保留的空状态场景\n\n| 场景 | 提示 |\n|------|------|\n| 买家无绑定门店 | 暂无绑定门店，请先绑定门店 |\n| 店员/店长无门店群 | 当前门店暂无群聊，请联系管理员确认 |\n| 代理无门店群 | 暂无可管理的门店群，当前代理身份下尚未绑定门店 |\n| 群内无白名单客户 | 当前群暂无白名单客户 |'
   },
   {
     id: 10,
     title: 'V1.0需求清单',
     target: '#topTabs',
     page: 'global',
-    content: '### 17.1 页面需求\n\n| 编号 | 需求 | 优先级 |\n|------|------|--------|\n| P-001 | 消息页右上角增加通讯录入口 | P0 |\n| P-002 | 通讯录列表页 | P0 |\n| P-003 | 当前身份展示 | P0 |\n| P-004 | 群聊搜索 | P1 |\n| P-005 | 群聊卡片列表 | P0 |\n| P-006 | 群详情页 | P0 |\n| P-007 | 群主/群管展示 | P0 |\n| P-008 | 白名单客户列表展示 | P0 |\n| P-009 | 空状态页面 | P0 |\n| P-010 | 异常提示 | P1 |\n\n### 17.2 功能需求\n\n| 编号 | 需求 | 优先级 |\n|------|------|--------|\n| F-001 | 根据当前身份展示通讯录数据 | P0 |\n| F-002 | 支持普通买家身份空状态 | P0 |\n| F-003 | 支持店员查看当前门店群 | P0 |\n| F-004 | 支持店长查看当前门店群 | P0 |\n| F-005 | 支持代理查看名下门店群 | P0 |\n| F-006 | 支持跨租户数据隔离 | P0 |\n| F-007 | 支持白名单客户展示 | P0 |\n| F-008 | 支持黑名单客户排除 | P0 |\n| F-009 | 支持客户手机号脱敏 | P0 |\n| F-010 | 支持群详情查看 | P0 |\n| F-011 | 支持群状态展示 | P1 |\n| F-012 | 支持进入群聊，依赖已有聊天能力 | P1 |\n| F-013 | 主播身份预留 | P2 |\n| F-014 | 直播群预留 | P2 |'
+    content: '### 17.1 页面需求\n\n| 编号 | 需求 | 优先级 |\n|------|------|--------|\n| P-001 | 消息页右上角增加通讯录入口 | P0 |\n| P-002 | 通讯录列表页 | P0 |\n| P-003 | 当前身份展示 | P0 |\n| P-004 | 群聊搜索 | P1 |\n| P-005 | 群聊卡片列表 | P0 |\n| P-006 | 群详情页 | P0 |\n| P-007 | 群主/群管展示 | P0 |\n| P-008 | 白名单客户列表展示 | P0 |\n| P-009 | 空状态页面 | P0 |\n| P-010 | 代理直营/非直营分组 | P0 |\n| P-011 | IM售后单发送与跳转 | P0 |\n\n### 17.2 功能需求\n\n| 编号 | 需求 | 优先级 |\n|------|------|--------|\n| F-001 | 根据当前身份展示通讯录数据 | P0 |\n| F-002 | 支持买家查看绑定门店客服 | P0 |\n| F-003 | 支持店员查看多门店群（跨租户） | P0 |\n| F-004 | 支持店长查看门店群并拉黑客户 | P0 |\n| F-005 | 支持代理查看门店群（直营/非直营分组，可跨租户） | P0 |\n| F-006 | 支持跨租户数据隔离（店员/代理例外） | P0 |\n| F-007 | 支持白名单客户展示 | P0 |\n| F-008 | 支持黑名单客户排除 | P0 |\n| F-009 | 支持客户手机号脱敏 | P0 |\n| F-010 | 支持群详情查看 | P0 |\n| F-011 | 支持群状态展示（正常/停用） | P1 |\n| F-012 | 支持进入群聊，依赖已有聊天能力 | P1 |\n| F-013 | 支持拉黑客户并同步业务后台 | P0 |\n| F-014 | 支持买家发送售后单闭环 | P0 |\n| F-015 | 主播身份预留 | P2 |\n| F-016 | 直播群预留 | P2 |'
   },
   {
     id: 11,
     title: '核心业务规则',
     target: '#identityBanner',
     page: 'contacts',
-    content: '### 5.1 买家身份规则 ✅ 已更新\n\n买家身份下，根据其成功订单所属门店展示对应门店群。\n\n当前身份=买家 → 查询成功订单 → 根据订单找到归属门店 → 展示该门店群\n\n买家入群流程：下单成功 → 订单归属门店 → 系统判断门店是否已有群 → 没有群则创建，已有群则加入\n\n买家入群条件：\n- 买家有成功订单\n- 客户不是黑名单\n- 客户状态有效\n- 客户有IM user_id\n\n空状态：暂无相关门店群，下单成功后，可在这里查看对应门店服务群\n\n### 5.2 店员身份规则 ✅ 已更新\n\n当前身份=店员 → 查询该用户作为店员所在的所有门店 → 一次性展示所有门店群（可跨门店、跨租户）\n\n店员可存在跨门店、跨租户情况，展示时一次展示名下所有门店群，无需切换身份即可查看不同门店/租户的群。\n\n设计意图：店员可能同时服务于多个门店（甚至不同租户的门店），如果按租户隔离，店员每次查看不同租户的群都需要去"我的"页面切换身份，体验很差。因此店员身份下，通讯录直接展示名下所有门店群，免去频繁切换身份的麻烦。\n\n跨门店示例：\n\n| 用户 | 身份 | 所属门店 | 通讯录展示 |\n|------|------|----------|------------|\n| 李四 | 店员 | A店 | A店群 |\n| 李四 | 店员 | A店、B店 | A店群、B店群 |\n| 李四 | 店员 | 租户A的A店 + 租户B的C店 | A店群、C店群（一次展示，无需切换） |\n\n| 成员类型 | 是否展示 |\n|----------|----------|\n| 店长 | 展示 |\n| 店员 | 展示 |\n| 白名单客户 | 展示 |\n| 黑名单客户 | 不展示 |\n| 非本门店客户 | 不展示 |\n| 跨租户客户 | 不展示 |\n\n### 5.3 店长身份规则\n\n当前身份=某门店店长 → 识别当前门店 → 展示该门店群 → 店长作为群主/群管\n\n| 能力 | 店长 |\n|------|------|\n| 查看门店群 | 是 |\n| 查看群成员 | 是 |\n| 查看白名单客户 | 是 |\n| 查看黑名单客户 | 否，或仅显示统计 |\n| 查看客户手机号 | 默认脱敏 |\n| 管理群成员 | 如后台已有则按权限控制 |\n| 发起聊天 | 如已有聊天能力则支持跳转 |\n\n### 5.4 代理身份规则 ✅ 已更新\n\n当前身份=代理 → 查询该代理所属"招募渠道"组织 → 查询该组织招募/关联的门店 → 展示门店群\n\n| 对象 | 规则 |\n|------|------|\n| 群来源 | 代理所属"招募渠道"组织招募/关联的门店 |\n| 群数量 | 一个门店一个群 |\n| 群主 | 代理（代理身份下，群主一定是代理） |\n| 群管 | 店长、店员 |\n| 客户成员 | 该门店白名单客户 |\n| 黑名单客户 | 不进入群 |\n| 非本组织关联门店 | 不展示 |\n\n### 5.5 主播身份规则\n\n主播身份本期暂缓，不做完整主播通讯录和直播场次群。V1.0仅预留身份。\n\n### 5.6 自动建群规则 ✅ 已更新\n\n门店创建后，系统实时自动创建对应的门店群。\n新增触发条件：买家下单成功后，根据订单所属门店自动创建/加入门店群。\n\n| 触发条件 | 建群逻辑 |\n|----------|----------|\n| 门店创建 | 系统实时自动创建门店群 |\n| 买家下单成功 | 根据订单所属门店，若已有群则加入，无群则创建 |\n\n| 规则 | 说明 |\n|------|------|\n| 建群时机 | 门店创建后实时自动建群 / 买家下单成功后实时建群 |\n| 建群方式 | 系统自动创建，无需人工干预 |\n| 群数量 | 一个门店一个群 |\n| 群主 | 代理（代理身份下，群主一定是代理） |\n| 群管 | 店长、店员 |\n| 客户成员 | 该门店白名单客户自动加入 |\n| 黑名单客户 | 不进入群 |\n\n### 成员同步规则 ✅ 已确认\n\n| 变更场景 | 同步方式 |\n|----------|----------|\n| 店员离职 | 实时同步，离职店员立即从群管中移除 |\n| 客户加入白名单 | 实时同步，自动加入群成员 |\n| 客户加入黑名单 | 实时同步，自动从群成员中移除 |\n| 新店员入职 | 实时同步，自动加入群管 |'
+    content: '### 5.1 买家身份规则 ✅ 5.14更新\n\n买家进入通讯录后，不是查看完整客户群，也不是查看其他客户，而是查看自己绑定门店对应的客服人员。\n\n买家绑定门店的数据来源：APP扫店铺成员码绑定 / 租户后台创建客户时绑定门店\n\n前置条件：\n1. 当前用户身份=买家\n2. 买家已绑定门店\n3. 买家在该门店下为白名单客户\n4. 该门店存在可联系的店长/店员/客服人员\n\n展示内容：绑定门店名称、店长（客服）、店员（客服）\n\n不展示：其他客户、黑名单客户、租户/组织/代理层级信息\n\n买家入群条件：绑定门店 + 白名单 + 该门店有客服人员\n\n空状态：暂无绑定门店，请先绑定门店查看客服人员\n\n### 5.2 店员身份规则 ✅ 已更新\n\n当前身份=店员 → 查询该用户作为店员所在的所有门店 → 一次性展示所有门店群（可跨门店、跨租户）\n\n店员可存在跨门店、跨租户情况，展示时一次展示名下所有门店群，无需切换身份。\n\n| 成员类型 | 是否展示 |\n|----------|----------|\n| 店长 | 展示 |\n| 店员 | 展示 |\n| 白名单客户 | 展示 |\n| 黑名单客户 | 不展示 |\n\n### 5.3 店长身份规则 ✅ 5.14更新\n\n当前身份=某门店店长 → 识别当前门店 → 展示该门店群\n\n| 操作 | 是否支持 | 说明 |\n|------|----------|------|\n| 进入群聊 | 是 | 进入门店群 |\n| 查看客户 | 是 | 查看白名单客户 |\n| 拉黑客户 | 是 | 同步业务后台黑名单 |\n| 删除群 | 否 | 不允许 |\n| 解除门店关系 | 否 | 不允许 |\n\n拉黑客户流程：选择客户 → 点击拉黑 → 二次确认 → 从通讯录移除 → 同步租户业务后台黑名单\n\n### 5.4 代理身份规则 ✅ 5.14更新\n\n代理身份来自组织渠道管理，只展示业务类型="招募渠道"的成员。代理下门店区分直营和非直营分组。代理可跨租户。\n\n代理不可直接管控某个门店的客户——代理任务是管门店，门店店长才管店员和客户。\n\n| 操作 | 代理是否支持 |\n|------|-------------|\n| 查看门店群 | 是（直营/非直营分组） |\n| 进入群聊 | 是 |\n| 查看客户 | 是 |\n| 拉黑客户 | 否 |\n| 移除客户 | 否 |\n| 删除门店群 | 否 |\n\n### 5.5 自动建群规则 ✅ 已更新\n\n门店创建后，系统实时自动创建对应的门店群。一个门店一个群。群主为代理（群长）。\n\n### 5.6 IM售后单闭环 ✅ 5.14新增\n\n买家在群聊中通过快捷操作发送售后单：点击快捷操作 → 跳转买家订单页面 → 选择售后单 → 发送到群\n\n店员/店长点击售后单消息 → 进入卖家侧售后单处理页面\n\n本期先做售后单闭环，不做订单发送。商品/红包/兑换券等后续扩展。\n\n### 成员同步规则 ✅ 已确认\n\n| 变更场景 | 同步方式 |\n|----------|----------|\n| 店员离职 | 实时同步，离职店员立即从群管中移除 |\n| 客户加入白名单 | 实时同步，自动加入群成员 |\n| 客户加入黑名单 | 实时同步，自动从群成员中移除 |\n| 新店员入职 | 实时同步，自动加入群管 |\n| 店长/店员拉黑客户 | 实时同步，同步租户业务后台黑名单 |'
   }
 ];
 
